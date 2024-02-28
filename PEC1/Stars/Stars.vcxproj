@@ -136,10 +136,12 @@
     <ClCompile Include="EffectTemplate.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="StarsEffect.cpp" />
+    <ClCompile Include="StarsEffectChallenge2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTemplate.h" />
     <ClInclude Include="StarsEffect.h" />
+    <ClInclude Include="StarsEffectChallenge2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

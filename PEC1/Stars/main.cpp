@@ -3,6 +3,7 @@
 
 #include "EffectTemplate.h"
 #include "StarsEffect.h"
+#include "StarsEffectChallenge2.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -37,7 +38,8 @@ int main(int argc, char* args[])
 	}
 	else
 	{
-		effect = new StarsEffect(screenSurface, SCREEN_HEIGHT, SCREEN_WIDTH);
+		//effect = new StarsEffect(screenSurface, SCREEN_HEIGHT, SCREEN_WIDTH);
+		effect = new StarsEffectChallenge2(screenSurface, SCREEN_HEIGHT, SCREEN_WIDTH);
 		effect->init();
 
 		//Main loop flag
