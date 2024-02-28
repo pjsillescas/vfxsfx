@@ -27,6 +27,12 @@
     <ClCompile Include="StarsEffectChallenge2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PlasmaEffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Clock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTemplate.h">
@@ -36,6 +42,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StarsEffectChallenge2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlasmaEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Clock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

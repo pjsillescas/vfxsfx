@@ -1,9 +1,12 @@
 #include <SDL.h>
 #include <iostream>
 
+#include "Clock.h"
+
 #include "EffectTemplate.h"
 #include "StarsEffect.h"
 #include "StarsEffectChallenge2.h"
+#include "PlasmaEffect.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -14,17 +17,11 @@ SDL_Window* window = NULL;
 //The surface contained by the window
 SDL_Surface* screenSurface = NULL;
 
-const float FPS = 60.f;
-int lastTime = 0, currentTime, deltaTime;
-float msFrame = 1 / (FPS / 1000.0f);
-
-
 bool initSDL();
 
 void render(EffectTemplate* effect);
 
 void close();
-void waitTime();
 
 int main(int argc, char* args[])
 {
@@ -39,7 +36,8 @@ int main(int argc, char* args[])
 	else
 	{
 		//effect = new StarsEffect(screenSurface, SCREEN_HEIGHT, SCREEN_WIDTH);
-		effect = new StarsEffectChallenge2(screenSurface, SCREEN_HEIGHT, SCREEN_WIDTH);
+		//effect = new StarsEffectChallenge2(screenSurface, SCREEN_HEIGHT, SCREEN_WIDTH);
+		effect = new PlasmaEffect(screenSurface, SCREEN_HEIGHT, SCREEN_WIDTH);
 		effect->init();
 
 		//Main loop flag
@@ -67,14 +65,14 @@ int main(int argc, char* args[])
 			}
 
 			// updates all
-			effect->update(deltaTime);
+			effect->update(Clock::getInstance().getDeltaTime());
 
 			//Render
 			render(effect);
 
 			//Update the surface
 			SDL_UpdateWindowSurface(window);
-			waitTime();
+			Clock::getInstance().waitTime();
 		}
 	}
 
@@ -125,15 +123,3 @@ void close() {
 	//Quit SDL subsystems
 	SDL_Quit();
 }
-
-void waitTime() {
-	currentTime = SDL_GetTicks();
-	deltaTime = currentTime - lastTime;
-	if (deltaTime < (int)msFrame) {
-		SDL_Delay((int)msFrame - deltaTime);
-	}
-	lastTime = currentTime;
-
-}
-
-

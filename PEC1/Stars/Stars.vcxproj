@@ -133,13 +133,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Clock.cpp" />
     <ClCompile Include="EffectTemplate.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PlasmaEffect.cpp" />
     <ClCompile Include="StarsEffect.cpp" />
     <ClCompile Include="StarsEffectChallenge2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Clock.h" />
     <ClInclude Include="EffectTemplate.h" />
+    <ClInclude Include="PlasmaEffect.h" />
     <ClInclude Include="StarsEffect.h" />
     <ClInclude Include="StarsEffectChallenge2.h" />
   </ItemGroup>
