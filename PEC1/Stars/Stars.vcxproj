@@ -43,7 +43,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -135,15 +135,19 @@
   <ItemGroup>
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="EffectTemplate.cpp" />
+    <ClCompile Include="FireEffect.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlasmaEffect.cpp" />
+    <ClCompile Include="PlasmaEffectChallenge3.cpp" />
     <ClCompile Include="StarsEffect.cpp" />
     <ClCompile Include="StarsEffectChallenge2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clock.h" />
     <ClInclude Include="EffectTemplate.h" />
+    <ClInclude Include="FireEffect.h" />
     <ClInclude Include="PlasmaEffect.h" />
+    <ClInclude Include="PlasmaEffectChallenge3.h" />
     <ClInclude Include="StarsEffect.h" />
     <ClInclude Include="StarsEffectChallenge2.h" />
   </ItemGroup>

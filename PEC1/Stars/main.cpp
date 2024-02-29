@@ -7,17 +7,25 @@
 #include "StarsEffect.h"
 #include "StarsEffectChallenge2.h"
 #include "PlasmaEffect.h"
+#include "PlasmaEffectChallenge3.h"
+#include "FireEffect.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
+
+const int FULL_SCREEN_WIDTH = 1920;
+const int FULL_SCREEN_HEIGHT = 1080;
+
+//const int FULL_SCREEN_WIDTH = 800;
+//const int FULL_SCREEN_HEIGHT = 480;
 
 //The window we'll be rendering to
 SDL_Window* window = NULL;
 //The surface contained by the window
 SDL_Surface* screenSurface = NULL;
 
-bool initSDL();
+bool initSDL(int, int);
 
 void render(EffectTemplate* effect);
 
@@ -25,19 +33,27 @@ void close();
 
 int main(int argc, char* args[])
 {
+	int screenWidth = SCREEN_WIDTH;
+	int screenHeight = SCREEN_HEIGHT;
+	
+	//int screenWidth = FULL_SCREEN_WIDTH;
+	//int screenHeight = FULL_SCREEN_HEIGHT;
+
 	EffectTemplate* effect = NULL;
 
 	//Start up SDL and create window
-	if (!initSDL())
+	if (!initSDL(screenWidth, screenHeight))
 	{
 		std::cout << "Failed to initialize!\n";
 		return 1;
 	}
 	else
 	{
-		//effect = new StarsEffect(screenSurface, SCREEN_HEIGHT, SCREEN_WIDTH);
-		//effect = new StarsEffectChallenge2(screenSurface, SCREEN_HEIGHT, SCREEN_WIDTH);
-		effect = new PlasmaEffect(screenSurface, SCREEN_HEIGHT, SCREEN_WIDTH);
+		//effect = new StarsEffect(screenSurface, screenHeight, screenWidth);
+		//effect = new StarsEffectChallenge2(screenSurface, screenHeight, screenWidth);
+		//effect = new PlasmaEffect(screenSurface, screenHeight, screenWidth);
+		//effect = new PlasmaEffectChallenge3(screenSurface, screenHeight, screenWidth);
+		effect = new FireEffect(screenSurface, screenHeight, screenWidth);
 		effect->init();
 
 		//Main loop flag
@@ -88,7 +104,7 @@ int main(int argc, char* args[])
 }
 
 
-bool initSDL() {
+bool initSDL(int screenWidth, int screenHeight) {
 
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -97,7 +113,7 @@ bool initSDL() {
 		return false;
 	}
 	//Create window
-	window = SDL_CreateWindow("SDL Stars Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("SDL Stars Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN);
 
 	if (window == NULL)
 	{

@@ -33,6 +33,12 @@
     <ClCompile Include="Clock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PlasmaEffectChallenge3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FireEffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTemplate.h">
@@ -48,6 +54,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Clock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlasmaEffectChallenge3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FireEffect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
