@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BumpmapEffect.cpp" />
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="DistortionEffect.cpp" />
     <ClCompile Include="EffectTemplate.cpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="StarsEffectChallenge2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BumpmapEffect.h" />
     <ClInclude Include="Clock.h" />
     <ClInclude Include="DistortionEffect.h" />
     <ClInclude Include="EffectTemplate.h" />

@@ -12,6 +12,8 @@ DistortionEffect::DistortionEffect(SDL_Surface* surface, int screenHeight, int s
 }
 
 void DistortionEffect::init() {
+	IMG_Init(IMG_INIT_PNG);
+
 	// two buffers
 	dispX = new char[screenWidth * screenHeight * 4];
 	dispY = new char[screenWidth * screenHeight * 4];
@@ -206,13 +208,3 @@ void DistortionEffect::Distort_Bili()
 	}
 	SDL_UnlockSurface(surface);
 }
-
-
-
-
-
-
-
-
-
-
