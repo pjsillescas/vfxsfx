@@ -9,6 +9,7 @@
 #include "PlasmaEffect.h"
 #include "PlasmaEffectChallenge3.h"
 #include "FireEffect.h"
+#include "DistortionEffect.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -53,7 +54,8 @@ int main(int argc, char* args[])
 		//effect = new StarsEffectChallenge2(screenSurface, screenHeight, screenWidth);
 		//effect = new PlasmaEffect(screenSurface, screenHeight, screenWidth);
 		//effect = new PlasmaEffectChallenge3(screenSurface, screenHeight, screenWidth);
-		effect = new FireEffect(screenSurface, screenHeight, screenWidth);
+		//effect = new FireEffect(screenSurface, screenHeight, screenWidth);
+		effect = new DistortionEffect(screenSurface, screenHeight, screenWidth);
 		effect->init();
 
 		//Main loop flag
