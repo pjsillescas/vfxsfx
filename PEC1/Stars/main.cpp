@@ -11,6 +11,7 @@
 #include "FireEffect.h"
 #include "DistortionEffect.h"
 #include "BumpmapEffect.h"
+#include "FractalEffect.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -56,8 +57,9 @@ int main(int argc, char* args[])
 		//effect = new PlasmaEffect(screenSurface, screenHeight, screenWidth);
 		//effect = new PlasmaEffectChallenge3(screenSurface, screenHeight, screenWidth);
 		//effect = new FireEffect(screenSurface, screenHeight, screenWidth);
-		effect = new DistortionEffect(screenSurface, screenHeight, screenWidth);
+		//effect = new DistortionEffect(screenSurface, screenHeight, screenWidth);
 		//effect = new BumpmapEffect(screenSurface, screenHeight, screenWidth);
+		effect = new FractalEffect(screenSurface, screenHeight, screenWidth);
 		effect->init();
 
 		//Main loop flag
