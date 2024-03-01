@@ -12,6 +12,7 @@
 #include "DistortionEffect.h"
 #include "BumpmapEffect.h"
 #include "FractalEffect.h"
+#include "TunnelEffect.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -59,7 +60,8 @@ int main(int argc, char* args[])
 		//effect = new FireEffect(screenSurface, screenHeight, screenWidth);
 		//effect = new DistortionEffect(screenSurface, screenHeight, screenWidth);
 		//effect = new BumpmapEffect(screenSurface, screenHeight, screenWidth);
-		effect = new FractalEffect(screenSurface, screenHeight, screenWidth);
+		//effect = new FractalEffect(screenSurface, screenHeight, screenWidth);
+		effect = new TunnelEffect(screenSurface, screenHeight, screenWidth);
 		effect->init();
 
 		//Main loop flag
