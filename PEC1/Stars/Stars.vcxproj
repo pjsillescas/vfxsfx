@@ -140,12 +140,15 @@
     <ClCompile Include="FireEffect.cpp" />
     <ClCompile Include="FractalEffect.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="ParticleEffect.cpp" />
     <ClCompile Include="PlasmaEffect.cpp" />
     <ClCompile Include="PlasmaEffectChallenge3.cpp" />
     <ClCompile Include="RotozoomEffect.cpp" />
     <ClCompile Include="StarsEffect.cpp" />
     <ClCompile Include="StarsEffectChallenge2.cpp" />
     <ClCompile Include="TunnelEffect.cpp" />
+    <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BumpmapEffect.h" />
@@ -154,12 +157,15 @@
     <ClInclude Include="EffectTemplate.h" />
     <ClInclude Include="FireEffect.h" />
     <ClInclude Include="FractalEffect.h" />
+    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="ParticleEffect.h" />
     <ClInclude Include="PlasmaEffect.h" />
     <ClInclude Include="PlasmaEffectChallenge3.h" />
     <ClInclude Include="RotozoomEffect.h" />
     <ClInclude Include="StarsEffect.h" />
     <ClInclude Include="StarsEffectChallenge2.h" />
     <ClInclude Include="TunnelEffect.h" />
+    <ClInclude Include="Vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
