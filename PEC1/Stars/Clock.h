@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SDL.h>
+
 class Clock
 {
 private:
@@ -11,6 +13,11 @@ private:
 	int currentTime = 0;
 	int deltaTime = 0;
 	float msFrame;
+
+	int framesDrawn;
+	Uint64 fpsCounter;
+	float fps;
+	Uint64 prevTicks;
 
 	Clock();
 
@@ -25,9 +32,13 @@ public:
 	Clock(Clock const&) = delete;
 	void operator=(Clock const&) = delete;
 
-	void waitTime();
+	void waitFrame();
 
-	int getCurrentTime();
-	int getDeltaTime();
+	int getCurrentTime() const;
+	int getDeltaTime() const;
+
+	float getFPS() const;
+private:
+	void updateFPS();
 };
 

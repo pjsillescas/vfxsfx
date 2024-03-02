@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <iostream>
 
 #include "Clock.h"
@@ -39,6 +40,8 @@ bool initSDL(int, int);
 void render(EffectTemplate* effect);
 
 void close();
+
+void renderFPS();
 
 int main(int argc, char* args[])
 {
@@ -99,14 +102,18 @@ int main(int argc, char* args[])
 			}
 
 			// updates all
-			effect->update(Clock::getInstance().getDeltaTime());
+			effect->update((float) Clock::getInstance().getDeltaTime());
 
 			//Render
 			render(effect);
 
+			renderFPS();
+
 			//Update the surface
 			SDL_UpdateWindowSurface(window);
-			Clock::getInstance().waitTime();
+			Clock::getInstance().waitFrame();
+
+			std::cout << "fps: " << Clock::getInstance().getFPS() << std::endl;
 		}
 	}
 
@@ -121,15 +128,47 @@ int main(int argc, char* args[])
 	return 0;
 }
 
+void drawText(SDL_Surface* screen, char* string, int size, int x, int y, SDL_Color fgC, SDL_Color bgC)
+{
+	// Remember to call TTF_Init(), TTF_Quit(), before/after using this function.
+	TTF_Font* font = TTF_OpenFont("LEMONMILK-Regular.otf", size);
+	if (!font) {
+		std::cout << "[ERROR] TTF_OpenFont() Failed with: " << TTF_GetError() << std::endl;
+		exit(2);
+	}
+	TTF_SetFontStyle(font, TTF_STYLE_BOLD);
+	//SDL_Surface* textSurface = TTF_RenderText_Solid(font, string, fgC);     // aliased glyphs
+	SDL_Surface* textSurface = TTF_RenderText_Shaded(font, string, fgC, bgC);   // anti-aliased glyphs
+	SDL_Rect textLocation = { x, y, 0, 0 };
+	SDL_BlitSurface(textSurface, NULL, screen, &textLocation);
+	SDL_FreeSurface(textSurface);
+	TTF_CloseFont(font);
+}
+
+void renderFPS()
+{
+	SDL_Color fg = { 0x00,0x00,0xff }, bg = { 0xff,0xff,0xff };      // Blue text on white background
+	char fpsText[100];
+
+	sprintf_s(fpsText, "FPS: %.2f", Clock::getInstance().getFPS());
+	drawText(screenSurface, fpsText, 12, 0, 0, fg, bg);
+}
+
 
 bool initSDL(int screenWidth, int screenHeight) {
 
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
-		std::cout << "SDL could not initialize! SDL_Error: %s\n" << SDL_GetError();
+		std::cout << "SDL could not initialize! SDL_Error: %s\n" << SDL_GetError() << std::endl;
 		return false;
 	}
+
+	if (TTF_Init() == -1) {
+		std::cout << "[ERROR] TTF_Init() Failed with: " << TTF_GetError() << std::endl;
+		return false;
+	}
+
 	//Create window
 	window = SDL_CreateWindow("SDL Stars Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN);
 
