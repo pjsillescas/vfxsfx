@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EffectTemplate.h"
-#include "Matrix.h";
+#include "Matrix.h"
 #include "Vector.h"
 
 class C3DEffect : public EffectTemplate

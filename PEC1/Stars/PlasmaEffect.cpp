@@ -40,7 +40,7 @@ void PlasmaEffect::init()
 }
 
 void PlasmaEffect::buildPalette() {
-	float currentTime = Clock::getInstance().getCurrentTime();
+	int currentTime = Clock::getInstance().getCurrentTime();
 	for (int i = 0; i < MAX_PALETTE; i++)
 	{
 		palette[i].R = (unsigned char)(128 + 127 * cos(i * M_PI / 128 + (double)currentTime / 740));
@@ -52,17 +52,17 @@ void PlasmaEffect::buildPalette() {
 
 void PlasmaEffect::update(float deltaTime)
 {
-	float currentTime = Clock::getInstance().getCurrentTime();
+	int currentTime = Clock::getInstance().getCurrentTime();
 	// setup some nice colours, different every frame
 	// this is a palette that wraps around itself, with different period sine
 	// functions to prevent monotonous colours
 	buildPalette();
 
 	// move plasma with more sine functions :)
-	int Windowx1 = (screenWidth / 2) + (int)(((screenWidth / 2) - 1) * cos((double)currentTime / 970));
-	int Windowx2 = (screenWidth / 2) + (int)(((screenWidth / 2) - 1) * sin((double)-currentTime / 1140));
-	int Windowy1 = (screenHeight / 2) + (int)(((screenHeight / 2) - 1) * sin((double)currentTime / 1230));
-	int Windowy2 = (screenHeight / 2) + (int)(((screenHeight / 2) - 1) * cos((double)-currentTime / 750));
+	int Windowx1 = (screenWidth / 2) + (int)((((double) screenWidth / 2) - 1) * cos((double)currentTime / 970));
+	int Windowx2 = (screenWidth / 2) + (int)((((double) screenWidth / 2) - 1) * sin((double)-currentTime / 1140));
+	int Windowy1 = (screenHeight / 2) + (int)((((double) screenHeight / 2) - 1) * sin((double)currentTime / 1230));
+	int Windowy2 = (screenHeight / 2) + (int)((((double) screenHeight / 2) - 1) * cos((double)-currentTime / 750));
 	// we only select the part of the precalculated buffer that we need
 	src1 = Windowy1 * (screenWidth * 2) + Windowx1;
 	src2 = Windowy2 * (screenWidth * 2) + Windowx2;

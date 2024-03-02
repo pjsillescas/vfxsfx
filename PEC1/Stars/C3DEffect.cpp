@@ -330,13 +330,13 @@ void C3DEffect::initObject()
 	for (i = 0; i < SLICES; i++)
 	{
 		// find angular position
-		float ext_angle = (float)i * M_PI * 2.0f / SLICES,
+		float ext_angle = (float)i * (float) M_PI * 2.0f / SLICES,
 			ca = cos(ext_angle),
 			sa = sin(ext_angle);
 		// now loop round C2
 		for (j = 0; j < SPANS; j++)
 		{
-			float int_angle = (float)j * M_PI * 2.0f / SPANS,
+			float int_angle = (float)j * (float) M_PI * 2.0f / SPANS,
 				int_rad = EXT_RADIUS + INT_RADIUS * cos(int_angle);
 			// compute position of vertex by rotating it round C1
 			org.vertices[k] = VECTOR(
@@ -393,7 +393,7 @@ void C3DEffect::initObject()
 			// we could use this for depth sorting
 			temp = org.vertices[P.p[0]] + org.vertices[P.p[1]]
 				+ org.vertices[P.p[2]] + org.vertices[P.p[3]];
-			P.centre = VECTOR(temp[0] * 0.25, temp[1] * 0.25, temp[2] * 0.25);
+			P.centre = VECTOR(temp[0] * 0.25f, temp[1] * 0.25f, temp[2] * 0.25f);
 		}
 	}
 }

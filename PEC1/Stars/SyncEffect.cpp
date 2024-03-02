@@ -40,8 +40,8 @@ void SyncEffect::init()
 
 void SyncEffect::update(float deltaTime)
 {
-	MusicCurrentTime += deltaTime;
-	MusicCurrentTimeBeat += deltaTime;
+	MusicCurrentTime += (int) deltaTime;
+	MusicCurrentTimeBeat += (int) deltaTime;
 	MusicPreviousBeat = MusicCurrentBeat;
 	if (MusicCurrentTimeBeat >= MSEG_BPM) {
 		MusicCurrentTimeBeat = 0;
@@ -49,7 +49,7 @@ void SyncEffect::update(float deltaTime)
 		flashtime = FLASH_MAX_TIME;
 	}
 	if (flashtime > 0) {
-		flashtime -= deltaTime;
+		flashtime -= (int) deltaTime;
 	}
 	else {
 		flashtime = 0;

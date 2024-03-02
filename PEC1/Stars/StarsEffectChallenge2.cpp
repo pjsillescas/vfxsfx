@@ -20,7 +20,7 @@ float StarsEffectChallenge2::getSpeed(float rng)
 
 Uint32 StarsEffectChallenge2::getColor(float rng)
 {
-	int colorValue = MIN_COLOR_VALUE + (MAX_COLOR_VALUE - MIN_COLOR_VALUE) * rng;
+	int colorValue = MIN_COLOR_VALUE + (int)((MAX_COLOR_VALUE - MIN_COLOR_VALUE) * rng);
 
 	return 0xFF000000 + colorValue * 256 * 256 + colorValue * 256 + colorValue;
 }

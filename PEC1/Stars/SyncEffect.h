@@ -10,9 +10,9 @@ private:
 	SDL_Surface* flashTexture;
 
 	Mix_Music* mySong;
-	const float BPM_MUSIC = 128.;
-	const float MSEG_BPM = (60000. / BPM_MUSIC);
-	const float FLASH_MAX_TIME = 300.f;
+	const float BPM_MUSIC = 128.f;
+	const float MSEG_BPM = (60000.f / BPM_MUSIC);
+	const int FLASH_MAX_TIME = 300;
 	int flashtime;
 	int MusicCurrentTime;
 	int MusicCurrentTimeBeat;

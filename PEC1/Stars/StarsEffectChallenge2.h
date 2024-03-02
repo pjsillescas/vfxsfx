@@ -14,8 +14,8 @@ struct TStarChallenge2
 class StarsEffectChallenge2 : public EffectTemplate
 {
 private:
-	const float MIN_SPEED = 0.15;
-	const float MAX_SPEED = 0.50;
+	const float MIN_SPEED = 0.15f;
+	const float MAX_SPEED = 0.50f;
 	const int MIN_COLOR_VALUE = 100;
 	const int MAX_COLOR_VALUE = 255;
 

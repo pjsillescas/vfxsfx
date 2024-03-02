@@ -56,7 +56,7 @@ void TunnelEffect::init()
 			// calculate the texture coordinates
 			x -= getXPos(z);
 			y -= getYPos(z);
-			float ang = atan2(y, x) * 256 / M_PI;
+			float ang = (float) atan2(y, x) * 256.f / (float) M_PI;
 			unsigned char u = (unsigned char)ang;
 			unsigned char v = (unsigned char)z;
 			// store texture coordinates
@@ -100,7 +100,7 @@ float TunnelEffect::getRadius(float f)
 */
 float TunnelEffect::getXPos(float f)
 {
-	return -16 * sin(f * M_PI / 256);
+	return -16 * (float) sin(f * M_PI / 256);
 };
 
 /*
@@ -108,7 +108,7 @@ float TunnelEffect::getXPos(float f)
 */
 float TunnelEffect::getYPos(float f)
 {
-	return -16 * sin(f * M_PI / 256);
+	return -16.f * (float) sin(f * M_PI / 256);
 };
 
 void TunnelEffect::DrawHole(int du, int dv)
