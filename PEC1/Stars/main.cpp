@@ -16,6 +16,8 @@
 #include "RotozoomEffect.h"
 #include "ParticleEffect.h"
 #include "C3DEffect.h"
+#include "TerraEffect.h"
+#include "SyncEffect.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -67,7 +69,9 @@ int main(int argc, char* args[])
 		//effect = new TunnelEffect(screenSurface, screenHeight, screenWidth);
 		//effect = new RotozoomEffect(screenSurface, screenHeight, screenWidth);
 		//effect = new ParticleEffect(screenSurface, screenHeight, screenWidth);
-		effect = new C3DEffect(screenSurface, screenHeight, screenWidth);
+		//effect = new C3DEffect(screenSurface, screenHeight, screenWidth);
+		//effect = new TerraEffect(screenSurface, screenHeight, screenWidth);
+		effect = new SyncEffect(screenSurface, screenHeight, screenWidth);
 		effect->init();
 
 		//Main loop flag
