@@ -150,6 +150,7 @@
     <ClCompile Include="StarsEffectChallenge2.cpp" />
     <ClCompile Include="SyncEffect.cpp" />
     <ClCompile Include="TerraEffect.cpp" />
+    <ClCompile Include="TransitionEffect.cpp" />
     <ClCompile Include="TunnelEffect.cpp" />
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>
@@ -170,6 +171,7 @@
     <ClInclude Include="StarsEffectChallenge2.h" />
     <ClInclude Include="SyncEffect.h" />
     <ClInclude Include="TerraEffect.h" />
+    <ClInclude Include="TransitionEffect.h" />
     <ClInclude Include="TunnelEffect.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>

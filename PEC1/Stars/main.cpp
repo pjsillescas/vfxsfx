@@ -1,6 +1,8 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_image.h>
 #include <iostream>
+#include <vector>
 
 #include "Clock.h"
 
@@ -20,15 +22,14 @@
 #include "TerraEffect.h"
 #include "SyncEffect.h"
 
+const int TIME_TO_DISPLAY_EFFECT = 10;
+
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
 const int FULL_SCREEN_WIDTH = 1920;
 const int FULL_SCREEN_HEIGHT = 1080;
-
-//const int FULL_SCREEN_WIDTH = 800;
-//const int FULL_SCREEN_HEIGHT = 480;
 
 //The window we'll be rendering to
 SDL_Window* window = NULL;
@@ -42,6 +43,7 @@ void render(EffectTemplate* effect);
 void close();
 
 void renderFPS();
+void renderCountdown(int counter);
 
 int main(int argc, char* args[])
 {
@@ -51,8 +53,6 @@ int main(int argc, char* args[])
 	//int screenWidth = FULL_SCREEN_WIDTH;
 	//int screenHeight = FULL_SCREEN_HEIGHT;
 
-	EffectTemplate* effect = NULL;
-
 	//Start up SDL and create window
 	if (!initSDL(screenWidth, screenHeight))
 	{
@@ -61,21 +61,22 @@ int main(int argc, char* args[])
 	}
 	else
 	{
-		//effect = new StarsEffect(screenSurface, screenHeight, screenWidth);
-		//effect = new StarsEffectChallenge2(screenSurface, screenHeight, screenWidth);
-		//effect = new PlasmaEffect(screenSurface, screenHeight, screenWidth);
-		//effect = new PlasmaEffectChallenge3(screenSurface, screenHeight, screenWidth);
-		//effect = new FireEffect(screenSurface, screenHeight, screenWidth);
-		//effect = new DistortionEffect(screenSurface, screenHeight, screenWidth);
-		//effect = new BumpmapEffect(screenSurface, screenHeight, screenWidth);
-		//effect = new FractalEffect(screenSurface, screenHeight, screenWidth);
-		//effect = new TunnelEffect(screenSurface, screenHeight, screenWidth);
-		//effect = new RotozoomEffect(screenSurface, screenHeight, screenWidth);
-		//effect = new ParticleEffect(screenSurface, screenHeight, screenWidth);
-		//effect = new C3DEffect(screenSurface, screenHeight, screenWidth);
-		//effect = new TerraEffect(screenSurface, screenHeight, screenWidth);
-		effect = new SyncEffect(screenSurface, screenHeight, screenWidth);
-		effect->init();
+		std::vector<EffectTemplate*> effects{
+			new StarsEffect(screenSurface, screenHeight, screenWidth),
+			new StarsEffectChallenge2(screenSurface, screenHeight, screenWidth),
+			new PlasmaEffect(screenSurface, screenHeight, screenWidth),
+			new PlasmaEffectChallenge3(screenSurface, screenHeight, screenWidth),
+			new FireEffect(screenSurface, screenHeight, screenWidth),
+			new DistortionEffect(screenSurface, screenHeight, screenWidth),
+			new BumpmapEffect(screenSurface, screenHeight, screenWidth),
+			new FractalEffect(screenSurface, screenHeight, screenWidth),
+			new TunnelEffect(screenSurface, screenHeight, screenWidth),
+			new RotozoomEffect(screenSurface, screenHeight, screenWidth),
+			new ParticleEffect(screenSurface, screenHeight, screenWidth),
+			new C3DEffect(screenSurface, screenHeight, screenWidth),
+			new TerraEffect(screenSurface, screenHeight, screenWidth),
+			new SyncEffect(screenSurface, screenHeight, screenWidth),
+		};
 
 		//Main loop flag
 		bool quit = false;
@@ -83,45 +84,63 @@ int main(int argc, char* args[])
 		//Event handler
 		SDL_Event e;
 
-		//While application is running
-		while (!quit)
+		int startTime, currentTime;
+
+		for (EffectTemplate*& effect : effects)
 		{
-			//Handle events on queue
-			while (SDL_PollEvent(&e) != 0)
-			{
-				if (e.type == SDL_KEYDOWN && e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-				{
-					quit = true;
-				}
-				
-				//User requests quit
-				if (e.type == SDL_QUIT)
-				{
-					quit = true;
-				}
-			}
-
-			// updates all
-			effect->update((float) Clock::getInstance().getDeltaTime());
-
-			//Render
-			render(effect);
-
-			renderFPS();
-
-			//Update the surface
-			SDL_UpdateWindowSurface(window);
-			Clock::getInstance().waitFrame();
-
-			std::cout << "fps: " << Clock::getInstance().getFPS() << std::endl;
+			effect->init();
 		}
+
+		for (EffectTemplate*& effect : effects)
+		{
+			startTime = Clock::getInstance().getCurrentTime();
+			
+			bool changeEffect = false;
+			//While application is running
+			while (!quit && !changeEffect)
+			{
+				//Handle events on queue
+				while (SDL_PollEvent(&e) != 0)
+				{
+					if (e.type == SDL_KEYDOWN && e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+					{
+						quit = true;
+					}
+
+					//User requests quit
+					if (e.type == SDL_QUIT)
+					{
+						quit = true;
+					}
+				}
+
+				// updates all
+				effect->update((float)Clock::getInstance().getDeltaTime());
+
+				//Render
+				render(effect);
+
+				renderFPS();
+
+				//Update the surface
+				SDL_UpdateWindowSurface(window);
+				Clock::getInstance().waitFrame();
+
+				currentTime = Clock::getInstance().getCurrentTime();
+				int countdown = (currentTime - startTime) / 1000;
+				changeEffect = countdown > TIME_TO_DISPLAY_EFFECT;
+				renderCountdown(countdown);
+			}
+		}
+
+		for (EffectTemplate*& effect : effects)
+		{
+			delete effect;
+		}
+
 	}
 
-	if (effect != NULL)
-	{
-		delete effect;
-	}
-
+	
 	//Free resources and close SDL
 	close();
 
@@ -145,13 +164,23 @@ void drawText(SDL_Surface* screen, char* string, int size, int x, int y, SDL_Col
 	TTF_CloseFont(font);
 }
 
+const int FONT_SIZE = 12;
 void renderFPS()
 {
 	SDL_Color fg = { 0x00,0x00,0xff }, bg = { 0xff,0xff,0xff };      // Blue text on white background
 	char fpsText[100];
 
 	sprintf_s(fpsText, "FPS: %.2f", Clock::getInstance().getFPS());
-	drawText(screenSurface, fpsText, 12, 0, 0, fg, bg);
+	drawText(screenSurface, fpsText, FONT_SIZE, 0, 0, fg, bg);
+}
+
+void renderCountdown(int counter)
+{
+	SDL_Color fg = { 0x00,0x00,0xff }, bg = { 0xff,0xff,0xff };      // Blue text on white background
+	char countdownText[100];
+
+	sprintf_s(countdownText, "FPS: %.2f", Clock::getInstance().getFPS());
+	drawText(screenSurface, countdownText, FONT_SIZE, FONT_SIZE, 0, fg, bg);
 }
 
 
@@ -169,8 +198,10 @@ bool initSDL(int screenWidth, int screenHeight) {
 		return false;
 	}
 
+	IMG_Init(IMG_INIT_PNG);
+
 	//Create window
-	window = SDL_CreateWindow("SDL Stars Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN);
 
 	if (window == NULL)
 	{

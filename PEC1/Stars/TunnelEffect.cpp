@@ -15,8 +15,6 @@ TunnelEffect::TunnelEffect(SDL_Surface* surface, int screenHeight, int screenWid
 
 void TunnelEffect::init()
 {
-	IMG_Init(IMG_INIT_PNG);
-
 	long offs = 0;
 	// precalc the (u,v) coordinates
 	for (int j = -(screenHeight / 2); j < (screenHeight / 2); j++) {

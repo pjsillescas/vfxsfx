@@ -17,7 +17,6 @@ ParticleEffect::ParticleEffect(SDL_Surface* surface, int screenHeight, int scree
 
 void ParticleEffect::init()
 {
-	IMG_Init(IMG_INIT_PNG);
 	// generate our points
 	pts = new VECTOR[MAXPTS];
 	for (int i = 0; i < MAXPTS; i++) {

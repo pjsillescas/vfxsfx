@@ -22,8 +22,6 @@ BumpmapEffect::BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenW
 
 void BumpmapEffect::init()
 {
-	IMG_Init(IMG_INIT_PNG);
-
 	// generate the light pattern
 	computeLight();
 	// load the color image

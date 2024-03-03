@@ -1,4 +1,5 @@
-#include "DistortionEffect.h"
+#include "TransitionEffect.h"
+
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -7,11 +8,11 @@
 #include "Clock.h"
 
 
-DistortionEffect::DistortionEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+TransitionEffect::TransitionEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
 {
 }
 
-void DistortionEffect::init() {
+void TransitionEffect::init() {
 
 	// two buffers
 	dispX = new char[screenWidth * screenHeight * 4];
@@ -27,7 +28,7 @@ void DistortionEffect::init() {
 	image = SDL_ConvertSurfaceFormat(temp, SDL_PIXELFORMAT_ARGB8888, 0);
 }
 
-void DistortionEffect::update(float deltaTime) {
+void TransitionEffect::update(float deltaTime) {
 	int currentTime = Clock::getInstance().getCurrentTime();
 	// move distortion buffer
 	windowx1 = (screenWidth / 2) + (int)(((screenWidth / 2) - 1) * cos((double)currentTime / 2050));
@@ -36,9 +37,9 @@ void DistortionEffect::update(float deltaTime) {
 	windowy2 = (screenHeight / 2) + (int)(((screenHeight / 2) - 1) * cos((double)-currentTime / 2240));
 }
 
-void DistortionEffect::render() {
+void TransitionEffect::render() {
 	int currentTime = Clock::getInstance().getCurrentTime();
-	
+
 	// draw the effect showing without filter and with filter each 2 seconds
 	if ((currentTime & 2048) < 1024) {
 		Distort();
@@ -48,7 +49,7 @@ void DistortionEffect::render() {
 	}
 }
 
-DistortionEffect::~DistortionEffect()
+TransitionEffect::~TransitionEffect()
 {
 	delete[] dispX;
 	delete[] dispY;
@@ -58,7 +59,7 @@ DistortionEffect::~DistortionEffect()
 /*
 * calculate a distorion function for X and Y in 5.3 fixed point
 */
-void DistortionEffect::precalculate()
+void TransitionEffect::precalculate()
 {
 	int i, j, dst;
 	dst = 0;
@@ -75,15 +76,6 @@ void DistortionEffect::precalculate()
 			dispX[dst] = (signed char)(8 * (2 * sin(x / 20) + sin(x * y / 2000)));
 			dispY[dst] = (signed char)(8 * (cos(x / 31) + cos(x * y / 1783)));
 
-			// Uncomment this to take another beautiful distorsion
-			/*
-			dispX[dst] = (signed char)(8 * (2 * (sin(x / 20) + sin(x*y / 2000)
-				+ sin((x + y) / 100) + sin((y - x) / 70) + sin((x + 4 * y) / 70)
-				+ 2 * sin(hypot(256 - x, (150 - y / 8)) / 40))));
-			dispY[dst] = (signed char)(8 * ((cos(x / 31) + cos(x*y / 1783) +
-				+2 * cos((x + y) / 137) + cos((y - x) / 55) + 2 * cos((x + 8 * y) / 57)
-				+ cos(hypot(384 - x, (274 - y / 9)) / 51))));
-			*/
 			dst++;
 		}
 	}
@@ -93,7 +85,7 @@ void DistortionEffect::precalculate()
 *   copy an image to the screen with added distortion.
 *   no bilinear filtering.
 */
-void DistortionEffect::Distort()
+void TransitionEffect::Distort()
 {
 	// setup the offsets in the buffers
 	Uint8* dst;
@@ -125,14 +117,9 @@ void DistortionEffect::Distort()
 				*(Uint32*)dst = *(Uint32*)p;
 			}
 			// otherwise, just set it to black
-			else
-			{
-				*(Uint32*)dst = 0;
-			}
-			
+			else *(Uint32*)dst = 0;
 			// next pixel
 			dst += bpp;
-			
 			src1++; src2++;
 		}
 		// next line
@@ -146,7 +133,7 @@ void DistortionEffect::Distort()
 *   copy an image to the screen with added distortion.
 *   with bilinear filtering.
 */
-void DistortionEffect::Distort_Bili()
+void TransitionEffect::Distort_Bili()
 {
 	// setup the offsets in the buffers
 	Uint8* dst;

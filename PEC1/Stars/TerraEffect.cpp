@@ -13,7 +13,6 @@ TerraEffect::TerraEffect(SDL_Surface* surface, int screenHeight, int screenWidth
 
 void TerraEffect::init()
 {
-	IMG_Init(IMG_INIT_PNG);
 	SDL_Surface* temp = IMG_Load("texture.png");
 	if (temp == NULL) {
 		std::cout << "Image can be loaded! " << IMG_GetError();

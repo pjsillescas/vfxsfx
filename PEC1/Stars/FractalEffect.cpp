@@ -17,8 +17,6 @@ FractalEffect::FractalEffect(SDL_Surface* surface, int screenHeight, int screenW
 
 void FractalEffect::init()
 {
-	IMG_Init(IMG_INIT_PNG);
-	
 	// calculate the first fractal
 	StartFrac(OR -zx, OI - zy, OR +zx, OI + zy);
 	for (j = 0; j < (screenHeight / 2); j++)
