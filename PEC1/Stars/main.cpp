@@ -21,6 +21,7 @@
 #include "C3DEffect.h"
 #include "TerraEffect.h"
 #include "SyncEffect.h"
+#include "TransitionEffect.h"
 
 const int TIME_TO_DISPLAY_EFFECT = 10;
 
@@ -62,6 +63,7 @@ int main(int argc, char* args[])
 	else
 	{
 		std::vector<EffectTemplate*> effects{
+			/*
 			new StarsEffect(screenSurface, screenHeight, screenWidth),
 			new StarsEffectChallenge2(screenSurface, screenHeight, screenWidth),
 			new PlasmaEffect(screenSurface, screenHeight, screenWidth),
@@ -76,6 +78,8 @@ int main(int argc, char* args[])
 			new C3DEffect(screenSurface, screenHeight, screenWidth),
 			new TerraEffect(screenSurface, screenHeight, screenWidth),
 			new SyncEffect(screenSurface, screenHeight, screenWidth),
+			*/
+			new TransitionEffect(screenSurface, screenHeight, screenWidth, 0, 0),
 		};
 
 		//Main loop flag
@@ -85,14 +89,16 @@ int main(int argc, char* args[])
 		SDL_Event e;
 
 		int startTime, currentTime;
+		/*
+		for (EffectTemplate*& effect : effects)
+		{
+		}
+		*/
 
 		for (EffectTemplate*& effect : effects)
 		{
 			effect->init();
-		}
-
-		for (EffectTemplate*& effect : effects)
-		{
+			
 			startTime = Clock::getInstance().getCurrentTime();
 			
 			bool changeEffect = false;
@@ -128,7 +134,8 @@ int main(int argc, char* args[])
 
 				currentTime = Clock::getInstance().getCurrentTime();
 				int countdown = (currentTime - startTime) / 1000;
-				changeEffect = countdown > TIME_TO_DISPLAY_EFFECT;
+				//changeEffect = countdown > TIME_TO_DISPLAY_EFFECT;
+				changeEffect = false;
 				renderCountdown(countdown);
 			}
 		}
@@ -215,7 +222,7 @@ bool initSDL(int screenWidth, int screenHeight) {
 
 void render(EffectTemplate* effect) {
 	//Fill with black
-	SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0, 0, 0));
+	//SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0, 0, 0));
 
 	effect->render();
 }

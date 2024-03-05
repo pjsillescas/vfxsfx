@@ -58,6 +58,7 @@ void StarsEffectChallenge2::update(float deltaTime) {
 }
 
 void StarsEffectChallenge2::render() {
+	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
 	// update all stars
 	for (int i = 0; i < MAXSTARS; i++)
 	{
