@@ -7,195 +7,140 @@
 #include <cmath>
 #include "Clock.h"
 
+static int currentTime = 0;
+static int startTime = 0;
+static bool useImageSrc = true;
 
-TransitionEffect::TransitionEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+TransitionEffect::TransitionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, EffectTemplate* src, EffectTemplate* dst) : EffectTemplate(surface, screenHeight, screenWidth)
 {
+	this->src = src;
+	this->dst = dst;
 }
 
 void TransitionEffect::init() {
-
-	// two buffers
-	dispX = new char[screenWidth * screenHeight * 4];
-	dispY = new char[screenWidth * screenHeight * 4];
-	// create two distortion functions
-	precalculate();
-	// load the background image
-	SDL_Surface* temp = IMG_Load("uoc.png");
+	SDL_Surface* temp;
+	
+	temp = IMG_Load("uoc.png");
 	if (temp == NULL) {
 		std::cout << "Image can be loaded! " << IMG_GetError();
 		exit(1);
 	}
-	image = SDL_ConvertSurfaceFormat(temp, SDL_PIXELFORMAT_ARGB8888, 0);
+	imageSrc = SDL_ConvertSurfaceFormat(temp, SDL_PIXELFORMAT_ARGB8888, 0);
+
+	temp = IMG_Load("uoc2.png");
+	if (temp == NULL) {
+		std::cout << "Image can be loaded! " << IMG_GetError();
+		exit(1);
+	}
+	imageDst = SDL_ConvertSurfaceFormat(temp, SDL_PIXELFORMAT_ARGB8888, 0);
+
+	startTime = Clock::getInstance().getCurrentTime();
+	currentTime = Clock::getInstance().getCurrentTime();
 }
 
-void TransitionEffect::update(float deltaTime) {
-	int currentTime = Clock::getInstance().getCurrentTime();
-	// move distortion buffer
-	windowx1 = (screenWidth / 2) + (int)(((screenWidth / 2) - 1) * cos((double)currentTime / 2050));
-	windowx2 = (screenWidth / 2) + (int)(((screenWidth / 2) - 1) * sin((double)-currentTime / 1970));
-	windowy1 = (screenHeight / 2) + (int)(((screenHeight / 2) - 1) * sin((double)currentTime / 2310));
-	windowy2 = (screenHeight / 2) + (int)(((screenHeight / 2) - 1) * cos((double)-currentTime / 2240));
+void TransitionEffect::update(float deltaTime)
+{
+	copyImage();
 }
 
 void TransitionEffect::render() {
-	int currentTime = Clock::getInstance().getCurrentTime();
-
-	// draw the effect showing without filter and with filter each 2 seconds
-	if ((currentTime & 2048) < 1024) {
-		Distort();
-	}
-	else {
-		Distort_Bili();
-	}
 }
 
 TransitionEffect::~TransitionEffect()
 {
-	delete[] dispX;
-	delete[] dispY;
-	SDL_FreeSurface(image);
+	SDL_FreeSurface(imageSrc);
+	SDL_FreeSurface(imageDst);
 }
 
-/*
-* calculate a distorion function for X and Y in 5.3 fixed point
-*/
-void TransitionEffect::precalculate()
-{
-	int i, j, dst;
-	dst = 0;
-	for (j = 0; j < (screenHeight * 2); j++)
-	{
-		for (i = 0; i < (screenWidth * 2); i++)
-		{
-			float x = (float)i;
-			float y = (float)j;
-			// notice the values contained in the buffers are signed
-			// i.e. can be both positive and negative
-			// also notice we multiply by 8 to get 5.3 fixed point distortion
-			// coefficients for our bilinear filtering
-			dispX[dst] = (signed char)(8 * (2 * sin(x / 20) + sin(x * y / 2000)));
-			dispY[dst] = (signed char)(8 * (cos(x / 31) + cos(x * y / 1783)));
 
-			dst++;
-		}
+static int pixelNum = 0;
+
+
+Uint8* TransitionEffect::getImageBuffer(int i, int j, Uint8* imageBufferSrc, Uint8* imageBufferDst)
+{
+	if (j > pixelNum)
+	{
+		//std::cout << "change (" << i << "," << j << ")" << std::endl;
+		return imageBufferSrc;
+	}
+	else
+	{
+		return 	imageBufferDst;
 	}
 }
+
+
 
 /*
 *   copy an image to the screen with added distortion.
 *   no bilinear filtering.
 */
-void TransitionEffect::Distort()
+void TransitionEffect::copyImage()
 {
+	/*
+	currentTime = Clock::getInstance().getCurrentTime();
+	if (currentTime - startTime > 5000)
+	{
+		startTime = Clock::getInstance().getCurrentTime();
+		useImageSrc = !useImageSrc;
+	}
+	*/
+
 	// setup the offsets in the buffers
 	Uint8* dst;
-	int	src1 = windowy1 * (screenWidth * 2) + windowx1,
-		src2 = windowy2 * (screenWidth * 2) + windowx2;
-	int dX, dY;
 	Uint8* initbuffer = (Uint8*)surface->pixels;
 	int bpp = surface->format->BytesPerPixel;
-	Uint8* imagebuffer = (Uint8*)image->pixels;
-	int bppImage = image->format->BytesPerPixel;
+	
+	Uint8* imagebuffer;
+	int bppImage;
+	int pitch;
+
+	Uint8* imageBufferSrc = (Uint8*)imageSrc->pixels;
+	Uint8* imageBufferDst = (Uint8*)imageDst->pixels;
+	bppImage = imageSrc->format->BytesPerPixel;
+	pitch = imageSrc->pitch;
+
+	/*
+	if (useImageSrc)
+	{
+		imagebuffer = (Uint8*)imageSrc->pixels;
+		bppImage = imageSrc->format->BytesPerPixel;
+		pitch = imageSrc->pitch;
+	}
+	else
+	{
+		imagebuffer = (Uint8*)imageDst->pixels;
+		bppImage = imageDst->format->BytesPerPixel;
+		pitch = imageDst->pitch;
+	}
+	*/
 
 	SDL_LockSurface(surface);
 	// loop for all lines
 	for (int j = 0; j < screenHeight; j++)
 	{
 		dst = initbuffer + j * surface->pitch;
+		
 		// for all pixels
 		for (int i = 0; i < screenWidth; i++)
 		{
-			// get distorted coordinates, use the integer part of the distortion
-			// buffers and truncate to closest texel
-			dY = j + (dispY[src1] >> 3);
-			dX = i + (dispX[src2] >> 3);
-			// check the texel is valid
-			if ((dY >= 0) && (dY < (screenHeight - 1)) && (dX >= 0) && (dX < (screenWidth - 1)))
-			{
-				// copy it to the screen
-				Uint8* p = (Uint8*)imagebuffer + dY * image->pitch + dX * bppImage;
-				*(Uint32*)dst = *(Uint32*)p;
-			}
-			// otherwise, just set it to black
-			else *(Uint32*)dst = 0;
+			//imagebuffer = (j * screenWidth + i > pixelNum) ? imageBufferDst : imageBufferSrc;
+
+			imagebuffer = getImageBuffer(i, j, imageBufferSrc, imageBufferDst);
+			// copy it to the screen
+			Uint8* p = (Uint8*)imagebuffer + j * pitch + i * bppImage;
+			*(Uint32*)dst = *(Uint32*)p;
+			
 			// next pixel
 			dst += bpp;
-			src1++; src2++;
 		}
-		// next line
-		src1 += screenWidth;
-		src2 += screenWidth;
 	}
 	SDL_UnlockSurface(surface);
-}
-
-/*
-*   copy an image to the screen with added distortion.
-*   with bilinear filtering.
-*/
-void TransitionEffect::Distort_Bili()
-{
-	// setup the offsets in the buffers
-	Uint8* dst;
-	int src1 = windowy1 * (screenWidth * 2) + windowx1,
-		src2 = windowy2 * (screenWidth * 2) + windowx2;
-	int dX, dY, cX, cY;
-	Uint8* initbuffer = (Uint8*)surface->pixels;
-	int bpp = surface->format->BytesPerPixel;
-	Uint32* imagebuffer = (Uint32*)image->pixels;
-	int bppImage = image->format->BytesPerPixel;
-
-	SDL_LockSurface(surface);
-	// loop for all lines
-	for (int j = 0; j < screenHeight; j++)
+	
+	pixelNum+= 2;
+	if (pixelNum >= screenHeight * screenWidth)
 	{
-		dst = initbuffer + j * surface->pitch;
-		// for all pixels
-		for (int i = 0; i < screenWidth; i++)
-		{
-			// get distorted coordinates, by using the truncated integer part
-			// of the distortion coefficients
-			dY = j + (dispY[src1] >> 3);
-			dX = i + (dispX[src2] >> 3);
-			// get the linear interpolation coefficiants by using the fractionnal
-			// part of the distortion coefficients
-			cY = dispY[src1] & 0x7;
-			cX = dispX[src2] & 0x7;
-			// check if the texel is valid
-			if ((dY >= 0) && (dY < (screenHeight - 1)) && (dX >= 0) && (dX < (screenWidth - 1)))
-			{
-				// load the 4 surrounding texels and multiply them by the
-				// right bilinear coefficients, then get rid of the fractionnal
-				// part by shifting right by 6
-				SDL_Color Colorvalues[4];
-				SDL_GetRGB(*(Uint32*)((Uint8*)image->pixels + dY * image->pitch + dX * bppImage), image->format, &Colorvalues[0].r, &Colorvalues[0].g, &Colorvalues[0].b);
-				SDL_GetRGB(*(Uint32*)((Uint8*)image->pixels + dY * image->pitch + (dX + 1) * bppImage), image->format, &Colorvalues[1].r, &Colorvalues[1].g, &Colorvalues[1].b);
-				SDL_GetRGB(*(Uint32*)((Uint8*)image->pixels + (dY + 1) * image->pitch + dX * bppImage), image->format, &Colorvalues[2].r, &Colorvalues[2].g, &Colorvalues[2].b);
-				SDL_GetRGB(*(Uint32*)((Uint8*)image->pixels + (dY + 1) * image->pitch + (dX + 1) * bppImage), image->format, &Colorvalues[3].r, &Colorvalues[3].g, &Colorvalues[3].b);
-				Uint32 Color[3]; // 0=R  1=G  2=B
-				Color[0] = (Colorvalues[0].r * (0x8 - cX) * (0x8 - cY) +
-					Colorvalues[1].r * cX * (0x8 - cY) +
-					Colorvalues[2].r * (0x8 - cX) * cY +
-					Colorvalues[3].r * cX * cY) >> 6;
-				Color[1] = (Colorvalues[0].g * (0x8 - cX) * (0x8 - cY) +
-					Colorvalues[1].g * cX * (0x8 - cY) +
-					Colorvalues[2].g * (0x8 - cX) * cY +
-					Colorvalues[3].g * cX * cY) >> 6;
-				Color[2] = (Colorvalues[0].b * (0x8 - cX) * (0x8 - cY) +
-					Colorvalues[1].b * cX * (0x8 - cY) +
-					Colorvalues[2].b * (0x8 - cX) * cY +
-					Colorvalues[3].b * cX * cY) >> 6;
-				Uint32 resultColor = SDL_MapRGB(image->format, Color[0], Color[1], Color[2]);
-				*(Uint32*)dst = resultColor;
-			}
-			// otherwise, just make it black
-			else *(Uint32*)dst = 0;
-			dst += bpp;
-			src1++; src2++;
-		}
-		// next line
-		src1 += screenWidth;
-		src2 += screenWidth;
+		pixelNum = 0;
 	}
-	SDL_UnlockSurface(surface);
+
 }

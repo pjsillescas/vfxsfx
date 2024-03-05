@@ -3,26 +3,26 @@
 class TransitionEffect : public EffectTemplate
 {
 private:
-	// displacement buffers
-	char* dispX, * dispY;
 	// image background
-	SDL_Surface* image;
-	// define the distortion buffer movement
-	int windowx1, windowy1, windowx2, windowy2;
+	SDL_Surface* imageSrc;
+	// image background
+	SDL_Surface* imageDst;
+
+	EffectTemplate* src;
+	EffectTemplate* dst;
 
 public:
 
-	TransitionEffect(SDL_Surface* surface, int screenHeight, int screenWidth);
+	TransitionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, EffectTemplate* src, EffectTemplate* dst);
 	~TransitionEffect();
 
 	virtual void init() override;
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
 
+	virtual Uint8* getImageBuffer(int i, int j, Uint8* imageBufferSrc, Uint8* imageBufferDst);
 private:
-	void precalculate();
-	void Distort_Bili();
-	void Distort();
+	void copyImage();
 
 };
 
