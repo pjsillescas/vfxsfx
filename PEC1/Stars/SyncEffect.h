@@ -21,13 +21,12 @@ private:
 
 public:
 
-	SyncEffect(SDL_Surface* surface, int screenHeight, int screenWidth);
+	SyncEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
 	~SyncEffect();
 
 	virtual void init() override;
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
-	virtual bool isEnded() override;
 
 private:
 	void renderFlash(SDL_Surface* surf, Uint8 alpha);

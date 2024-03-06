@@ -8,7 +8,7 @@
 
 #include "Clock.h"
 
-SyncEffect::SyncEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+SyncEffect::SyncEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
 }
 
@@ -37,12 +37,6 @@ void SyncEffect::init()
 	flashTexture = SDL_ConvertSurfaceFormat(temp, SDL_PIXELFORMAT_ARGB8888, 0);
 
 }
-
-bool SyncEffect::isEnded()
-{
-	return false;
-}
-
 
 void SyncEffect::update(float deltaTime)
 {

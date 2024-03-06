@@ -7,13 +7,8 @@
 
 #include "Clock.h"
 
-RotozoomEffect::RotozoomEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+RotozoomEffect::RotozoomEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
-}
-
-bool RotozoomEffect::isEnded()
-{
-	return false;
 }
 
 void RotozoomEffect::init()

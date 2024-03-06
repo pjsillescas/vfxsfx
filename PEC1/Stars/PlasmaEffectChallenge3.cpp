@@ -3,7 +3,7 @@
 #include "Clock.h"
 
 
-PlasmaEffectChallenge3::PlasmaEffectChallenge3(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+PlasmaEffectChallenge3::PlasmaEffectChallenge3(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
 	//plasma1 = (unsigned char*)malloc(SCREEN_WIDTH * SCREEN_HEIGHT * 4);
 	//plasma2 = (unsigned char*)malloc(SCREEN_WIDTH * SCREEN_HEIGHT * 4);
@@ -22,11 +22,6 @@ PlasmaEffectChallenge3::~PlasmaEffectChallenge3()
 	delete[] plasma1;
 	delete[] plasma2;
 
-}
-
-bool PlasmaEffectChallenge3::isEnded()
-{
-	return false;
 }
 
 void PlasmaEffectChallenge3::init()

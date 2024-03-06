@@ -7,16 +7,13 @@
 #include <cmath>
 #include "Clock.h"
 
-TransitionEffect::TransitionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, EffectTemplate* src, EffectTemplate* dst) : EffectTemplate(surface, screenHeight, screenWidth)
+TransitionEffect::TransitionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, EffectTemplate* src, EffectTemplate* dst) : EffectTemplate(surface, screenHeight, screenWidth, 0)
 {
 	this->src = src;
 	this->dst = dst;
 }
 
 void TransitionEffect::init() {
-	SDL_Surface* temp;
-
-	//useImageSrc = true;
 	lineNum = 0;
 
 	startTime = Clock::getInstance().getCurrentTime();
@@ -54,8 +51,7 @@ void TransitionEffect::render() {
 
 TransitionEffect::~TransitionEffect()
 {
-	//SDL_FreeSurface(imageSrc);
-	//SDL_FreeSurface(imageDst);
+	;
 }
 
 
@@ -70,11 +66,6 @@ Uint8* TransitionEffect::getImageBuffer(int i, int j, Uint8* imageBufferSrc, Uin
 	{
 		return 	imageBufferDst;
 	}
-}
-
-bool TransitionEffect::isEnded()
-{
-	return lineNum >= screenHeight;
 }
 
 /*
@@ -122,4 +113,8 @@ void TransitionEffect::copyImage()
 	
 	lineNum += 2;
 
+	if (lineNum >= screenHeight)
+	{
+		setIsEnded(true);
+	}
 }

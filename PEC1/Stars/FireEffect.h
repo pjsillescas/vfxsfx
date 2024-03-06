@@ -17,13 +17,12 @@ private:
 
 public:
 
-	FireEffect(SDL_Surface* surface, int screenHeight, int screenWidth);
+	FireEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
 	~FireEffect();
 
 	virtual void init() override;
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
-	virtual bool isEnded() override;
 
 private:
 	void buildPalette();

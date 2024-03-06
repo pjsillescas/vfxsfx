@@ -17,7 +17,7 @@ private:
 
 public:
 
-	RotozoomEffect(SDL_Surface* surface, int screenHeight, int screenWidth);
+	RotozoomEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
 	~RotozoomEffect();
 
 	virtual void init() override;
@@ -27,7 +27,6 @@ public:
 private:
 	void DoRotoZoom(float cx, float cy, float radius, float angle);
 	void TextureScreen();
-	virtual bool isEnded() override;
 
 
 };

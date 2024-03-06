@@ -9,13 +9,12 @@ private:
 	SDL_Surface* texdata;
 public:
 
-	TunnelEffect(SDL_Surface* surface, int screenHeight, int screenWidth);
+	TunnelEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
 	~TunnelEffect();
 
 	virtual void init() override;
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
-	virtual bool isEnded() override;
 
 private:
 	float getXPos(float f);

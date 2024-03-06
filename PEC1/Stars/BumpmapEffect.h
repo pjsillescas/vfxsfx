@@ -21,13 +21,12 @@ private:
 
 public:
 
-	BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenWidth);
+	BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
 	~BumpmapEffect();
 
 	virtual void init() override;
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
-	virtual bool isEnded() override;
 
 private:
 	void computeLight();

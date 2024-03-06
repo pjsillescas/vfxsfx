@@ -7,7 +7,7 @@
 
 #include "Clock.h"
 
-TunnelEffect::TunnelEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+TunnelEffect::TunnelEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
 	// alloc memory to store SCREEEN SIZE times u, v
 	texcoord = new unsigned char[(long long) screenWidth * screenHeight * 2];
@@ -70,11 +70,6 @@ void TunnelEffect::init()
 
 void TunnelEffect::update(float deltaTime)
 {
-}
-
-bool TunnelEffect::isEnded()
-{
-	return false;
 }
 
 void TunnelEffect::render()

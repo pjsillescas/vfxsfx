@@ -70,20 +70,20 @@ int main(int argc, char* args[])
 		newSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
 
 		std::vector<EffectTemplate*> effects{
-			new StarsEffect(screenSurface, screenHeight, screenWidth),
-			new StarsEffectChallenge2(screenSurface, screenHeight, screenWidth),
-			new PlasmaEffect(screenSurface, screenHeight, screenWidth),
-			new PlasmaEffectChallenge3(screenSurface, screenHeight, screenWidth),
-			new FireEffect(screenSurface, screenHeight, screenWidth),
-			new DistortionEffect(screenSurface, screenHeight, screenWidth),
-			new BumpmapEffect(screenSurface, screenHeight, screenWidth),
-			new FractalEffect(screenSurface, screenHeight, screenWidth),
-			new TunnelEffect(screenSurface, screenHeight, screenWidth),
-			new RotozoomEffect(screenSurface, screenHeight, screenWidth),
-			new ParticleEffect(screenSurface, screenHeight, screenWidth),
-			new C3DEffect(screenSurface, screenHeight, screenWidth),
-			new TerraEffect(screenSurface, screenHeight, screenWidth),
-			new SyncEffect(screenSurface, screenHeight, screenWidth),
+			new StarsEffect(screenSurface, screenHeight, screenWidth, 5),
+			new StarsEffectChallenge2(screenSurface, screenHeight, screenWidth, 5),
+			new PlasmaEffect(screenSurface, screenHeight, screenWidth, 10),
+			new PlasmaEffectChallenge3(screenSurface, screenHeight, screenWidth, 10),
+			new FireEffect(screenSurface, screenHeight, screenWidth, 10),
+			new DistortionEffect(screenSurface, screenHeight, screenWidth, 10),
+			new BumpmapEffect(screenSurface, screenHeight, screenWidth, 10),
+			new FractalEffect(screenSurface, screenHeight, screenWidth, 10),
+			new TunnelEffect(screenSurface, screenHeight, screenWidth, 10),
+			new RotozoomEffect(screenSurface, screenHeight, screenWidth, 10),
+			new ParticleEffect(screenSurface, screenHeight, screenWidth, 10),
+			new C3DEffect(screenSurface, screenHeight, screenWidth, 10),
+			new TerraEffect(screenSurface, screenHeight, screenWidth, 10),
+			new SyncEffect(screenSurface, screenHeight, screenWidth, 143),
 		};
 
 		//Main loop flag
@@ -97,7 +97,7 @@ int main(int argc, char* args[])
 
 		for (EffectTemplate*& effect : effects)
 		{
-			effect->init();
+			effect->start();
 			
 			// Transition to the new effect
 			if (oldEffect != NULL)
@@ -136,16 +136,15 @@ int main(int argc, char* args[])
 					Clock::getInstance().waitFrame();
 				}
 
+				delete transition;
 				effect->setSurface(screenSurface);
 			}
 
 			// display effect
 			startTime = Clock::getInstance().getCurrentTime();
 			
-			bool changeEffect = false;
-
 			//While application is running
-			while (!quit && !changeEffect)
+			while (!quit && !effect->isEnded())
 			{
 				//Handle events on queue
 				while (SDL_PollEvent(&e) != 0)
@@ -163,7 +162,7 @@ int main(int argc, char* args[])
 				}
 
 				// updates all
-				effect->update((float)Clock::getInstance().getDeltaTime());
+				effect->updateFixed((float)Clock::getInstance().getDeltaTime());
 
 				//Render
 				render(effect);
@@ -176,8 +175,6 @@ int main(int argc, char* args[])
 
 				currentTime = Clock::getInstance().getCurrentTime();
 				int countdown = (currentTime - startTime) / 1000;
-				changeEffect = countdown > TIME_TO_DISPLAY_EFFECT;
-				//changeEffect = false;
 				renderCountdown(countdown);
 			}
 
@@ -191,7 +188,6 @@ int main(int argc, char* args[])
 
 	}
 
-	
 	//Free resources and close SDL
 	close();
 

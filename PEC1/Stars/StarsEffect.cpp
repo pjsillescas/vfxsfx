@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-StarsEffect::StarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+StarsEffect::StarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
 	// allocate memory for all our stars
 	stars = new TStar[MAXSTARS];
@@ -36,12 +36,6 @@ void StarsEffect::update(float deltaTime) {
 		}
 	}
 }
-
-bool StarsEffect::isEnded()
-{
-	return false;
-}
-
 
 void StarsEffect::render() {
 	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));

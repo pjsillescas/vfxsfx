@@ -7,17 +7,12 @@
 #include "Clock.h"
 
 
-FractalEffect::FractalEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+FractalEffect::FractalEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
 	// allocate memory for our fractal
 	frac1 = new unsigned char[screenWidth * screenHeight * 4];
 	frac2 = new unsigned char[screenWidth * screenHeight * 4];
 	;
-}
-
-bool FractalEffect::isEnded()
-{
-	return false;
 }
 
 void FractalEffect::init()

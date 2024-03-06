@@ -7,13 +7,8 @@
 
 #include "Clock.h"
 
-TerraEffect::TerraEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+TerraEffect::TerraEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
-}
-
-bool TerraEffect::isEnded()
-{
-	return false;
 }
 
 void TerraEffect::init()
@@ -39,6 +34,8 @@ void TerraEffect::update(float deltaTime)
 
 void TerraEffect::render()
 {
+	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
+
 	// draw plane
 	DrawPlane(A, B, C);
 }

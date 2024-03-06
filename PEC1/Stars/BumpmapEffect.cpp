@@ -7,7 +7,7 @@
 #include "Clock.h"
 
 
-BumpmapEffect::BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+BumpmapEffect::BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
 	// contains the image of the spotlight
 	light = new unsigned char[(long long) LIGHT_PIXEL_RES * LIGHT_PIXEL_RES];
@@ -19,12 +19,6 @@ BumpmapEffect::BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenW
 	windowy2 = 0;
 	windowZ = 0;
 }
-
-bool BumpmapEffect::isEnded()
-{
-	return false;
-}
-
 
 void BumpmapEffect::init()
 {

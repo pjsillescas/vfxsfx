@@ -9,15 +9,10 @@
 
 #include "Clock.h"
 
-ParticleEffect::ParticleEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+ParticleEffect::ParticleEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
 	scaleX = new int[screenWidth];
 	scaleY = new int[screenHeight];
-}
-
-bool ParticleEffect::isEnded()
-{
-	return false;
 }
 
 void ParticleEffect::init()

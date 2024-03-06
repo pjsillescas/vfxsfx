@@ -7,7 +7,7 @@
 
 #include "Clock.h"
 
-C3DEffect::C3DEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+C3DEffect::C3DEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
 	edgeTable = new EdgeData*[screenHeight];
 	for (int i = 0; i < screenHeight; i++)
@@ -19,11 +19,6 @@ C3DEffect::C3DEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : 
 	light = new unsigned char[MAX_LIGHTMAP_X * MAX_LIGHTMAP_Y];
 	// prepare 3D data
 	zbuffer = new unsigned short[screenWidth * screenHeight];
-}
-
-bool C3DEffect::isEnded()
-{
-	return false;
 }
 
 void C3DEffect::init()

@@ -14,13 +14,12 @@ private:
 
 public:
 
-	TerraEffect(SDL_Surface* surface, int screenHeight, int screenWidth);
+	TerraEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
 	~TerraEffect();
 
 	virtual void init() override;
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
-	virtual bool isEnded() override;
 
 private:
 	void DrawPlane(VECTOR Bp, VECTOR Up, VECTOR Vp);

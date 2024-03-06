@@ -25,13 +25,12 @@ private:
 
 public:
 
-	ParticleEffect(SDL_Surface* surface, int screenHeight, int screenWidth);
+	ParticleEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
 	~ParticleEffect();
 
 	virtual void init() override;
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
-	virtual bool isEnded() override;
 
 
 private:

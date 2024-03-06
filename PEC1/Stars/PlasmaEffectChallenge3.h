@@ -17,13 +17,12 @@ private:
 
 public:
 
-	PlasmaEffectChallenge3(SDL_Surface* surface, int screenHeight, int screenWidth);
+	PlasmaEffectChallenge3(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
 	~PlasmaEffectChallenge3();
 
 	virtual void init() override;
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
-	virtual bool isEnded() override;
 
 private:
 	void buildPalette();

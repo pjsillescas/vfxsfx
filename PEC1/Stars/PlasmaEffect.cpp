@@ -3,7 +3,7 @@
 #include "Clock.h"
 
 
-PlasmaEffect::PlasmaEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+PlasmaEffect::PlasmaEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
 	//plasma1 = (unsigned char*)malloc(SCREEN_WIDTH * SCREEN_HEIGHT * 4);
 	//plasma2 = (unsigned char*)malloc(SCREEN_WIDTH * SCREEN_HEIGHT * 4);
@@ -22,11 +22,6 @@ PlasmaEffect::~PlasmaEffect()
 	delete[] plasma1;
 	delete[] plasma2;
 
-}
-
-bool PlasmaEffect::isEnded()
-{
-	return false;
 }
 
 void PlasmaEffect::init()

@@ -45,13 +45,12 @@ private:
 
 public:
 
-	FractalEffect(SDL_Surface* surface, int screenHeight, int screenWidth);
+	FractalEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
 	~FractalEffect();
 
 	virtual void init() override;
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
-	virtual bool isEnded() override;
 
 private:
 	void StartFrac(double _sr, double _si, double er, double ei);

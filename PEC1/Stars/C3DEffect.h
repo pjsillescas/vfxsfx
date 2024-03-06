@@ -68,13 +68,12 @@ private:
 
 public:
 
-	C3DEffect(SDL_Surface* surface, int screenHeight, int screenWidth);
+	C3DEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
 	~C3DEffect();
 
 	virtual void init() override;
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
-	virtual bool isEnded() override;
 
 private:
 	void InitEdgeTable();

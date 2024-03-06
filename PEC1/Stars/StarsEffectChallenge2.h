@@ -35,13 +35,12 @@ private:
 	Uint32 getColor(float rng);
 public:
 
-	StarsEffectChallenge2(SDL_Surface* surface, int screenHeight, int screenWidth);
+	StarsEffectChallenge2(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
 	~StarsEffectChallenge2();
 
 	virtual void init() override;
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
-	virtual bool isEnded() override;
 
 
 };

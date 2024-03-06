@@ -12,13 +12,12 @@ private:
 
 public:
 
-	DistortionEffect(SDL_Surface* surface, int screenHeight, int screenWidth);
+	DistortionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
 	~DistortionEffect();
 
 	virtual void init() override;
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
-	virtual bool isEnded() override;
 
 private:
 	void precalculate();

@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-FireEffect::FireEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+FireEffect::FireEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
 	// two fire buffers
 	fire1 = new unsigned char[screenWidth * screenHeight];
@@ -11,11 +11,6 @@ FireEffect::FireEffect(SDL_Surface* surface, int screenHeight, int screenWidth) 
 	palette = new RGBColor[MAX_PALETTE];
 
 	tmp = NULL;
-}
-
-bool FireEffect::isEnded()
-{
-	return false;
 }
 
 void FireEffect::init() {

@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-StarsEffectChallenge2::StarsEffectChallenge2(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+StarsEffectChallenge2::StarsEffectChallenge2(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
 	// allocate memory for all our stars
 	stars = new TStarChallenge2[MAXSTARS];
@@ -37,11 +37,6 @@ void StarsEffectChallenge2::init() {
 		stars[i].color = getColor(rng);
 	}
 
-}
-
-bool StarsEffectChallenge2::isEnded()
-{
-	return false;
 }
 
 void StarsEffectChallenge2::update(float deltaTime) {

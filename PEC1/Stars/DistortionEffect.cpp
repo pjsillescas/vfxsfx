@@ -7,15 +7,9 @@
 #include "Clock.h"
 
 
-DistortionEffect::DistortionEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : EffectTemplate(surface, screenHeight, screenWidth)
+DistortionEffect::DistortionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
 }
-
-bool DistortionEffect::isEnded()
-{
-	return false;
-}
-
 
 void DistortionEffect::init() {
 
