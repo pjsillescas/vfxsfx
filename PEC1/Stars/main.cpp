@@ -23,6 +23,7 @@
 #include "SyncEffect.h"
 #include "TransitionEffect.h"
 #include "RowTransitionEffect.h"
+#include "ColumnTransitionEffect.h"
 
 const int FONT_SIZE = 12;
 const int TIME_TO_DISPLAY_EFFECT = 10;
@@ -50,6 +51,23 @@ void close();
 
 void renderFPS();
 void renderCountdown(int counter);
+
+int transitionNum = 1;
+
+static TransitionEffect* getNewTransition(SDL_Surface* screenSurface, int screenHeight, int screenWidth, EffectTemplate* oldEffect, EffectTemplate* effect) {
+	
+	transitionNum = (transitionNum + 1) % 2;
+
+	switch (transitionNum) {
+	case 0:
+		return new RowTransitionEffect(screenSurface, screenHeight, screenWidth, oldEffect, effect);
+		break;
+	case 1:
+	default:
+		return new ColumnTransitionEffect(screenSurface, screenHeight, screenWidth, oldEffect, effect);
+		break;
+	}
+}
 
 int main(int argc, char* args[])
 {
@@ -103,7 +121,9 @@ int main(int argc, char* args[])
 			// Transition to the new effect
 			if (oldEffect != NULL)
 			{
-				TransitionEffect* transition = new RowTransitionEffect(screenSurface, screenHeight, screenWidth, oldEffect, effect);
+				//TransitionEffect* transition = new RowTransitionEffect(screenSurface, screenHeight, screenWidth, oldEffect, effect);
+				TransitionEffect* transition = getNewTransition(screenSurface, screenHeight, screenWidth, oldEffect, effect);
+				
 				oldEffect->setSurface(oldSurface);
 				effect->setSurface(newSurface);
 				//While application is running
