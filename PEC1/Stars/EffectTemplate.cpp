@@ -12,3 +12,7 @@ SDL_Surface* EffectTemplate::getSurface()
 	return surface;
 }
 
+void EffectTemplate::setSurface(SDL_Surface* surface)
+{
+	this->surface = surface;
+}

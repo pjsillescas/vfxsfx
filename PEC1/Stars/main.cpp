@@ -23,6 +23,7 @@
 #include "SyncEffect.h"
 #include "TransitionEffect.h"
 
+const int FONT_SIZE = 12;
 const int TIME_TO_DISPLAY_EFFECT = 10;
 
 //Screen dimension constants
@@ -37,8 +38,8 @@ SDL_Window* window = NULL;
 //The surface contained by the window
 SDL_Surface* screenSurface = NULL;
 
-SDL_Surface* plasmaSurface = NULL;
-SDL_Surface* fractalSurface = NULL;
+SDL_Surface* oldSurface = NULL;
+SDL_Surface* newSurface = NULL;
 
 bool initSDL(int, int);
 
@@ -65,17 +66,10 @@ int main(int argc, char* args[])
 	}
 	else
 	{
-		//SDL_Surface* plasmaSurface = SDL_CreateRGBSurface(0, screenWidth, screenHeight,32,0,0,0,0);
-		//SDL_Surface* fractalSurface = SDL_CreateRGBSurface(0, screenWidth, screenHeight, 32, 0, 0, 0, 0);
+		oldSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
+		newSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
 
-		plasmaSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
-		fractalSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
-
-		PlasmaEffect* plasma = new PlasmaEffect(plasmaSurface, screenHeight, screenWidth);
-		FractalEffect* fractal = new FractalEffect(fractalSurface, screenHeight, screenWidth);
-		
 		std::vector<EffectTemplate*> effects{
-			/*
 			new StarsEffect(screenSurface, screenHeight, screenWidth),
 			new StarsEffectChallenge2(screenSurface, screenHeight, screenWidth),
 			new PlasmaEffect(screenSurface, screenHeight, screenWidth),
@@ -90,8 +84,6 @@ int main(int argc, char* args[])
 			new C3DEffect(screenSurface, screenHeight, screenWidth),
 			new TerraEffect(screenSurface, screenHeight, screenWidth),
 			new SyncEffect(screenSurface, screenHeight, screenWidth),
-			*/
-			new TransitionEffect(screenSurface, screenHeight, screenWidth, plasma, fractal),
 		};
 
 		//Main loop flag
@@ -101,14 +93,57 @@ int main(int argc, char* args[])
 		SDL_Event e;
 
 		int startTime, currentTime;
+		EffectTemplate* oldEffect = NULL;
 
 		for (EffectTemplate*& effect : effects)
 		{
 			effect->init();
 			
+			// Transition to the new effect
+			if (oldEffect != NULL)
+			{
+				TransitionEffect* transition = new TransitionEffect(screenSurface, screenHeight, screenWidth, oldEffect, effect);
+				oldEffect->setSurface(oldSurface);
+				effect->setSurface(newSurface);
+				//While application is running
+				while (!quit && !transition->isEnded())
+				{
+					//Handle events on queue
+					while (SDL_PollEvent(&e) != 0)
+					{
+						if (e.type == SDL_KEYDOWN && e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+						{
+							quit = true;
+						}
+
+						//User requests quit
+						if (e.type == SDL_QUIT)
+						{
+							quit = true;
+						}
+					}
+
+					// updates all
+					transition->update((float)Clock::getInstance().getDeltaTime());
+
+					//Render
+					render(transition);
+
+					renderFPS();
+
+					//Update the surface
+					SDL_UpdateWindowSurface(window);
+					Clock::getInstance().waitFrame();
+				}
+
+				effect->setSurface(screenSurface);
+			}
+
+			// display effect
 			startTime = Clock::getInstance().getCurrentTime();
 			
 			bool changeEffect = false;
+
 			//While application is running
 			while (!quit && !changeEffect)
 			{
@@ -141,10 +176,12 @@ int main(int argc, char* args[])
 
 				currentTime = Clock::getInstance().getCurrentTime();
 				int countdown = (currentTime - startTime) / 1000;
-				//changeEffect = countdown > TIME_TO_DISPLAY_EFFECT;
-				changeEffect = false;
+				changeEffect = countdown > TIME_TO_DISPLAY_EFFECT;
+				//changeEffect = false;
 				renderCountdown(countdown);
 			}
+
+			oldEffect = effect;
 		}
 
 		for (EffectTemplate*& effect : effects)
@@ -178,7 +215,6 @@ void drawText(SDL_Surface* screen, char* string, int size, int x, int y, SDL_Col
 	TTF_CloseFont(font);
 }
 
-const int FONT_SIZE = 12;
 void renderFPS()
 {
 	SDL_Color fg = { 0x00,0x00,0xff }, bg = { 0xff,0xff,0xff };      // Blue text on white background
@@ -193,6 +229,7 @@ void renderCountdown(int counter)
 	SDL_Color fg = { 0x00,0x00,0xff }, bg = { 0xff,0xff,0xff };      // Blue text on white background
 	char countdownText[100];
 
+	// std::cout << "counter " << counter << std::endl;
 	sprintf_s(countdownText, "%d", counter);
 	drawText(screenSurface, countdownText, FONT_SIZE, 0, 2*FONT_SIZE, fg, bg);
 }
@@ -236,8 +273,8 @@ void render(EffectTemplate* effect) {
 
 void close() {
 
-	SDL_FreeSurface(plasmaSurface);
-	SDL_FreeSurface(fractalSurface);
+	SDL_FreeSurface(oldSurface);
+	SDL_FreeSurface(newSurface);
 
 	//Destroy window
 	SDL_DestroyWindow(window);

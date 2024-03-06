@@ -17,5 +17,6 @@ public:
 	virtual bool isEnded() = 0;
 
 	SDL_Surface* getSurface();
+	void setSurface(SDL_Surface* surface);
 
 };
