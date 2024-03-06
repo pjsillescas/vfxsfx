@@ -37,6 +37,9 @@ SDL_Window* window = NULL;
 //The surface contained by the window
 SDL_Surface* screenSurface = NULL;
 
+SDL_Surface* plasmaSurface = NULL;
+SDL_Surface* fractalSurface = NULL;
+
 bool initSDL(int, int);
 
 void render(EffectTemplate* effect);
@@ -62,8 +65,11 @@ int main(int argc, char* args[])
 	}
 	else
 	{
-		SDL_Surface* plasmaSurface = SDL_CreateRGBSurface(0, screenWidth, screenHeight,32,0,0,0,0);
-		SDL_Surface* fractalSurface = SDL_CreateRGBSurface(0, screenWidth, screenHeight, 32, 0, 0, 0, 0);
+		//SDL_Surface* plasmaSurface = SDL_CreateRGBSurface(0, screenWidth, screenHeight,32,0,0,0,0);
+		//SDL_Surface* fractalSurface = SDL_CreateRGBSurface(0, screenWidth, screenHeight, 32, 0, 0, 0, 0);
+
+		plasmaSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
+		fractalSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
 
 		PlasmaEffect* plasma = new PlasmaEffect(plasmaSurface, screenHeight, screenWidth);
 		FractalEffect* fractal = new FractalEffect(fractalSurface, screenHeight, screenWidth);
@@ -229,6 +235,9 @@ void render(EffectTemplate* effect) {
 }
 
 void close() {
+
+	SDL_FreeSurface(plasmaSurface);
+	SDL_FreeSurface(fractalSurface);
 
 	//Destroy window
 	SDL_DestroyWindow(window);

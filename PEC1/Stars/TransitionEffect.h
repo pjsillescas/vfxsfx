@@ -4,12 +4,17 @@ class TransitionEffect : public EffectTemplate
 {
 private:
 	// image background
-	SDL_Surface* imageSrc;
+	//SDL_Surface* imageSrc;
 	// image background
-	SDL_Surface* imageDst;
+	//SDL_Surface* imageDst;
 
 	EffectTemplate* src;
 	EffectTemplate* dst;
+
+	int currentTime = 0;
+	int startTime = 0;
+	int lineNum = 0;
+
 
 public:
 

@@ -6,3 +6,9 @@ EffectTemplate::EffectTemplate(SDL_Surface* surface, int screenHeight, int scree
 	this->screenHeight = screenHeight;
 	this->screenWidth = screenWidth;
 }
+
+SDL_Surface* EffectTemplate::getSurface()
+{
+	return surface;
+}
+
