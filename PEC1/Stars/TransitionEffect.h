@@ -3,17 +3,11 @@
 class TransitionEffect : public EffectTemplate
 {
 private:
-	// image background
-	//SDL_Surface* imageSrc;
-	// image background
-	//SDL_Surface* imageDst;
-
 	EffectTemplate* src;
 	EffectTemplate* dst;
 
 	int currentTime = 0;
 	int startTime = 0;
-	int lineNum = 0;
 
 
 public:
@@ -25,9 +19,9 @@ public:
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
 
-	virtual Uint8* getImageBuffer(int i, int j, Uint8* imageBufferSrc, Uint8* imageBufferDst);
+	virtual Uint8* getImageBuffer(int i, int j, Uint8* imageBufferSrc, Uint8* imageBufferDst) = 0;
+	virtual void prepareNextFrame() = 0;
 private:
-	void copyImage();
+	void renderFrame();
 
 };
-

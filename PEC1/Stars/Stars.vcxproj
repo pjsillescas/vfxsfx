@@ -146,6 +146,7 @@
     <ClCompile Include="PlasmaEffect.cpp" />
     <ClCompile Include="PlasmaEffectChallenge3.cpp" />
     <ClCompile Include="RotozoomEffect.cpp" />
+    <ClCompile Include="RowTransitionEffect.cpp" />
     <ClCompile Include="StarsEffect.cpp" />
     <ClCompile Include="StarsEffectChallenge2.cpp" />
     <ClCompile Include="SyncEffect.cpp" />
@@ -167,6 +168,7 @@
     <ClInclude Include="PlasmaEffect.h" />
     <ClInclude Include="PlasmaEffectChallenge3.h" />
     <ClInclude Include="RotozoomEffect.h" />
+    <ClInclude Include="RowTransitionEffect.h" />
     <ClInclude Include="StarsEffect.h" />
     <ClInclude Include="StarsEffectChallenge2.h" />
     <ClInclude Include="SyncEffect.h" />

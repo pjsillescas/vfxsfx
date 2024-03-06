@@ -22,6 +22,7 @@
 #include "TerraEffect.h"
 #include "SyncEffect.h"
 #include "TransitionEffect.h"
+#include "RowTransitionEffect.h"
 
 const int FONT_SIZE = 12;
 const int TIME_TO_DISPLAY_EFFECT = 10;
@@ -102,7 +103,7 @@ int main(int argc, char* args[])
 			// Transition to the new effect
 			if (oldEffect != NULL)
 			{
-				TransitionEffect* transition = new TransitionEffect(screenSurface, screenHeight, screenWidth, oldEffect, effect);
+				TransitionEffect* transition = new RowTransitionEffect(screenSurface, screenHeight, screenWidth, oldEffect, effect);
 				oldEffect->setSurface(oldSurface);
 				effect->setSurface(newSurface);
 				//While application is running

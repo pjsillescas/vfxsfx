@@ -14,7 +14,6 @@ TransitionEffect::TransitionEffect(SDL_Surface* surface, int screenHeight, int s
 }
 
 void TransitionEffect::init() {
-	lineNum = 0;
 
 	startTime = Clock::getInstance().getCurrentTime();
 	currentTime = Clock::getInstance().getCurrentTime();
@@ -45,7 +44,7 @@ void TransitionEffect::render() {
 		src->render();
 		dst->render();
 
-		copyImage();
+		renderFrame();
 	}
 }
 
@@ -55,24 +54,12 @@ TransitionEffect::~TransitionEffect()
 }
 
 
-Uint8* TransitionEffect::getImageBuffer(int i, int j, Uint8* imageBufferSrc, Uint8* imageBufferDst)
-{
-	if (j > lineNum)
-	{
-		//std::cout << "change (" << i << "," << j << ")" << std::endl;
-		return imageBufferSrc;
-	}
-	else
-	{
-		return 	imageBufferDst;
-	}
-}
 
 /*
 *   copy an image to the screen with added distortion.
 *   no bilinear filtering.
 */
-void TransitionEffect::copyImage()
+void TransitionEffect::renderFrame()
 {
 	// setup the offsets in the buffers
 	Uint8* dst;
@@ -111,10 +98,5 @@ void TransitionEffect::copyImage()
 	}
 	SDL_UnlockSurface(surface);
 	
-	lineNum += 2;
-
-	if (lineNum >= screenHeight)
-	{
-		setIsEnded(true);
-	}
+	prepareNextFrame();
 }
