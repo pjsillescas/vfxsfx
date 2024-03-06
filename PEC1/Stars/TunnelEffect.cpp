@@ -72,6 +72,11 @@ void TunnelEffect::update(float deltaTime)
 {
 }
 
+bool TunnelEffect::isEnded()
+{
+	return false;
+}
+
 void TunnelEffect::render()
 {
 	int currentTime = Clock::getInstance().getCurrentTime();

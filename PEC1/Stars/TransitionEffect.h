@@ -19,6 +19,7 @@ public:
 	virtual void init() override;
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
+	virtual bool isEnded() override;
 
 	virtual Uint8* getImageBuffer(int i, int j, Uint8* imageBufferSrc, Uint8* imageBufferDst);
 private:

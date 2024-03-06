@@ -27,6 +27,8 @@ public:
 private:
 	void DoRotoZoom(float cx, float cy, float radius, float angle);
 	void TextureScreen();
+	virtual bool isEnded() override;
+
 
 };
 

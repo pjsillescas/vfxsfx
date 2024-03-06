@@ -20,6 +20,12 @@ BumpmapEffect::BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenW
 	windowZ = 0;
 }
 
+bool BumpmapEffect::isEnded()
+{
+	return false;
+}
+
+
 void BumpmapEffect::init()
 {
 	// generate the light pattern

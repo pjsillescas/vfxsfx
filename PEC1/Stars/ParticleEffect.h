@@ -31,6 +31,8 @@ public:
 	virtual void init() override;
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
+	virtual bool isEnded() override;
+
 
 private:
 	void Rescale(SDL_Surface* src, SDL_Surface* dst);

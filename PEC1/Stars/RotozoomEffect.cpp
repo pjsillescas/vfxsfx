@@ -11,6 +11,11 @@ RotozoomEffect::RotozoomEffect(SDL_Surface* surface, int screenHeight, int scree
 {
 }
 
+bool RotozoomEffect::isEnded()
+{
+	return false;
+}
+
 void RotozoomEffect::init()
 {
 	// load the texture

@@ -11,6 +11,11 @@ TerraEffect::TerraEffect(SDL_Surface* surface, int screenHeight, int screenWidth
 {
 }
 
+bool TerraEffect::isEnded()
+{
+	return false;
+}
+
 void TerraEffect::init()
 {
 	SDL_Surface* temp = IMG_Load("texture.png");

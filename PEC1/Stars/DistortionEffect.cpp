@@ -11,6 +11,12 @@ DistortionEffect::DistortionEffect(SDL_Surface* surface, int screenHeight, int s
 {
 }
 
+bool DistortionEffect::isEnded()
+{
+	return false;
+}
+
+
 void DistortionEffect::init() {
 
 	// two buffers

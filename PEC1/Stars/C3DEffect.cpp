@@ -21,6 +21,11 @@ C3DEffect::C3DEffect(SDL_Surface* surface, int screenHeight, int screenWidth) : 
 	zbuffer = new unsigned short[screenWidth * screenHeight];
 }
 
+bool C3DEffect::isEnded()
+{
+	return false;
+}
+
 void C3DEffect::init()
 {
 	// Load Texture

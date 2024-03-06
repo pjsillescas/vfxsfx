@@ -62,6 +62,12 @@ int main(int argc, char* args[])
 	}
 	else
 	{
+		SDL_Surface* plasmaSurface = SDL_CreateRGBSurface(0, screenWidth, screenHeight,32,0,0,0,0);
+		SDL_Surface* fractalSurface = SDL_CreateRGBSurface(0, screenWidth, screenHeight, 32, 0, 0, 0, 0);
+
+		PlasmaEffect* plasma = new PlasmaEffect(plasmaSurface, screenHeight, screenWidth);
+		FractalEffect* fractal = new FractalEffect(fractalSurface, screenHeight, screenWidth);
+		
 		std::vector<EffectTemplate*> effects{
 			/*
 			new StarsEffect(screenSurface, screenHeight, screenWidth),
@@ -79,7 +85,7 @@ int main(int argc, char* args[])
 			new TerraEffect(screenSurface, screenHeight, screenWidth),
 			new SyncEffect(screenSurface, screenHeight, screenWidth),
 			*/
-			new TransitionEffect(screenSurface, screenHeight, screenWidth, 0, 0),
+			new TransitionEffect(screenSurface, screenHeight, screenWidth, plasma, fractal),
 		};
 
 		//Main loop flag
@@ -89,11 +95,6 @@ int main(int argc, char* args[])
 		SDL_Event e;
 
 		int startTime, currentTime;
-		/*
-		for (EffectTemplate*& effect : effects)
-		{
-		}
-		*/
 
 		for (EffectTemplate*& effect : effects)
 		{
@@ -186,8 +187,8 @@ void renderCountdown(int counter)
 	SDL_Color fg = { 0x00,0x00,0xff }, bg = { 0xff,0xff,0xff };      // Blue text on white background
 	char countdownText[100];
 
-	sprintf_s(countdownText, "FPS: %.2f", Clock::getInstance().getFPS());
-	drawText(screenSurface, countdownText, FONT_SIZE, FONT_SIZE, 0, fg, bg);
+	sprintf_s(countdownText, "%d", counter);
+	drawText(screenSurface, countdownText, FONT_SIZE, 0, 2*FONT_SIZE, fg, bg);
 }
 
 

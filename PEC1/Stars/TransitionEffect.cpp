@@ -40,7 +40,10 @@ void TransitionEffect::init() {
 
 void TransitionEffect::update(float deltaTime)
 {
-	copyImage();
+	if (!isEnded())
+	{
+		copyImage();
+	}
 }
 
 void TransitionEffect::render() {
@@ -53,12 +56,12 @@ TransitionEffect::~TransitionEffect()
 }
 
 
-static int pixelNum = 0;
+static int lineNum = 0;
 
 
 Uint8* TransitionEffect::getImageBuffer(int i, int j, Uint8* imageBufferSrc, Uint8* imageBufferDst)
 {
-	if (j > pixelNum)
+	if (j > lineNum)
 	{
 		//std::cout << "change (" << i << "," << j << ")" << std::endl;
 		return imageBufferSrc;
@@ -69,7 +72,10 @@ Uint8* TransitionEffect::getImageBuffer(int i, int j, Uint8* imageBufferSrc, Uin
 	}
 }
 
-
+bool TransitionEffect::isEnded()
+{
+	return lineNum >= screenHeight;
+}
 
 /*
 *   copy an image to the screen with added distortion.
@@ -137,10 +143,6 @@ void TransitionEffect::copyImage()
 	}
 	SDL_UnlockSurface(surface);
 	
-	pixelNum+= 2;
-	if (pixelNum >= screenHeight * screenWidth)
-	{
-		pixelNum = 0;
-	}
+	lineNum += 2;
 
 }

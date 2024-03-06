@@ -15,6 +15,11 @@ FractalEffect::FractalEffect(SDL_Surface* surface, int screenHeight, int screenW
 	;
 }
 
+bool FractalEffect::isEnded()
+{
+	return false;
+}
+
 void FractalEffect::init()
 {
 	// calculate the first fractal

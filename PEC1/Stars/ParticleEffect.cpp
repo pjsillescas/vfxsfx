@@ -15,6 +15,11 @@ ParticleEffect::ParticleEffect(SDL_Surface* surface, int screenHeight, int scree
 	scaleY = new int[screenHeight];
 }
 
+bool ParticleEffect::isEnded()
+{
+	return false;
+}
+
 void ParticleEffect::init()
 {
 	// generate our points

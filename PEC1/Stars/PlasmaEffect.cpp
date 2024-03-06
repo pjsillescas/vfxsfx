@@ -24,6 +24,11 @@ PlasmaEffect::~PlasmaEffect()
 
 }
 
+bool PlasmaEffect::isEnded()
+{
+	return false;
+}
+
 void PlasmaEffect::init()
 {
 	int dst = 0;

@@ -39,6 +39,11 @@ void StarsEffectChallenge2::init() {
 
 }
 
+bool StarsEffectChallenge2::isEnded()
+{
+	return false;
+}
+
 void StarsEffectChallenge2::update(float deltaTime) {
 	// update all stars
 	for (int i = 0; i < MAXSTARS; i++)

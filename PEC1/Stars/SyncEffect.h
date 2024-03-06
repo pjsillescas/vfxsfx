@@ -27,6 +27,7 @@ public:
 	virtual void init() override;
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
+	virtual bool isEnded() override;
 
 private:
 	void renderFlash(SDL_Surface* surf, Uint8 alpha);

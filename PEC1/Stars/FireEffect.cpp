@@ -13,6 +13,11 @@ FireEffect::FireEffect(SDL_Surface* surface, int screenHeight, int screenWidth) 
 	tmp = NULL;
 }
 
+bool FireEffect::isEnded()
+{
+	return false;
+}
+
 void FireEffect::init() {
 	buildPalette();
 	// clear the buffers

@@ -24,6 +24,11 @@ PlasmaEffectChallenge3::~PlasmaEffectChallenge3()
 
 }
 
+bool PlasmaEffectChallenge3::isEnded()
+{
+	return false;
+}
+
 void PlasmaEffectChallenge3::init()
 {
 	int dst = 0;

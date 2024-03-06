@@ -38,6 +38,12 @@ void SyncEffect::init()
 
 }
 
+bool SyncEffect::isEnded()
+{
+	return false;
+}
+
+
 void SyncEffect::update(float deltaTime)
 {
 	MusicCurrentTime += (int) deltaTime;
