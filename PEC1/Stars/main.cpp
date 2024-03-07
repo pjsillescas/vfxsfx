@@ -40,8 +40,7 @@ SDL_Window* window = NULL;
 //The surface contained by the window
 SDL_Surface* screenSurface = NULL;
 
-SDL_Surface* oldSurface = NULL;
-SDL_Surface* newSurface = NULL;
+SDL_Surface* auxSurface = NULL;
 
 bool initSDL(int, int);
 
@@ -85,8 +84,7 @@ int main(int argc, char* args[])
 	}
 	else
 	{
-		oldSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
-		newSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
+		auxSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
 
 		std::vector<EffectTemplate*> effects{
 			new StarsEffect(screenSurface, screenHeight, screenWidth, 5),
@@ -124,8 +122,7 @@ int main(int argc, char* args[])
 				//TransitionEffect* transition = new RowTransitionEffect(screenSurface, screenHeight, screenWidth, oldEffect, effect);
 				TransitionEffect* transition = getNewTransition(screenSurface, screenHeight, screenWidth, oldEffect, effect);
 				
-				oldEffect->setSurface(oldSurface);
-				effect->setSurface(newSurface);
+				oldEffect->setSurface(auxSurface);
 				//While application is running
 				while (!quit && !transition->isEnded())
 				{
@@ -158,7 +155,6 @@ int main(int argc, char* args[])
 				}
 
 				delete transition;
-				effect->setSurface(screenSurface);
 			}
 
 			// display effect
@@ -290,8 +286,7 @@ void render(EffectTemplate* effect) {
 
 void close() {
 
-	SDL_FreeSurface(oldSurface);
-	SDL_FreeSurface(newSurface);
+	SDL_FreeSurface(auxSurface);
 
 	//Destroy window
 	SDL_DestroyWindow(window);

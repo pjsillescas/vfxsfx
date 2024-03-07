@@ -66,7 +66,6 @@ void TransitionEffect::renderFrame()
 	Uint8* initbuffer = (Uint8*)surface->pixels;
 	int bpp = surface->format->BytesPerPixel;
 	
-	Uint8* imagebuffer;
 	int bppImage;
 	int pitch;
 
@@ -84,14 +83,13 @@ void TransitionEffect::renderFrame()
 		// for all pixels
 		for (int i = 0; i < screenWidth; i++)
 		{
-			//imagebuffer = (j * screenWidth + i > pixelNum) ? imageBufferDst : imageBufferSrc;
+			if (useSourceBuffer(i, j))
+			{
+				// copy it to the screen
+				Uint8* p = (Uint8*)imageBufferSrc + j * pitch + i * bppImage;
 
-			imagebuffer = getImageBuffer(i, j, imageBufferSrc, imageBufferDst);
-			// copy it to the screen
-			Uint8* p = (Uint8*)imagebuffer + j * pitch + i * bppImage;
-
-			*(Uint32*)dst = *(Uint32*)p;
-			
+				*(Uint32*)dst = *(Uint32*)p;
+			}
 			// next pixel
 			dst += bpp;
 		}

@@ -19,7 +19,7 @@ public:
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
 
-	virtual Uint8* getImageBuffer(int i, int j, Uint8* imageBufferSrc, Uint8* imageBufferDst) = 0;
+	virtual bool useSourceBuffer(int i, int j) = 0;
 	virtual void prepareNextFrame() = 0;
 private:
 	void renderFrame();

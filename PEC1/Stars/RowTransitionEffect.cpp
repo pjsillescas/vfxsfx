@@ -10,18 +10,11 @@ RowTransitionEffect::~RowTransitionEffect()
 	;
 }
 
-Uint8* RowTransitionEffect::getImageBuffer(int i, int j, Uint8* imageBufferSrc, Uint8* imageBufferDst)
+bool RowTransitionEffect::useSourceBuffer(int i, int j)
 {
-	if (j > lineNum)
-	{
-		//std::cout << "change (" << i << "," << j << ")" << std::endl;
-		return imageBufferSrc;
-	}
-	else
-	{
-		return 	imageBufferDst;
-	}
+	return (j > lineNum);
 }
+
 
 void RowTransitionEffect::init()
 {

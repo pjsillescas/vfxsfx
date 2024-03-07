@@ -10,17 +10,9 @@ ColumnTransitionEffect::~ColumnTransitionEffect()
 	;
 }
 
-Uint8* ColumnTransitionEffect::getImageBuffer(int i, int j, Uint8* imageBufferSrc, Uint8* imageBufferDst)
+bool ColumnTransitionEffect::useSourceBuffer(int i, int j)
 {
-	if (i > lineNum)
-	{
-		//std::cout << "change (" << i << "," << j << ")" << std::endl;
-		return imageBufferSrc;
-	}
-	else
-	{
-		return 	imageBufferDst;
-	}
+	return (i > lineNum);
 }
 
 void ColumnTransitionEffect::init()
