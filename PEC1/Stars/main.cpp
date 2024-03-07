@@ -24,6 +24,7 @@
 #include "TransitionEffect.h"
 #include "RowTransitionEffect.h"
 #include "ColumnTransitionEffect.h"
+#include "CircleTransitionEffect.h"
 
 const int FONT_SIZE = 12;
 const int TIME_TO_DISPLAY_EFFECT = 10;
@@ -55,15 +56,18 @@ int transitionNum = 1;
 
 static TransitionEffect* getNewTransition(SDL_Surface* screenSurface, int screenHeight, int screenWidth, EffectTemplate* oldEffect, EffectTemplate* effect) {
 	
-	transitionNum = (transitionNum + 1) % 2;
-
+	transitionNum = (transitionNum + 1) % 3;
+	
 	switch (transitionNum) {
-	case 0:
-		return new RowTransitionEffect(screenSurface, screenHeight, screenWidth, oldEffect, effect);
-		break;
 	case 1:
-	default:
 		return new ColumnTransitionEffect(screenSurface, screenHeight, screenWidth, oldEffect, effect);
+		break;
+	case 2:
+		return new CircleTransitionEffect(screenSurface, screenHeight, screenWidth, oldEffect, effect);
+		break;
+	case 0:
+	default:
+		return new RowTransitionEffect(screenSurface, screenHeight, screenWidth, oldEffect, effect);
 		break;
 	}
 }
@@ -123,6 +127,8 @@ int main(int argc, char* args[])
 				TransitionEffect* transition = getNewTransition(screenSurface, screenHeight, screenWidth, oldEffect, effect);
 				
 				oldEffect->setSurface(auxSurface);
+
+				transition->start();
 				//While application is running
 				while (!quit && !transition->isEnded())
 				{

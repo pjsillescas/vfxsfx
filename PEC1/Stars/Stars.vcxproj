@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="BumpmapEffect.cpp" />
     <ClCompile Include="C3DEffect.cpp" />
+    <ClCompile Include="CircleTransitionEffect.cpp" />
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="ColumnTransitionEffect.cpp" />
     <ClCompile Include="DistortionEffect.cpp" />
@@ -159,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="BumpmapEffect.h" />
     <ClInclude Include="C3DEffect.h" />
+    <ClInclude Include="CircleTransitionEffect.h" />
     <ClInclude Include="Clock.h" />
     <ClInclude Include="ColumnTransitionEffect.h" />
     <ClInclude Include="DistortionEffect.h" />

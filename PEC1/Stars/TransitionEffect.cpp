@@ -17,7 +17,7 @@ void TransitionEffect::init() {
 
 	startTime = Clock::getInstance().getCurrentTime();
 	currentTime = Clock::getInstance().getCurrentTime();
-
+	/*
 	if (src)
 	{
 		src->init();
@@ -27,6 +27,7 @@ void TransitionEffect::init() {
 	{
 		dst->init();
 	}
+	*/
 }
 
 void TransitionEffect::update(float deltaTime)
