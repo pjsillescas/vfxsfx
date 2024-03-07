@@ -6,6 +6,7 @@ class ColumnTransitionEffect : public TransitionEffect
 {
 private:
 	int lineNum = 0;
+	int deltaLines;
 
 public:
 

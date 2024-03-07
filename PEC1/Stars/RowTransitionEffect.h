@@ -6,7 +6,7 @@ class RowTransitionEffect : public TransitionEffect
 {
 private:
 	int lineNum = 0;
-
+	int deltaLines = 0;
 public:
 
 	RowTransitionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, EffectTemplate* src, EffectTemplate* dst);

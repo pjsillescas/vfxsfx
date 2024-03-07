@@ -7,6 +7,7 @@ class CircleTransitionEffect : public TransitionEffect
 private:
 	int radius;
 	int maxRadius;
+	int deltaRadius;
 
 public:
 

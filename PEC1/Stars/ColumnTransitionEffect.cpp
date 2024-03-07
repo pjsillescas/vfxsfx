@@ -19,11 +19,13 @@ void ColumnTransitionEffect::init()
 {
 	TransitionEffect::init();
 	lineNum = 0;
+	deltaLines = screenHeight / 10;
+
 }
 
 void ColumnTransitionEffect::prepareNextFrame()
 {
-	lineNum += 2;
+	lineNum += deltaLines;
 
 	if (lineNum >= screenWidth)
 	{

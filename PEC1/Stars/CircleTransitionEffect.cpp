@@ -24,12 +24,12 @@ void CircleTransitionEffect::init()
 	TransitionEffect::init();
 	radius = 0;
 	maxRadius = (screenWidth > screenHeight) ? screenWidth : screenHeight;
-
+	deltaRadius = maxRadius / 10;
 }
 
 void CircleTransitionEffect::prepareNextFrame()
 {
-	radius += 2;
+	radius += deltaRadius;
 	
 	if (radius >= maxRadius)
 	{
