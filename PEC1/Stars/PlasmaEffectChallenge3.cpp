@@ -32,8 +32,8 @@ void PlasmaEffectChallenge3::init()
 		for (int i = 0; i < (screenWidth * 2); i++)
 		{
 			plasma1[dst] = (unsigned char)(64 + 63 * (sin((double)hypot(screenHeight - j, screenWidth - i) / 16)));
-			plasma2[dst] = (unsigned char)(64 + 63 * sin((float)i / (37 + 15 * cos((float)j / 74)))
-				* cos((float)j / (31 + 11 * sin((float)i / 57))));
+			plasma2[dst] = (unsigned char)(64 + 63 * cos((float)i / (37 + 15 * sin((float)j / 74)))
+				* atan((float)j / (31 + 11 * tan((float)i / 57))));
 			dst++;
 		}
 	}
