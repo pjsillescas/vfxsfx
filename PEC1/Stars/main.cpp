@@ -68,6 +68,7 @@ void close();
 
 void renderFPS();
 void renderCountdown(int counter);
+void runEffect(EffectTemplate* effect, bool& quit, SDL_Event& e);
 
 int transitionNum = 1;
 
@@ -141,7 +142,6 @@ int main(int argc, char* args[])
 		//Event handler
 		SDL_Event e;
 
-		int startTime, currentTime;
 		EffectTemplate* oldEffect = NULL;
 
 		for (EffectTemplate*& effect : effects)
@@ -151,83 +151,18 @@ int main(int argc, char* args[])
 			// Transition to the new effect
 			if (oldEffect != NULL)
 			{
-				//TransitionEffect* transition = new RowTransitionEffect(screenSurface, screenHeight, screenWidth, oldEffect, effect);
 				TransitionEffect* transition = getNewTransition(screenSurface, screenHeight, screenWidth, oldEffect, effect);
 				
 				oldEffect->setSurface(auxSurface);
 
 				transition->start();
-				//While application is running
-				while (!quit && !transition->isEnded())
-				{
-					//Handle events on queue
-					while (SDL_PollEvent(&e) != 0)
-					{
-						if (e.type == SDL_KEYDOWN && e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-						{
-							quit = true;
-						}
-
-						//User requests quit
-						if (e.type == SDL_QUIT)
-						{
-							quit = true;
-						}
-					}
-
-					// updates all
-					transition->update((float)Clock::getInstance().getDeltaTime());
-
-					//Render
-					render(transition);
-
-					renderFPS();
-
-					//Update the surface
-					SDL_UpdateWindowSurface(window);
-					Clock::getInstance().waitFrame();
-				}
+				runEffect(transition, quit, e);
 
 				delete transition;
 			}
 
 			// display effect
-			startTime = Clock::getInstance().getCurrentTime();
-			
-			//While application is running
-			while (!quit && !effect->isEnded())
-			{
-				//Handle events on queue
-				while (SDL_PollEvent(&e) != 0)
-				{
-					if (e.type == SDL_KEYDOWN && e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-					{
-						quit = true;
-					}
-
-					//User requests quit
-					if (e.type == SDL_QUIT)
-					{
-						quit = true;
-					}
-				}
-
-				// updates all
-				effect->updateFixed((float)Clock::getInstance().getDeltaTime());
-
-				//Render
-				render(effect);
-
-				renderFPS();
-
-				//Update the surface
-				SDL_UpdateWindowSurface(window);
-				Clock::getInstance().waitFrame();
-
-				currentTime = Clock::getInstance().getCurrentTime();
-				int countdown = (currentTime - startTime) / 1000;
-				renderCountdown(countdown);
-			}
+			runEffect(effect, quit, e);
 
 			oldEffect = effect;
 		}
@@ -243,6 +178,40 @@ int main(int argc, char* args[])
 	close();
 
 	return 0;
+}
+
+void runEffect(EffectTemplate* effect, bool& quit, SDL_Event&e)
+{
+	//While application is running
+	while (!quit && !effect->isEnded())
+	{
+		//Handle events on queue
+		while (SDL_PollEvent(&e) != 0)
+		{
+			if (e.type == SDL_KEYDOWN && e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+			{
+				quit = true;
+			}
+
+			//User requests quit
+			if (e.type == SDL_QUIT)
+			{
+				quit = true;
+			}
+		}
+
+		// updates all
+		effect->updateFixed((float)Clock::getInstance().getDeltaTime());
+
+		//Render
+		render(effect);
+
+		renderFPS();
+
+		//Update the surface
+		SDL_UpdateWindowSurface(window);
+		Clock::getInstance().waitFrame();
+	}
 }
 
 void drawText(SDL_Surface* screen, char* string, int size, int x, int y, SDL_Color fgC, SDL_Color bgC)
