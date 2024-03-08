@@ -10,6 +10,14 @@
 
 SyncEffect::SyncEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
+	// load the texture
+	flashTexture = loadImage("uoc.png");
+}
+
+SyncEffect::SyncEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, const char* fileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
+{
+	// load the texture
+	flashTexture = loadImage(fileName);
 }
 
 void SyncEffect::init()
@@ -28,14 +36,6 @@ void SyncEffect::init()
 	MusicCurrentBeat = 0;
 	MusicPreviousBeat = -1;
 	Backgroundcolor = 0xFF000000 | ((rand() % 256) << 16) | ((rand() % 256) << 8) | (rand() % 256);
-	// load the texture
-	SDL_Surface* temp = IMG_Load("uoc.png");
-	if (temp == NULL) {
-		std::cout << "Image can be loaded! " << IMG_GetError();
-		exit(1);
-	}
-	flashTexture = SDL_ConvertSurfaceFormat(temp, SDL_PIXELFORMAT_ARGB8888, 0);
-
 }
 
 void SyncEffect::update(float deltaTime)

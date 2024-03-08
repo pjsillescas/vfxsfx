@@ -18,26 +18,33 @@ BumpmapEffect::BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenW
 	windowx2 = 0;
 	windowy2 = 0;
 	windowZ = 0;
+	
+	// load the color image
+	image = loadImage("wall.png");
+	bump = loadImage("bump.png");
+}
+
+BumpmapEffect::BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, const char* wallFileName, const char* bumpFileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
+{
+	// contains the image of the spotlight
+	light = new unsigned char[(long long)LIGHT_PIXEL_RES * LIGHT_PIXEL_RES];
+	bump = NULL;
+	image = NULL;
+	windowx1 = 0;
+	windowy1 = 0;
+	windowx2 = 0;
+	windowy2 = 0;
+	windowZ = 0;
+
+	// load the color image
+	image = loadImage(wallFileName);
+	bump = loadImage(bumpFileName);
 }
 
 void BumpmapEffect::init()
 {
 	// generate the light pattern
 	computeLight();
-	// load the color image
-	SDL_Surface* temp = IMG_Load("wall.png");
-	if (temp == NULL) {
-		std::cout << "Image can be loaded! " << IMG_GetError();
-		exit(1);
-	}
-	image = SDL_ConvertSurfaceFormat(temp, SDL_PIXELFORMAT_ARGB8888, 0);
-	// load the bump image
-	temp = IMG_Load("bump.png");
-	if (temp == NULL) {
-		std::cout << "Image can be loaded! " << IMG_GetError();
-		exit(1);
-	}
-	bump = SDL_ConvertSurfaceFormat(temp, SDL_PIXELFORMAT_ARGB8888, 0);
 }
 
 void BumpmapEffect::update(float deltaTime) {

@@ -48,6 +48,7 @@ void ParticleEffect::update(float deltaTime)
 
 void ParticleEffect::render()
 {
+	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
 	//SDL_LockSurface(screenSurface);
 
 	// rescale the image

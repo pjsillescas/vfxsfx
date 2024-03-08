@@ -9,6 +9,14 @@
 
 DistortionEffect::DistortionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
 {
+	// load the background image
+	image = loadImage("uoc.png");
+}
+
+DistortionEffect::DistortionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, const char* fileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
+{
+	// load the background image
+	image = loadImage(fileName);
 }
 
 void DistortionEffect::init() {
@@ -18,13 +26,7 @@ void DistortionEffect::init() {
 	dispY = new char[screenWidth * screenHeight * 4];
 	// create two distortion functions
 	precalculate();
-	// load the background image
-	SDL_Surface* temp = IMG_Load("uoc.png");
-	if (temp == NULL) {
-		std::cout << "Image can be loaded! " << IMG_GetError();
-		exit(1);
-	}
-	image = SDL_ConvertSurfaceFormat(temp, SDL_PIXELFORMAT_ARGB8888, 0);
+	
 }
 
 void DistortionEffect::update(float deltaTime) {

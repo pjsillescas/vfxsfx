@@ -33,8 +33,25 @@ const int TIME_TO_DISPLAY_EFFECT = 10;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
-const int FULL_SCREEN_WIDTH = 1920;
+//const int FULL_SCREEN_WIDTH = 1920;
+const int FULL_SCREEN_WIDTH = 1440;
 const int FULL_SCREEN_HEIGHT = 1080;
+
+// uoc image
+const char* UOC_IMAGE_FILENAME = "uoc.png";
+const char* UOC_IMAGE_FILENAME_BIG = "uoc1920.png";
+
+// uoc2 image
+const char* UOC2_IMAGE_FILENAME = "uoc2.png";
+const char* UOC2_IMAGE_FILENAME_BIG = "uoc21920.png";
+
+// wall image
+const char* WALL_IMAGE_FILENAME = "wall.png";
+const char* WALL_IMAGE_FILENAME_BIG = "wall1920.png";
+
+// bump image
+const char* BUMP_IMAGE_FILENAME = "bump.png";
+const char* BUMP_IMAGE_FILENAME_BIG = "bump1920.png";
 
 //The window we'll be rendering to
 SDL_Window* window = NULL;
@@ -72,13 +89,24 @@ static TransitionEffect* getNewTransition(SDL_Surface* screenSurface, int screen
 	}
 }
 
+#define FULL_SCREEN
+
 int main(int argc, char* args[])
 {
+#ifndef FULL_SCREEN
+
 	int screenWidth = SCREEN_WIDTH;
 	int screenHeight = SCREEN_HEIGHT;
-	
-	//int screenWidth = FULL_SCREEN_WIDTH;
-	//int screenHeight = FULL_SCREEN_HEIGHT;
+	const char* uocFileName = UOC_IMAGE_FILENAME;
+	const char* wallFileName = WALL_IMAGE_FILENAME;
+	const char* bumpFileName = BUMP_IMAGE_FILENAME;
+#else
+	int screenWidth = FULL_SCREEN_WIDTH;
+	int screenHeight = FULL_SCREEN_HEIGHT;
+	const char* uocFileName = UOC_IMAGE_FILENAME_BIG;
+	const char* wallFileName = WALL_IMAGE_FILENAME_BIG;
+	const char* bumpFileName = BUMP_IMAGE_FILENAME_BIG;
+#endif // FULL_SCREEN
 
 	//Start up SDL and create window
 	if (!initSDL(screenWidth, screenHeight))
@@ -96,15 +124,15 @@ int main(int argc, char* args[])
 			new PlasmaEffect(screenSurface, screenHeight, screenWidth, 10),
 			new PlasmaEffectChallenge3(screenSurface, screenHeight, screenWidth, 10),
 			new FireEffect(screenSurface, screenHeight, screenWidth, 10),
-			new DistortionEffect(screenSurface, screenHeight, screenWidth, 10),
-			new BumpmapEffect(screenSurface, screenHeight, screenWidth, 10),
+			new DistortionEffect(screenSurface, screenHeight, screenWidth, 10, uocFileName),
+			new BumpmapEffect(screenSurface, screenHeight, screenWidth, 10, wallFileName, bumpFileName),
 			new FractalEffect(screenSurface, screenHeight, screenWidth, 10),
 			new TunnelEffect(screenSurface, screenHeight, screenWidth, 10),
 			new RotozoomEffect(screenSurface, screenHeight, screenWidth, 10),
 			new ParticleEffect(screenSurface, screenHeight, screenWidth, 10),
 			new C3DEffect(screenSurface, screenHeight, screenWidth, 10),
 			new TerraEffect(screenSurface, screenHeight, screenWidth, 10),
-			new SyncEffect(screenSurface, screenHeight, screenWidth, 143),
+			new SyncEffect(screenSurface, screenHeight, screenWidth, 143, uocFileName),
 		};
 
 		//Main loop flag

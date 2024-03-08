@@ -6,7 +6,8 @@ class BumpmapEffect : public EffectTemplate
 {
 private:
 	// size of the spot light
-	const float LIGHTSIZE = 2.4f;
+	//const float LIGHTSIZE = 2.4f;
+	const float LIGHTSIZE = 1.6f;
 	const int LIGHT_PIXEL_RES = 256;
 
 	// contains the precalculated spotlight
@@ -22,6 +23,7 @@ private:
 public:
 
 	BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
+	BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, const char* wallFileName, const char* bumpFileName);
 	~BumpmapEffect();
 
 	virtual void init() override;

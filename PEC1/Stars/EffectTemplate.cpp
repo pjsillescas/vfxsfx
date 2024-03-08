@@ -1,5 +1,7 @@
 #include "EffectTemplate.h"
 
+#include <iostream>
+#include <SDL_image.h>
 #include "Clock.h"
 
 int currentTime;
@@ -49,4 +51,14 @@ bool EffectTemplate::isEnded()
 void EffectTemplate::setIsEnded(bool isEnded)
 {
 	this->bIsEnded = isEnded;
+}
+
+SDL_Surface* EffectTemplate::loadImage(const char* fileName)
+{
+		SDL_Surface* temp = IMG_Load(fileName);
+		if (temp == NULL) {
+			std::cout << "Image can be loaded! " << IMG_GetError();
+			exit(1);
+		}
+		return SDL_ConvertSurfaceFormat(temp, SDL_PIXELFORMAT_ARGB8888, 0);
 }

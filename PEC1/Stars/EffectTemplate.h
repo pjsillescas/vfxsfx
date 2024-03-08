@@ -27,4 +27,6 @@ public:
 	SDL_Surface* getSurface();
 	void setSurface(SDL_Surface* surface);
 
+protected:
+	SDL_Surface* loadImage(const char* fileName);
 };
