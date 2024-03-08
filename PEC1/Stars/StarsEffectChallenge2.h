@@ -8,6 +8,7 @@ struct TStarChallenge2
 	float x, y;             // position of the star
 	float speed;
 	Uint32 color;
+	bool isBigStar;
 };
 
 

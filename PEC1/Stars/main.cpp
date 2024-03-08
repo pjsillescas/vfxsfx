@@ -165,6 +165,12 @@ int main(int argc, char* args[])
 			runEffect(effect, quit, e);
 
 			oldEffect = effect;
+
+			if (quit)
+			{
+				// don't start the remaining effects
+				break;
+			}
 		}
 
 		for (EffectTemplate*& effect : effects)

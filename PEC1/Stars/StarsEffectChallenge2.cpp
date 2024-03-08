@@ -20,9 +20,11 @@ float StarsEffectChallenge2::getSpeed(float rng)
 
 Uint32 StarsEffectChallenge2::getColor(float rng)
 {
-	int colorValue = MIN_COLOR_VALUE + (int)((MAX_COLOR_VALUE - MIN_COLOR_VALUE) * rng);
+	int colorValue = MIN_COLOR_VALUE + (int)((MAX_COLOR_VALUE - MIN_COLOR_VALUE) * getRandomNumber());
+	int colorValue2 = MIN_COLOR_VALUE + (int)((MAX_COLOR_VALUE - MIN_COLOR_VALUE) * getRandomNumber());
+	int colorValue3 = MIN_COLOR_VALUE + (int)((MAX_COLOR_VALUE - MIN_COLOR_VALUE) * getRandomNumber());
 
-	return 0xFF000000 + colorValue * 256 * 256 + colorValue * 256 + colorValue;
+	return 0xFF000000 + colorValue * 256 * 256 + colorValue2 * 256 + colorValue3;
 }
 
 void StarsEffectChallenge2::init() {
@@ -35,6 +37,7 @@ void StarsEffectChallenge2::init() {
 		float rng = getRandomNumber();
 		stars[i].speed = getSpeed(rng);
 		stars[i].color = getColor(rng);
+		stars[i].isBigStar = rng > 0.70;
 	}
 
 }
@@ -63,6 +66,12 @@ void StarsEffectChallenge2::render() {
 	for (int i = 0; i < MAXSTARS; i++)
 	{
 		putPixel(surface, (int)stars[i].x, (int)stars[i].y, stars[i].color);
+		if(stars[i].isBigStar)
+		{
+			putPixel(surface, (int)stars[i].x+1, (int)stars[i].y, stars[i].color);
+			putPixel(surface, (int)stars[i].x, (int)stars[i].y+1, stars[i].color);
+			putPixel(surface, (int)stars[i].x+1, (int)stars[i].y+1, stars[i].color);
+		}
 	}
 }
 
