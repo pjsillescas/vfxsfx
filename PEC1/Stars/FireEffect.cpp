@@ -103,7 +103,7 @@ void FireEffect::Heat(unsigned char* dst)
 	// add some random hot spots at the bottom of the buffer
 	for (i = 0; i < j; i++)
 	{
-		dst[(screenWidth * (screenHeight - 3)) + (rand() % (screenWidth * 3))] = 255;
+		dst[(screenWidth * 3 / 4 * (screenHeight - 3)) + (rand() % (screenWidth * 3))] = 255;
 	}
 }
 
