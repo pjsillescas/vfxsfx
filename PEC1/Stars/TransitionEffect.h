@@ -2,6 +2,9 @@
 #include "EffectTemplate.h"
 class TransitionEffect : public EffectTemplate
 {
+protected:
+	const int NUM_FRAMES_TRANSITION = 20;
+
 private:
 	EffectTemplate* src;
 	EffectTemplate* dst;

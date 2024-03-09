@@ -20,7 +20,7 @@ void RowTransitionEffect::init()
 {
 	TransitionEffect::init();
 	lineNum = 0;
-	deltaLines = screenHeight / 10;
+	deltaLines = screenHeight / NUM_FRAMES_TRANSITION;
 }
 
 void RowTransitionEffect::prepareNextFrame()

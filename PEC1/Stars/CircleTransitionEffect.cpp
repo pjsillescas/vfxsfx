@@ -24,7 +24,7 @@ void CircleTransitionEffect::init()
 	TransitionEffect::init();
 	radius = 0;
 	maxRadius = (screenWidth > screenHeight) ? screenWidth : screenHeight;
-	deltaRadius = maxRadius / 10;
+	deltaRadius = maxRadius / NUM_FRAMES_TRANSITION;
 }
 
 void CircleTransitionEffect::prepareNextFrame()
