@@ -16,22 +16,25 @@ bool CircleTransitionEffect::useSourceBuffer(int i, int j)
 {
 	int x = ( i - screenWidth / 2);
 	int y = (j - screenHeight / 2);
-	return ((x * x + y * y) >= radius * radius);
+	bool useBuffer = ((x * x + y * y) >= radius * radius);
+
+	return getIsReverse() && !useBuffer || !getIsReverse() && useBuffer;
 }
 
 void CircleTransitionEffect::init()
 {
 	TransitionEffect::init();
-	radius = 0;
 	maxRadius = (screenWidth > screenHeight) ? screenWidth : screenHeight;
 	deltaRadius = maxRadius / NUM_FRAMES_TRANSITION;
+	
+	radius = (getIsReverse()) ? maxRadius : 0;
 }
 
 void CircleTransitionEffect::prepareNextFrame()
 {
-	radius += deltaRadius;
+	radius += ((getIsReverse()) ? -1 : 1) * deltaRadius;
 	
-	if (radius >= maxRadius)
+	if (getIsReverse() && radius <= 0 || radius >= maxRadius)
 	{
 		setIsEnded(true);
 	}

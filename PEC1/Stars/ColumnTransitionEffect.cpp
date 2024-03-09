@@ -12,22 +12,22 @@ ColumnTransitionEffect::~ColumnTransitionEffect()
 
 bool ColumnTransitionEffect::useSourceBuffer(int i, int j)
 {
-	return (i > lineNum);
+	return getIsReverse() && j <= lineNum || !getIsReverse() && (i > lineNum);
 }
 
 void ColumnTransitionEffect::init()
 {
 	TransitionEffect::init();
-	lineNum = 0;
+	lineNum = (getIsReverse()) ? screenWidth : 0;
 	deltaLines = screenHeight / NUM_FRAMES_TRANSITION;
 
 }
 
 void ColumnTransitionEffect::prepareNextFrame()
 {
-	lineNum += deltaLines;
+	lineNum += ((getIsReverse()) ? -1 : 1) * deltaLines;
 
-	if (lineNum >= screenWidth)
+	if (getIsReverse() && lineNum <= 0 || lineNum >= screenWidth)
 	{
 		setIsEnded(true);
 	}

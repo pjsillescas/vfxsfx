@@ -11,6 +11,13 @@ TransitionEffect::TransitionEffect(SDL_Surface* surface, int screenHeight, int s
 {
 	this->src = src;
 	this->dst = dst;
+
+	isReverse = rand() % 2 == 0;
+}
+
+bool TransitionEffect::getIsReverse()
+{
+	return isReverse;
 }
 
 void TransitionEffect::init() {

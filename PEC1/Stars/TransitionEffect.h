@@ -12,6 +12,7 @@ private:
 	int currentTime = 0;
 	int startTime = 0;
 
+	bool isReverse;
 
 public:
 
@@ -26,5 +27,6 @@ public:
 	virtual void prepareNextFrame() = 0;
 private:
 	void renderFrame();
-
+protected:
+	bool getIsReverse();
 };

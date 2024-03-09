@@ -12,22 +12,23 @@ RowTransitionEffect::~RowTransitionEffect()
 
 bool RowTransitionEffect::useSourceBuffer(int i, int j)
 {
-	return (j > lineNum);
+	return getIsReverse() && j <= lineNum || !getIsReverse() && (j > lineNum);
 }
 
 
 void RowTransitionEffect::init()
 {
 	TransitionEffect::init();
-	lineNum = 0;
+	lineNum = (getIsReverse()) ? screenHeight : 0;
 	deltaLines = screenHeight / NUM_FRAMES_TRANSITION;
 }
 
 void RowTransitionEffect::prepareNextFrame()
 {
-	lineNum += deltaLines;
 
-	if (lineNum >= screenHeight)
+	lineNum += ((getIsReverse()) ? -1 : 1) * deltaLines;
+
+	if (getIsReverse() && lineNum <= 0 || lineNum >= screenHeight)
 	{
 		setIsEnded(true);
 	}
