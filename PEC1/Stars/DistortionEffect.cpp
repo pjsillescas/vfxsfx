@@ -7,13 +7,13 @@
 #include "Clock.h"
 
 
-DistortionEffect::DistortionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
+DistortionEffect::DistortionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	// load the background image
 	image = loadImage("uoc.png");
 }
 
-DistortionEffect::DistortionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, const char* fileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
+DistortionEffect::DistortionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	// load the background image
 	image = loadImage(fileName);

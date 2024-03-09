@@ -7,7 +7,7 @@
 
 #include "Clock.h"
 
-C3DEffect::C3DEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
+C3DEffect::C3DEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	edgeTable = new EdgeData*[screenHeight];
 	for (int i = 0; i < screenHeight; i++)

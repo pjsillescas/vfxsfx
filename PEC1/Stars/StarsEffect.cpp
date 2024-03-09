@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-StarsEffect::StarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
+StarsEffect::StarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	// allocate memory for all our stars
 	stars = new TStar[MAXSTARS];

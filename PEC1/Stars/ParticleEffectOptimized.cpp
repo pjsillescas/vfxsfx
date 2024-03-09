@@ -1,6 +1,4 @@
-#include "ParticleEffect.h"
-
-#include "TunnelEffect.h"
+#include "ParticleEffectOptimized.h"
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -9,16 +7,16 @@
 
 #include "Clock.h"
 
-ParticleEffect::ParticleEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
+ParticleEffectOptimized::ParticleEffectOptimized(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	scaleX = new int[screenWidth];
 	scaleY = new int[screenHeight];
 }
 
-void ParticleEffect::init()
+void ParticleEffectOptimized::init()
 {
 	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
-	
+
 	// generate our points
 	pts = new VECTOR[MAXPTS];
 	for (int i = 0; i < MAXPTS; i++) {
@@ -31,7 +29,7 @@ void ParticleEffect::init()
 	//	secondScreen = SDL_CreateRGBSurfaceWithFormat(0, SCREEN_WIDTH, SCREEN_HEIGHT, 32, screenSurface->format->format);
 }
 
-void ParticleEffect::update(float deltaTime)
+void ParticleEffectOptimized::update(float deltaTime)
 {
 	int currentTime = Clock::getInstance().getCurrentTime();
 
@@ -48,16 +46,15 @@ void ParticleEffect::update(float deltaTime)
 
 }
 
-void ParticleEffect::render()
+void ParticleEffectOptimized::render()
 {
-	//SDL_LockSurface(screenSurface);
+	SDL_LockSurface(surface);
 
 	// rescale the image
 	Rescale(surface, secondScreen);
-	//SDL_BlitSurface(screenSurface, NULL, secondScreen, NULL);
+	//SDL_BlitSurface(surface, NULL, secondScreen, NULL);
 	// blur it
 	Blur(secondScreen, surface);
-	//SDL_BlitSurface(secondScreen, NULL, screenSurface, NULL);
 
 	// draw the particles
 	for (int i = 0; i < MAXPTS; i++)
@@ -65,15 +62,15 @@ void ParticleEffect::render()
 		Draw(surface, obj * pts[i]);
 	}
 
-	//SDL_UnlockSurface(screenSurface);
+	SDL_UnlockSurface(surface);
 
 }
 
-ParticleEffect::~ParticleEffect()
+ParticleEffectOptimized::~ParticleEffectOptimized()
 {
 	delete[] scaleX;
 	delete[] scaleY;
-	
+
 	SDL_FreeSurface(secondScreen);
 }
 
@@ -81,7 +78,7 @@ ParticleEffect::~ParticleEffect()
 /*
 * scale an image away from a given point
 */
-void ParticleEffect::Rescale(SDL_Surface* src, SDL_Surface* dst)
+void ParticleEffectOptimized::Rescale(SDL_Surface* src, SDL_Surface* dst)
 {
 	Uint8* dstPixel;
 	Uint8* initbuffer = (Uint8*)src->pixels;
@@ -105,7 +102,7 @@ void ParticleEffect::Rescale(SDL_Surface* src, SDL_Surface* dst)
 /*
 * smooth a buffer
 */
-void ParticleEffect::Blur(SDL_Surface* src, SDL_Surface* dst)
+void ParticleEffectOptimized::Blur(SDL_Surface* src, SDL_Surface* dst)
 {
 	Uint8* dstPixel;
 	Uint8* initbuffer = (Uint8*)src->pixels;
@@ -125,6 +122,7 @@ void ParticleEffect::Blur(SDL_Surface* src, SDL_Surface* dst)
 		// calculate the filter for all the other pixels
 		for (int i = 1; i < (screenWidth - 1); i++)
 		{
+			/*
 			// calculate the average
 			SDL_Color resultColor[8];
 			SDL_GetRGB(*(Uint32*)((Uint8*)src->pixels + (j - 1) * src->pitch + (i - 1) * initbufferbpp), src->format, &resultColor[0].r, &resultColor[0].g, &resultColor[0].b);
@@ -144,9 +142,37 @@ void ParticleEffect::Blur(SDL_Surface* src, SDL_Surface* dst)
 			medianColor.r = medianColor.r / 8;
 			medianColor.g = medianColor.g / 8;
 			medianColor.b = medianColor.b / 8;
+			
 			// store the pixel
 			Uint32 finalColor = SDL_MapRGB(dst->format, medianColor.r, medianColor.g, medianColor.b);
 			*(Uint32*)dstPixel = finalColor;
+
+			*/
+			
+			SDL_Color medianColor = { 0,0,0 };
+			//Uint32 pixel = *((Uint32)(initBuffer + i));
+			Uint32 pixel = 0;
+			for (int x = -1; x < 2; x++)
+			{
+				for (int y = -1; y < 2; y++)
+				{
+					if (x != 0 || y != 0)
+					{
+						if ((j + x >= 0 && j + x < screenHeight) && (i + y >= 0 && i + y < screenWidth))
+						{
+							pixel = *(Uint32*)((Uint8*)src->pixels + (j + x) * src->pitch + (i + y) * initbufferbpp);
+						}
+					}
+				}
+			}
+			//medianColor.r = medianColor.r / 8;
+			//medianColor.g = medianColor.g / 8;
+			//medianColor.b = medianColor.b / 8;
+			
+
+			// store the pixel
+			//Uint32 finalColor = SDL_MapRGB(dst->format, medianColor.r, medianColor.g, medianColor.b);
+			*(Uint32*)dstPixel =  (pixel / 8);
 			dstPixel += finalbufferbpp;
 		}
 		// set last pixel of the line to 0
@@ -158,7 +184,7 @@ void ParticleEffect::Blur(SDL_Surface* src, SDL_Surface* dst)
 /*
 * draw one single particle
 */
-void ParticleEffect::Draw(SDL_Surface* where, VECTOR v)
+void ParticleEffectOptimized::Draw(SDL_Surface* where, VECTOR v)
 {
 	// calculate the screen coordinates of the particle
 	float iz = 1 / (v[2] + base_dist),

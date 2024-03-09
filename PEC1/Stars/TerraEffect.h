@@ -14,7 +14,7 @@ private:
 
 public:
 
-	TerraEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
+	TerraEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
 	~TerraEffect();
 
 	virtual void init() override;

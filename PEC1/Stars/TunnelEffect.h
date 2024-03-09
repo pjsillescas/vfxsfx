@@ -9,7 +9,7 @@ private:
 	SDL_Surface* texdata;
 public:
 
-	TunnelEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
+	TunnelEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
 	~TunnelEffect();
 
 	virtual void init() override;

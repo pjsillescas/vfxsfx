@@ -22,8 +22,8 @@ private:
 
 public:
 
-	BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
-	BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, const char* wallFileName, const char* bumpFileName);
+	BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
+	BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* wallFileName, const char* bumpFileName);
 	~BumpmapEffect();
 
 	virtual void init() override;

@@ -17,7 +17,7 @@ private:
 
 public:
 
-	RotozoomEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
+	RotozoomEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
 	~RotozoomEffect();
 
 	virtual void init() override;

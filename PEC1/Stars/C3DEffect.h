@@ -68,7 +68,7 @@ private:
 
 public:
 
-	C3DEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
+	C3DEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
 	~C3DEffect();
 
 	virtual void init() override;

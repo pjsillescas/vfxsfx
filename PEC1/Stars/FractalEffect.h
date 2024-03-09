@@ -45,7 +45,7 @@ private:
 
 public:
 
-	FractalEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
+	FractalEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
 	~FractalEffect();
 
 	virtual void init() override;

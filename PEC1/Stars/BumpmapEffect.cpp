@@ -7,7 +7,7 @@
 #include "Clock.h"
 
 
-BumpmapEffect::BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
+BumpmapEffect::BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	// contains the image of the spotlight
 	light = new unsigned char[(long long) LIGHT_PIXEL_RES * LIGHT_PIXEL_RES];
@@ -24,7 +24,7 @@ BumpmapEffect::BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenW
 	bump = loadImage("bump.png");
 }
 
-BumpmapEffect::BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, const char* wallFileName, const char* bumpFileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
+BumpmapEffect::BumpmapEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* wallFileName, const char* bumpFileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	// contains the image of the spotlight
 	light = new unsigned char[(long long)LIGHT_PIXEL_RES * LIGHT_PIXEL_RES];

@@ -12,8 +12,8 @@ private:
 
 public:
 
-	DistortionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
-	DistortionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, const char* fileName);
+	DistortionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
+	DistortionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName);
 	~DistortionEffect();
 
 	virtual void init() override;

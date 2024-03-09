@@ -145,6 +145,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="ParticleEffect.cpp" />
+    <ClCompile Include="ParticleEffectOptimized.cpp" />
     <ClCompile Include="PlasmaEffect.cpp" />
     <ClCompile Include="PlasmaEffectChallenge3.cpp" />
     <ClCompile Include="RotozoomEffect.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="FractalEffect.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="ParticleEffect.h" />
+    <ClInclude Include="ParticleEffectOptimized.h" />
     <ClInclude Include="PlasmaEffect.h" />
     <ClInclude Include="PlasmaEffectChallenge3.h" />
     <ClInclude Include="RotozoomEffect.h" />

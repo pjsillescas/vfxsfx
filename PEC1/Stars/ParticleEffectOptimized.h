@@ -5,28 +5,28 @@
 #include "vector.h"
 #include "matrix.h"
 
-class ParticleEffect : public EffectTemplate
+class ParticleEffectOptimized : public EffectTemplate
 {
 private:
 	// number of points in the object
 	const int MAXPTS = 2048;
 
-// matrix that describes the rotation of the object
+	// matrix that describes the rotation of the object
 	MATRIX obj;
 	// how far it is from the viewer
 	float base_dist;
 	// points of our object
 	VECTOR* pts;
 	// store the precalculated scaling values
-	int *scaleX;
-	int *scaleY;
+	int* scaleX;
+	int* scaleY;
 	// Second buffer for effects
 	SDL_Surface* secondScreen;
 
 public:
 
-	ParticleEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
-	~ParticleEffect();
+	ParticleEffectOptimized(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
+	~ParticleEffectOptimized();
 
 	virtual void init() override;
 	virtual void update(float deltaTime) override;

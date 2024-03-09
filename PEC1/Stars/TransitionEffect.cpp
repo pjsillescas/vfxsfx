@@ -7,7 +7,7 @@
 #include <cmath>
 #include "Clock.h"
 
-TransitionEffect::TransitionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, EffectTemplate* src, EffectTemplate* dst) : EffectTemplate(surface, screenHeight, screenWidth, 0)
+TransitionEffect::TransitionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, EffectTemplate* src, EffectTemplate* dst) : EffectTemplate(surface, screenHeight, screenWidth, 0, "trans"/*dst->getTitle()*/)
 {
 	this->src = src;
 	this->dst = dst;

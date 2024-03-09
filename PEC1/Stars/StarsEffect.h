@@ -24,7 +24,7 @@ private:
 
 public:
 
-	StarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
+	StarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
 	~StarsEffect();
 
 	virtual void init() override;

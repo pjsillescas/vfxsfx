@@ -8,13 +8,13 @@
 
 #include "Clock.h"
 
-SyncEffect::SyncEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
+SyncEffect::SyncEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	// load the texture
 	flashTexture = loadImage("uoc.png");
 }
 
-SyncEffect::SyncEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, const char* fileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
+SyncEffect::SyncEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	// load the texture
 	flashTexture = loadImage(fileName);

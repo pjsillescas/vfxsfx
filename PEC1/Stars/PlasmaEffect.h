@@ -16,7 +16,7 @@ private:
 
 public:
 
-	PlasmaEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
+	PlasmaEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
 	~PlasmaEffect();
 
 	virtual void init() override;

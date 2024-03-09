@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-FireEffect::FireEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout) : EffectTemplate(surface, screenHeight, screenWidth, timeout)
+FireEffect::FireEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	// two fire buffers
 	fire1 = new unsigned char[screenWidth * screenHeight];

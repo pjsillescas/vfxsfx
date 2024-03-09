@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL.h>
+#include <string>
 
 class EffectTemplate
 {
@@ -10,9 +11,11 @@ protected:
 	int screenWidth;
 	int timeout;
 	bool bIsEnded;
+	bool bIsLateInit;
+	std::string title;
 
 public:
-	EffectTemplate(SDL_Surface* surface,int screenHeight,int screenWidth, int timeout);
+	EffectTemplate(SDL_Surface* surface,int screenHeight,int screenWidth, int timeout, std::string title);
 
 	void updateFixed(float deltaTime);
 	void start();
@@ -20,9 +23,14 @@ public:
 	virtual void init() = 0;
 	virtual void update(float deltaTime) = 0;
 	virtual void render() = 0;
-	
-	bool isEnded();
+	virtual const char* getTitle();
+	void setTitle(std::string title);
+
+	bool isLateInit() const;
+	bool isEnded() const;
 	void setIsEnded(bool isEnded);
+
+	EffectTemplate* setIsLateInit(bool isLateInit);
 
 	SDL_Surface* getSurface();
 	void setSurface(SDL_Surface* surface);

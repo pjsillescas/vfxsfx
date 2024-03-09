@@ -25,6 +25,7 @@
 #include "RowTransitionEffect.h"
 #include "ColumnTransitionEffect.h"
 #include "CircleTransitionEffect.h"
+#include "ParticleEffectOptimized.h"
 
 const int FONT_SIZE = 12;
 const int TIME_TO_DISPLAY_EFFECT = 10;
@@ -68,6 +69,7 @@ void close();
 
 void renderFPS();
 void renderCountdown(int counter);
+void renderTitle(const char* title);
 void runEffect(EffectTemplate* effect, bool& quit, SDL_Event& e);
 
 int transitionNum = 1;
@@ -120,20 +122,24 @@ int main(int argc, char* args[])
 		auxSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
 
 		std::vector<EffectTemplate*> effects{
-			new StarsEffect(screenSurface, screenHeight, screenWidth, 5),
-			new StarsEffectChallenge2(screenSurface, screenHeight, screenWidth, 5),
-			new PlasmaEffect(screenSurface, screenHeight, screenWidth, 10),
-			new PlasmaEffectChallenge3(screenSurface, screenHeight, screenWidth, 10),
-			new FireEffect(screenSurface, screenHeight, screenWidth, 10),
-			new DistortionEffect(screenSurface, screenHeight, screenWidth, 10, uocFileName),
-			new BumpmapEffect(screenSurface, screenHeight, screenWidth, 10, wallFileName, bumpFileName),
-			new FractalEffect(screenSurface, screenHeight, screenWidth, 10),
-			new TunnelEffect(screenSurface, screenHeight, screenWidth, 10),
-			new RotozoomEffect(screenSurface, screenHeight, screenWidth, 10),
-			new ParticleEffect(screenSurface, screenHeight, screenWidth, 10),
-			new C3DEffect(screenSurface, screenHeight, screenWidth, 10),
-			new TerraEffect(screenSurface, screenHeight, screenWidth, 10),
-			new SyncEffect(screenSurface, screenHeight, screenWidth, 143, uocFileName),
+			new StarsEffect(screenSurface, screenHeight, screenWidth, 10, "Stars"),
+			new StarsEffectChallenge2(screenSurface, screenHeight, screenWidth, 10, "Stars Reto 2"),
+			
+			new PlasmaEffect(screenSurface, screenHeight, screenWidth, 10, "Plasma"),
+			new PlasmaEffectChallenge3(screenSurface, screenHeight, screenWidth, 10, "Plasma Reto 3"),
+			new FireEffect(screenSurface, screenHeight, screenWidth, 10, "Fire"),
+			new DistortionEffect(screenSurface, screenHeight, screenWidth, 10, "Distortion", uocFileName),
+			new BumpmapEffect(screenSurface, screenHeight, screenWidth, 10, "Bumpmap", wallFileName, bumpFileName),
+			new FractalEffect(screenSurface, screenHeight, screenWidth, 10, "Fractal"),
+			new TunnelEffect(screenSurface, screenHeight, screenWidth, 10, "Tunnel"),
+			new RotozoomEffect(screenSurface, screenHeight, screenWidth, 10, "Rotozoom"),
+			(new ParticleEffect(screenSurface, screenHeight, screenWidth, 10, "Particles"))->setIsLateInit(true),
+			
+			//(new ParticleEffectOptimized(screenSurface, screenHeight, screenWidth, 10))->setIsLateInit(true),
+			
+			new C3DEffect(screenSurface, screenHeight, screenWidth, 10, "C3D"),
+			new TerraEffect(screenSurface, screenHeight, screenWidth, 10, "Terra"),
+			(new SyncEffect(screenSurface, screenHeight, screenWidth, 143, "Synch", uocFileName))->setIsLateInit(true),
 		};
 
 		//Main loop flag
@@ -142,19 +148,32 @@ int main(int argc, char* args[])
 		//Event handler
 		SDL_Event e;
 
+		for (EffectTemplate*& effect : effects)
+		{
+			if (!effect->isLateInit())
+			{
+				effect->init();
+			}
+		}
+
 		EffectTemplate* oldEffect = NULL;
 
 		for (EffectTemplate*& effect : effects)
 		{
+			if (effect->isLateInit())
+			{
+				effect->init();
+			}
+
 			effect->start();
-			
+
 			// Transition to the new effect
 			if (oldEffect != NULL)
 			{
 				TransitionEffect* transition = getNewTransition(screenSurface, screenHeight, screenWidth, oldEffect, effect);
 				
 				oldEffect->setSurface(auxSurface);
-
+				transition->init();
 				transition->start();
 				runEffect(transition, quit, e);
 
@@ -188,6 +207,7 @@ int main(int argc, char* args[])
 
 void runEffect(EffectTemplate* effect, bool& quit, SDL_Event&e)
 {
+	std::cout << "running effect " << effect->getTitle() << std::endl;
 	//While application is running
 	while (!quit && !effect->isEnded())
 	{
@@ -213,6 +233,7 @@ void runEffect(EffectTemplate* effect, bool& quit, SDL_Event&e)
 		render(effect);
 
 		renderFPS();
+		renderTitle(effect->getTitle());
 
 		//Update the surface
 		SDL_UpdateWindowSurface(window);
@@ -220,7 +241,7 @@ void runEffect(EffectTemplate* effect, bool& quit, SDL_Event&e)
 	}
 }
 
-void drawText(SDL_Surface* screen, char* string, int size, int x, int y, SDL_Color fgC, SDL_Color bgC)
+static void drawText(SDL_Surface* screen, char* string, int size, int x, int y, SDL_Color fgC, SDL_Color bgC)
 {
 	// Remember to call TTF_Init(), TTF_Quit(), before/after using this function.
 	TTF_Font* font = TTF_OpenFont("LEMONMILK-Regular.otf", size);
@@ -244,6 +265,15 @@ void renderFPS()
 
 	sprintf_s(fpsText, "FPS: %.2f", Clock::getInstance().getFPS());
 	drawText(screenSurface, fpsText, FONT_SIZE, 0, 0, fg, bg);
+}
+
+void renderTitle(const char* title)
+{
+	SDL_Color fg = { 0x00,0x00,0xff }, bg = { 0xff,0xff,0xff };      // Blue text on white background
+	char titleText[100];
+
+	sprintf_s(titleText, "%s", title);
+	drawText(screenSurface, titleText, FONT_SIZE, 0, 3*FONT_SIZE, fg, bg);
 }
 
 void renderCountdown(int counter)

@@ -7,17 +7,19 @@
 int currentTime;
 int startTime;
 
-EffectTemplate::EffectTemplate(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout)
+EffectTemplate::EffectTemplate(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title)
 {
 	this->surface = surface;
 	this->screenHeight = screenHeight;
 	this->screenWidth = screenWidth;
 	this->timeout = timeout;
+	this->bIsLateInit = false;
+	this->title = title;
 }
 
 void EffectTemplate::start()
 {
-	init();
+	//init();
 	
 	bIsEnded = false;
 	startTime = Clock::getInstance().getCurrentTime();
@@ -38,15 +40,39 @@ void EffectTemplate::updateFixed(float deltaTime)
 	update(deltaTime);
 
 	currentTime = Clock::getInstance().getCurrentTime();
-	int countdown = (currentTime - startTime) / 1000;
-	bIsEnded = timeout > 0 && countdown > timeout;
+	int elapsedTime = (currentTime - startTime) / 1000;
+	bIsEnded = timeout > 0 && elapsedTime > timeout;
+	//std::cout << "update fixed " << title.c_str() << " with elapsed time " << elapsedTime << std::endl;
 
 }
 
-bool EffectTemplate::isEnded()
+bool EffectTemplate::isEnded() const
 {
 	return bIsEnded;
 }
+
+bool EffectTemplate::isLateInit() const
+{
+	return bIsLateInit;
+}
+
+const char* EffectTemplate::getTitle()
+{
+	return title.c_str();
+}
+
+void EffectTemplate::setTitle(std::string title)
+{
+	this->title = title;
+}
+
+EffectTemplate* EffectTemplate::setIsLateInit(bool isLateInit)
+{
+	bIsLateInit = isLateInit;
+
+	return this;
+}
+
 
 void EffectTemplate::setIsEnded(bool isEnded)
 {

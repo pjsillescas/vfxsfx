@@ -17,7 +17,7 @@ private:
 
 public:
 
-	PlasmaEffectChallenge3(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
+	PlasmaEffectChallenge3(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
 	~PlasmaEffectChallenge3();
 
 	virtual void init() override;

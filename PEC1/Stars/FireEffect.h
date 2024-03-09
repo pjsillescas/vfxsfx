@@ -17,7 +17,7 @@ private:
 
 public:
 
-	FireEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
+	FireEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
 	~FireEffect();
 
 	virtual void init() override;

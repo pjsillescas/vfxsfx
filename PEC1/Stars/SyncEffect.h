@@ -21,8 +21,8 @@ private:
 
 public:
 
-	SyncEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout);
-	SyncEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, const char* fileName);
+	SyncEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
+	SyncEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName);
 	~SyncEffect();
 
 	virtual void init() override;
