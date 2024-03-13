@@ -17,7 +17,6 @@ protected:
 public:
 	EffectTemplate(SDL_Surface* surface,int screenHeight,int screenWidth, int timeout, std::string title);
 
-	void updateFixed(float deltaTime);
 	void start();
 
 	virtual void init() = 0;
@@ -29,6 +28,7 @@ public:
 	bool isLateInit() const;
 	bool isEnded() const;
 	void setIsEnded(bool isEnded);
+	int getTimeout();
 
 	EffectTemplate* setIsLateInit(bool isLateInit);
 

@@ -4,9 +4,6 @@
 #include <SDL_image.h>
 #include "Clock.h"
 
-int currentTime;
-int startTime;
-
 EffectTemplate::EffectTemplate(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title)
 {
 	this->surface = surface;
@@ -19,10 +16,7 @@ EffectTemplate::EffectTemplate(SDL_Surface* surface, int screenHeight, int scree
 
 void EffectTemplate::start()
 {
-	//init();
-	
 	bIsEnded = false;
-	startTime = Clock::getInstance().getCurrentTime();
 }
 
 SDL_Surface* EffectTemplate::getSurface()
@@ -33,17 +27,6 @@ SDL_Surface* EffectTemplate::getSurface()
 void EffectTemplate::setSurface(SDL_Surface* surface)
 {
 	this->surface = surface;
-}
-
-void EffectTemplate::updateFixed(float deltaTime)
-{
-	update(deltaTime);
-
-	currentTime = Clock::getInstance().getCurrentTime();
-	int elapsedTime = (currentTime - startTime) / 1000;
-	bIsEnded = timeout > 0 && elapsedTime > timeout;
-	//std::cout << "update fixed " << title.c_str() << " with elapsed time " << elapsedTime << std::endl;
-
 }
 
 bool EffectTemplate::isEnded() const
@@ -73,6 +56,9 @@ EffectTemplate* EffectTemplate::setIsLateInit(bool isLateInit)
 	return this;
 }
 
+int EffectTemplate::getTimeout() {
+	return timeout;
+}
 
 void EffectTemplate::setIsEnded(bool isEnded)
 {

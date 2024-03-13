@@ -30,30 +30,6 @@
 const int FONT_SIZE = 12;
 const int TIME_TO_DISPLAY_EFFECT = 10;
 
-//Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
-
-//const int FULL_SCREEN_WIDTH = 1920;
-const int FULL_SCREEN_WIDTH = 1440;
-const int FULL_SCREEN_HEIGHT = 1080;
-
-// uoc image
-const char* UOC_IMAGE_FILENAME = "uoc.png";
-const char* UOC_IMAGE_FILENAME_BIG = "uoc1920.png";
-
-// uoc2 image
-const char* UOC2_IMAGE_FILENAME = "uoc2.png";
-const char* UOC2_IMAGE_FILENAME_BIG = "uoc21920.png";
-
-// wall image
-const char* WALL_IMAGE_FILENAME = "wall.png";
-const char* WALL_IMAGE_FILENAME_BIG = "wall1920.png";
-
-// bump image
-const char* BUMP_IMAGE_FILENAME = "bump.png";
-const char* BUMP_IMAGE_FILENAME_BIG = "bump1920.png";
-
 //The window we'll be rendering to
 SDL_Window* window = NULL;
 //The surface contained by the window
@@ -68,9 +44,10 @@ void render(EffectTemplate* effect);
 void close();
 
 void renderFPS();
-void renderCountdown(int counter);
 void renderTitle(const char* title);
 void runEffect(EffectTemplate* effect, bool& quit, SDL_Event& e);
+void renderTime(int time);
+TTF_Font* getFont(int size);
 
 int transitionNum = 1;
 
@@ -98,17 +75,17 @@ int main(int argc, char* args[])
 {
 #ifndef FULL_SCREEN
 
-	int screenWidth = SCREEN_WIDTH;
-	int screenHeight = SCREEN_HEIGHT;
-	const char* uocFileName = UOC_IMAGE_FILENAME;
-	const char* wallFileName = WALL_IMAGE_FILENAME;
-	const char* bumpFileName = BUMP_IMAGE_FILENAME;
+	int screenWidth = 640;
+	int screenHeight = 480;
+	const char* uocFileName = "uoc.png";
+	const char* wallFileName = "wall.png";
+	const char* bumpFileName = "bump.png";
 #else
-	int screenWidth = FULL_SCREEN_WIDTH;
-	int screenHeight = FULL_SCREEN_HEIGHT;
-	const char* uocFileName = UOC_IMAGE_FILENAME_BIG;
-	const char* wallFileName = WALL_IMAGE_FILENAME_BIG;
-	const char* bumpFileName = BUMP_IMAGE_FILENAME_BIG;
+	int screenWidth = 1440;
+	int screenHeight = 1080;
+	const char* uocFileName = "uoc1920.png";
+	const char* wallFileName = "wall1920.png";
+	const char* bumpFileName = "bump1920.png";
 #endif // FULL_SCREEN
 
 	//Start up SDL and create window
@@ -208,8 +185,13 @@ int main(int argc, char* args[])
 void runEffect(EffectTemplate* effect, bool& quit, SDL_Event&e)
 {
 	std::cout << "running effect " << effect->getTitle() << std::endl;
+	int startTime = Clock::getInstance().getCurrentTime();
+	int timeout = effect->getTimeout();
+	int elapsedTime = 0;
+	bool isEnded = effect->isEnded() || timeout > 0 && elapsedTime > timeout;
+	
 	//While application is running
-	while (!quit && !effect->isEnded())
+	while (!quit && !isEnded)
 	{
 		//Handle events on queue
 		while (SDL_PollEvent(&e) != 0)
@@ -227,7 +209,7 @@ void runEffect(EffectTemplate* effect, bool& quit, SDL_Event&e)
 		}
 
 		// updates all
-		effect->updateFixed((float)Clock::getInstance().getDeltaTime());
+		effect->update((float)Clock::getInstance().getDeltaTime());
 
 		//Render
 		render(effect);
@@ -235,20 +217,22 @@ void runEffect(EffectTemplate* effect, bool& quit, SDL_Event&e)
 		renderFPS();
 		renderTitle(effect->getTitle());
 
+		int effectTime = timeout - (Clock::getInstance().getCurrentTime() - startTime) / 1000;
+		//std::cout << "effect " << effect->getTitle() << " " << effectTime << std::endl;
+		renderTime(effectTime);
+
 		//Update the surface
 		SDL_UpdateWindowSurface(window);
 		Clock::getInstance().waitFrame();
+		int elapsedTime = (Clock::getInstance().getCurrentTime() - startTime) / 1000;
+		isEnded = effect->isEnded() || timeout > 0 && elapsedTime > timeout;
 	}
 }
 
 static void drawText(SDL_Surface* screen, char* string, int size, int x, int y, SDL_Color fgC, SDL_Color bgC)
 {
 	// Remember to call TTF_Init(), TTF_Quit(), before/after using this function.
-	TTF_Font* font = TTF_OpenFont("LEMONMILK-Regular.otf", size);
-	if (!font) {
-		std::cout << "[ERROR] TTF_OpenFont() Failed with: " << TTF_GetError() << std::endl;
-		exit(2);
-	}
+	TTF_Font* font = getFont(size);
 	TTF_SetFontStyle(font, TTF_STYLE_BOLD);
 	//SDL_Surface* textSurface = TTF_RenderText_Solid(font, string, fgC);     // aliased glyphs
 	SDL_Surface* textSurface = TTF_RenderText_Shaded(font, string, fgC, bgC);   // anti-aliased glyphs
@@ -276,16 +260,29 @@ void renderTitle(const char* title)
 	drawText(screenSurface, titleText, FONT_SIZE, 0, 3*FONT_SIZE, fg, bg);
 }
 
-void renderCountdown(int counter)
+void renderTime(int time)
 {
-	SDL_Color fg = { 0x00,0x00,0xff }, bg = { 0xff,0xff,0xff };      // Blue text on white background
-	char countdownText[100];
+	if (time > 0)
+	{
+		SDL_Color fg = { 0x00,0x00,0xff }, bg = { 0xff,0xff,0xff };      // Blue text on white background
+		char timeText[100];
 
-	// std::cout << "counter " << counter << std::endl;
-	sprintf_s(countdownText, "%d", counter);
-	drawText(screenSurface, countdownText, FONT_SIZE, 0, 2*FONT_SIZE, fg, bg);
+		sprintf_s(timeText, "%d", time);
+		drawText(screenSurface, timeText, FONT_SIZE, 0, 5 * FONT_SIZE, fg, bg);
+	}
 }
 
+TTF_Font* getFont(int size)
+{
+	// Remember to call TTF_Init(), TTF_Quit(), before/after using this function.
+	TTF_Font* font = TTF_OpenFont("LEMONMILK-Regular.otf", size);
+	if (!font) {
+		std::cout << "[ERROR] TTF_OpenFont() Failed with: " << TTF_GetError() << std::endl;
+		exit(2);
+	}
+
+	return font;
+}
 
 bool initSDL(int screenWidth, int screenHeight) {
 
@@ -300,6 +297,8 @@ bool initSDL(int screenWidth, int screenHeight) {
 		std::cout << "[ERROR] TTF_Init() Failed with: " << TTF_GetError() << std::endl;
 		return false;
 	}
+
+	getFont(12);
 
 	IMG_Init(IMG_INIT_PNG);
 
@@ -324,6 +323,7 @@ void render(EffectTemplate* effect) {
 }
 
 void close() {
+	TTF_Quit();
 
 	SDL_FreeSurface(auxSurface);
 

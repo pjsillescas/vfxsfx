@@ -10,10 +10,11 @@ Clock::Clock()
 	fpsCounter = 0;
 	fps = 0.0f;
 	prevTicks = SDL_GetTicks64();
+	currentTime = prevTicks;
 }
 
 void Clock::waitFrame() {
-	currentTime = SDL_GetTicks();
+	currentTime = SDL_GetTicks64();
 	deltaTime = currentTime - lastTime;
 	if (deltaTime < (int)msFrame) {
 		SDL_Delay((int)msFrame - deltaTime);
@@ -36,10 +37,9 @@ int Clock::getDeltaTime() const
 void Clock::updateFPS()
 {
 	framesDrawn++;
-	Uint64 ticksNow = SDL_GetTicks64();
-	Uint64 diff = ticksNow - prevTicks;
+	Uint64 diff = currentTime - prevTicks;
 	fpsCounter += diff;
-	prevTicks = ticksNow;
+	prevTicks = currentTime;
 
 	if (fpsCounter >= 1000) {
 		fps = (float)framesDrawn / (float)(fpsCounter / 1000.0f);
