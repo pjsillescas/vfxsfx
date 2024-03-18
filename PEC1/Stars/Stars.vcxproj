@@ -141,11 +141,13 @@
     <ClCompile Include="DistortionEffect.cpp" />
     <ClCompile Include="EffectTemplate.cpp" />
     <ClCompile Include="FireEffect.cpp" />
+    <ClCompile Include="FlowEffect.cpp" />
     <ClCompile Include="FractalEffect.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="ParticleEffect.cpp" />
     <ClCompile Include="ParticleEffectOptimized.cpp" />
+    <ClCompile Include="Pec1AudioEffect.cpp" />
     <ClCompile Include="PlasmaEffect.cpp" />
     <ClCompile Include="PlasmaEffectChallenge3.cpp" />
     <ClCompile Include="RotozoomEffect.cpp" />
@@ -154,9 +156,11 @@
     <ClCompile Include="StarsEffectChallenge2.cpp" />
     <ClCompile Include="SyncEffect.cpp" />
     <ClCompile Include="TerraEffect.cpp" />
+    <ClCompile Include="TextUtils.cpp" />
     <ClCompile Include="TransitionEffect.cpp" />
     <ClCompile Include="TunnelEffect.cpp" />
     <ClCompile Include="Vector.cpp" />
+    <ClCompile Include="VortexEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BumpmapEffect.h" />
@@ -167,21 +171,29 @@
     <ClInclude Include="DistortionEffect.h" />
     <ClInclude Include="EffectTemplate.h" />
     <ClInclude Include="FireEffect.h" />
+    <ClInclude Include="FlowEffect.h" />
     <ClInclude Include="FractalEffect.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="ParticleEffect.h" />
     <ClInclude Include="ParticleEffectOptimized.h" />
+    <ClInclude Include="Pec1AudioEffect.h" />
     <ClInclude Include="PlasmaEffect.h" />
     <ClInclude Include="PlasmaEffectChallenge3.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="RotozoomEffect.h" />
     <ClInclude Include="RowTransitionEffect.h" />
     <ClInclude Include="StarsEffect.h" />
     <ClInclude Include="StarsEffectChallenge2.h" />
     <ClInclude Include="SyncEffect.h" />
     <ClInclude Include="TerraEffect.h" />
+    <ClInclude Include="TextUtils.h" />
     <ClInclude Include="TransitionEffect.h" />
     <ClInclude Include="TunnelEffect.h" />
     <ClInclude Include="Vector.h" />
+    <ClInclude Include="VortexEffect.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="PEC1.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

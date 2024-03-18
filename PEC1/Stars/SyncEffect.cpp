@@ -55,7 +55,8 @@ void SyncEffect::update(float deltaTime)
 		flashtime = 0;
 	}
 	if (!Mix_PlayingMusic()) {
-		exit(0);
+		//exit(0);
+		setIsEnded(true);
 	}
 
 }

@@ -6,6 +6,7 @@
 
 #include "Clock.h"
 
+#include "TextUtils.h"
 #include "EffectTemplate.h"
 #include "StarsEffect.h"
 #include "StarsEffectChallenge2.h"
@@ -26,6 +27,9 @@
 #include "ColumnTransitionEffect.h"
 #include "CircleTransitionEffect.h"
 #include "ParticleEffectOptimized.h"
+#include "FlowEffect.h"
+#include "VortexEffect.h"
+#include "Pec1AudioEffect.h"
 
 const int FONT_SIZE = 12;
 const int TIME_TO_DISPLAY_EFFECT = 10;
@@ -69,7 +73,7 @@ static TransitionEffect* getNewTransition(SDL_Surface* screenSurface, int screen
 	}
 }
 
-#define FULL_SCREEN
+//#define FULL_SCREEN
 
 int main(int argc, char* args[])
 {
@@ -99,6 +103,9 @@ int main(int argc, char* args[])
 		auxSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
 
 		std::vector<EffectTemplate*> effects{
+			//new VortexEffect(screenSurface, screenHeight, screenWidth, 100, "Vortex"),
+			//new FlowEffect(screenSurface, screenHeight, screenWidth, 100, "Flow"),
+			/*
 			new StarsEffect(screenSurface, screenHeight, screenWidth, 10, "Stars"),
 			new StarsEffectChallenge2(screenSurface, screenHeight, screenWidth, 10, "Stars Reto 2"),
 			
@@ -117,6 +124,8 @@ int main(int argc, char* args[])
 			new C3DEffect(screenSurface, screenHeight, screenWidth, 10, "C3D"),
 			new TerraEffect(screenSurface, screenHeight, screenWidth, 10, "Terra"),
 			(new SyncEffect(screenSurface, screenHeight, screenWidth, 143, "Synch", uocFileName))->setIsLateInit(true),
+			*/
+			(new Pec1AudioEffect(screenSurface, screenHeight, screenWidth, 215, "PEC1 Audio", uocFileName))->setIsLateInit(true),
 		};
 
 		//Main loop flag
@@ -229,6 +238,7 @@ void runEffect(EffectTemplate* effect, bool& quit, SDL_Event&e)
 	}
 }
 
+/*
 static void drawText(SDL_Surface* screen, char* string, int size, int x, int y, SDL_Color fgC, SDL_Color bgC)
 {
 	// Remember to call TTF_Init(), TTF_Quit(), before/after using this function.
@@ -241,6 +251,7 @@ static void drawText(SDL_Surface* screen, char* string, int size, int x, int y, 
 	SDL_FreeSurface(textSurface);
 	TTF_CloseFont(font);
 }
+*/
 
 void renderFPS()
 {
@@ -248,7 +259,7 @@ void renderFPS()
 	char fpsText[100];
 
 	sprintf_s(fpsText, "FPS: %.2f", Clock::getInstance().getFPS());
-	drawText(screenSurface, fpsText, FONT_SIZE, 0, 0, fg, bg);
+	TextUtils::drawText(screenSurface, fpsText, FONT_SIZE, 0, 0, fg, bg);
 }
 
 void renderTitle(const char* title)
@@ -257,7 +268,7 @@ void renderTitle(const char* title)
 	char titleText[100];
 
 	sprintf_s(titleText, "%s", title);
-	drawText(screenSurface, titleText, FONT_SIZE, 0, 3*FONT_SIZE, fg, bg);
+	TextUtils::drawText(screenSurface, titleText, FONT_SIZE, 0, 3*FONT_SIZE, fg, bg);
 }
 
 void renderTime(int time)
@@ -268,10 +279,10 @@ void renderTime(int time)
 		char timeText[100];
 
 		sprintf_s(timeText, "%d", time);
-		drawText(screenSurface, timeText, FONT_SIZE, 0, 5 * FONT_SIZE, fg, bg);
+		TextUtils::drawText(screenSurface, timeText, FONT_SIZE, 0, 5 * FONT_SIZE, fg, bg);
 	}
 }
-
+/*
 TTF_Font* getFont(int size)
 {
 	// Remember to call TTF_Init(), TTF_Quit(), before/after using this function.
@@ -283,7 +294,7 @@ TTF_Font* getFont(int size)
 
 	return font;
 }
-
+*/
 bool initSDL(int screenWidth, int screenHeight) {
 
 	//Initialize SDL
@@ -298,7 +309,7 @@ bool initSDL(int screenWidth, int screenHeight) {
 		return false;
 	}
 
-	getFont(12);
+	//getFont(12);
 
 	IMG_Init(IMG_INIT_PNG);
 
@@ -323,6 +334,8 @@ void render(EffectTemplate* effect) {
 }
 
 void close() {
+
+	TextUtils::close();
 	TTF_Quit();
 
 	SDL_FreeSurface(auxSurface);
