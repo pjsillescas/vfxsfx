@@ -8,17 +8,29 @@
 
 #include "Clock.h"
 #include "TextUtils.h"
+#include "FlockingEffect.h"
+#include "PlasmaPec1Effect.h"
+#include "FractalPec1Effect.h"
+
+FlockingEffect *flockingEffect = NULL;
+PlasmaPec1Effect* plasmaPec1Effect = NULL;
+FractalPec1Effect* fractalPec1Effect = NULL;
 
 Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	// load the texture
 	flashTexture = loadImage("uoc.png");
+
+	flockingEffect = new FlockingEffect(surface,screenHeight,screenWidth,timeout, "flocking");
 }
 
 Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	// load the texture
 	flashTexture = loadImage(fileName);
+	flockingEffect = new FlockingEffect(surface, screenHeight, screenWidth, timeout, "Flocking");
+	plasmaPec1Effect = new PlasmaPec1Effect(surface, screenHeight, screenWidth, timeout, "Plasma Pec1");
+	fractalPec1Effect = new FractalPec1Effect(surface, screenHeight, screenWidth, timeout, "Plasma Pec1");
 }
 
 Uint32 getRandomColor()
@@ -76,12 +88,16 @@ void Pec1AudioEffect::init()
 		{4, "Percussion beat"},
 		{4 * 8,"Section 1"},
 		{4 * 8 - 1,"Section 1 bis"},
-		{4 * 8 - 1,"Section 7"},
-		{4 * 8,"Section 8"},
+		{4 * 8 - 1,"Section 1"},
+		{4 * 8,"Section 1 bis 2"},
 		{4 * 8,"Ending"},
 	};
 	currentSection = 0;
 	currentBeatInSection = 0;
+
+	flockingEffect->init();
+	plasmaPec1Effect->init();
+	fractalPec1Effect->init();
 }
 
 void Pec1AudioEffect::update(float deltaTime)
@@ -106,6 +122,55 @@ void Pec1AudioEffect::update(float deltaTime)
 		flashtime = 0;
 	}
 	
+	switch (currentSection)
+	{
+	case 0: // Anacrusa
+	case 3: // Percussion beat
+	case 9: // Percussion beat
+	case 14: // Percussion beat
+		break;
+	case 1: // Intro 1
+		plasmaPec1Effect->update(deltaTime);
+		break;
+	case 2: //Intro 2
+		break;
+	case 4: // Section 1
+		flockingEffect->update(deltaTime);
+		break;
+	case 5: // Section 1 bis
+		fractalPec1Effect->update(deltaTime);
+		break;
+	case 6: //Section 2
+		break;
+	case 7: // Section 3
+		break;
+	case 8: // Section 3 bis
+		break;
+	case 10: // Section 1
+		flockingEffect->update(deltaTime);
+		break;
+	case 11: // Section 1 bis
+		fractalPec1Effect->update(deltaTime);
+		break;
+	case 12: // Section 4
+		break;
+	case 13: // Section 4 bis
+		break;
+	case 15: // Section 1
+		flockingEffect->update(deltaTime);
+		break;
+	case 16: // Section 1 bis
+		fractalPec1Effect->update(deltaTime);
+		break;
+	case 17: // Section 1
+		break;
+	case 18: // Section 1 bis
+		plasmaPec1Effect->update(deltaTime);
+		break;
+	case 19: // Ending
+		break;
+	}
+
 	if (!Mix_PlayingMusic())
 	{
 		//exit(0);
@@ -172,7 +237,8 @@ void Pec1AudioEffect::render()
 		SDL_FillRect(surface, NULL, 0);
 		break;
 	case 1: // Intro 1
-		changeBackgroundColor();
+		plasmaPec1Effect->render();
+		//changeBackgroundColor();
 		break;
 	case 2: //Intro 2
 		changeBackgroundColor();
@@ -182,14 +248,18 @@ void Pec1AudioEffect::render()
 		}
 		break;
 	case 4: // Section 1
-		changeBackgroundColor();
+		//changeBackgroundColor();
+		flockingEffect->render();
 		break;
 	case 5: // Section 1 bis
+		fractalPec1Effect->render();
+		/*
 		changeBackgroundColor();
 		if (flashtime > 0)
 		{
 			renderFlash(flashTexture, (Uint8)(255 * (1.f - flashtime / (float)(FLASH_MAX_TIME))));
 		}
+		*/
 		break;
 	case 6: //Section 2
 		changeBackgroundColor();
@@ -205,14 +275,18 @@ void Pec1AudioEffect::render()
 		changeBackgroundColor();
 		break;
 	case 10: // Section 1
-		changeBackgroundColor();
+		//changeBackgroundColor();
+		flockingEffect->render();
 		break;
 	case 11: // Section 1 bis
+		fractalPec1Effect->render();
+		/*
 		changeBackgroundColor();
 		if (flashtime > 0)
 		{
 			renderFlash(flashTexture, (Uint8)(255 * (1.f - flashtime / (float)(FLASH_MAX_TIME))));
 		}
+		*/
 		break;
 	case 12: // Section 4
 		changeBackgroundColor();
@@ -225,24 +299,31 @@ void Pec1AudioEffect::render()
 		}
 		break;
 	case 15: // Section 1
-		changeBackgroundColor();
+		//changeBackgroundColor();
+		flockingEffect->render();
 		break;
 	case 16: // Section 1 bis
+		fractalPec1Effect->render();
+		/*
 		changeBackgroundColor();
 		if (flashtime > 0)
 		{
 			renderFlash(flashTexture, (Uint8)(255 * (1.f - flashtime / (float)(FLASH_MAX_TIME))));
 		}
+		*/
 		break;
-	case 17: // Section 7
+	case 17: // Section 1
 		changeBackgroundColor();
 		break;
-	case 18: // Section 8
+	case 18: // Section 1 bis
+		plasmaPec1Effect->render();
+		/*
 		changeBackgroundColor();
 		if (flashtime > 0)
 		{
 			renderFlash(flashTexture, (Uint8)(255 * (1.f - flashtime / (float)(FLASH_MAX_TIME))));
 		}
+		*/
 		break;
 	case 19: // Ending
 		fadeOut();
@@ -275,6 +356,10 @@ void Pec1AudioEffect::fadeOut()
 
 Pec1AudioEffect::~Pec1AudioEffect()
 {
+	delete flockingEffect;
+	delete fractalPec1Effect;
+	delete plasmaPec1Effect;
+
 	delete[] sections;
 	SDL_FreeSurface(blackSurface);
 

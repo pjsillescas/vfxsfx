@@ -30,6 +30,7 @@
 #include "FlowEffect.h"
 #include "VortexEffect.h"
 #include "Pec1AudioEffect.h"
+#include "FlockingEffect.h"
 
 const int FONT_SIZE = 12;
 const int TIME_TO_DISPLAY_EFFECT = 10;
@@ -108,7 +109,7 @@ int main(int argc, char* args[])
 			/*
 			new StarsEffect(screenSurface, screenHeight, screenWidth, 10, "Stars"),
 			new StarsEffectChallenge2(screenSurface, screenHeight, screenWidth, 10, "Stars Reto 2"),
-			
+
 			new PlasmaEffect(screenSurface, screenHeight, screenWidth, 10, "Plasma"),
 			new PlasmaEffectChallenge3(screenSurface, screenHeight, screenWidth, 10, "Plasma Reto 3"),
 			new FireEffect(screenSurface, screenHeight, screenWidth, 10, "Fire"),
@@ -118,14 +119,15 @@ int main(int argc, char* args[])
 			new TunnelEffect(screenSurface, screenHeight, screenWidth, 10, "Tunnel"),
 			new RotozoomEffect(screenSurface, screenHeight, screenWidth, 10, "Rotozoom"),
 			(new ParticleEffect(screenSurface, screenHeight, screenWidth, 10, "Particles"))->setIsLateInit(true),
-			
+
 			//(new ParticleEffectOptimized(screenSurface, screenHeight, screenWidth, 10))->setIsLateInit(true),
-			
+
 			new C3DEffect(screenSurface, screenHeight, screenWidth, 10, "C3D"),
 			new TerraEffect(screenSurface, screenHeight, screenWidth, 10, "Terra"),
 			(new SyncEffect(screenSurface, screenHeight, screenWidth, 143, "Synch", uocFileName))->setIsLateInit(true),
 			*/
 			(new Pec1AudioEffect(screenSurface, screenHeight, screenWidth, 215, "PEC1 Audio", uocFileName))->setIsLateInit(true),
+			//new FlockingEffect(screenSurface, screenHeight, screenWidth, 215, "Flocking")
 		};
 
 		//Main loop flag

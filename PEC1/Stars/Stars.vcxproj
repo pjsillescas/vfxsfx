@@ -144,6 +144,7 @@
     <ClCompile Include="FlockingEffect.cpp" />
     <ClCompile Include="FlowEffect.cpp" />
     <ClCompile Include="FractalEffect.cpp" />
+    <ClCompile Include="FractalPec1Effect.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="ParticleEffect.cpp" />
@@ -151,6 +152,7 @@
     <ClCompile Include="Pec1AudioEffect.cpp" />
     <ClCompile Include="PlasmaEffect.cpp" />
     <ClCompile Include="PlasmaEffectChallenge3.cpp" />
+    <ClCompile Include="PlasmaPec1Effect.cpp" />
     <ClCompile Include="RotozoomEffect.cpp" />
     <ClCompile Include="RowTransitionEffect.cpp" />
     <ClCompile Include="StarsEffect.cpp" />
@@ -175,12 +177,14 @@
     <ClInclude Include="FlockingEffect.h" />
     <ClInclude Include="FlowEffect.h" />
     <ClInclude Include="FractalEffect.h" />
+    <ClInclude Include="FractalPec1Effect.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="ParticleEffect.h" />
     <ClInclude Include="ParticleEffectOptimized.h" />
     <ClInclude Include="Pec1AudioEffect.h" />
     <ClInclude Include="PlasmaEffect.h" />
     <ClInclude Include="PlasmaEffectChallenge3.h" />
+    <ClInclude Include="PlasmaPec1Effect.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RotozoomEffect.h" />
     <ClInclude Include="RowTransitionEffect.h" />
