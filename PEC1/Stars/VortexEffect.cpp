@@ -129,8 +129,10 @@ void VortexEffect::init()
 
 void VortexEffect::update(float deltaTime) {
 	// update all stars
-	calculateVorticity();
-	applyVorticityConf(deltaTime);
+	//calculateVorticity();
+	//applyVorticityConf(deltaTime);
+
+	//for(int i=0;i<num)
 }
 
 void VortexEffect::render() {
