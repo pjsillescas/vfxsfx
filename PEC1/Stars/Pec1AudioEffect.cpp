@@ -11,10 +11,12 @@
 #include "FlockingEffect.h"
 #include "PlasmaPec1Effect.h"
 #include "FractalPec1Effect.h"
+#include "DistortionPec1Effect.h"
 
 FlockingEffect *flockingEffect = NULL;
 PlasmaPec1Effect* plasmaPec1Effect = NULL;
 FractalPec1Effect* fractalPec1Effect = NULL;
+DistortionPec1Effect* distortionPec1Effect = NULL;
 
 Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
@@ -30,7 +32,8 @@ Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int scr
 	flashTexture = loadImage(fileName);
 	flockingEffect = new FlockingEffect(surface, screenHeight, screenWidth, timeout, "Flocking");
 	plasmaPec1Effect = new PlasmaPec1Effect(surface, screenHeight, screenWidth, timeout, "Plasma Pec1");
-	fractalPec1Effect = new FractalPec1Effect(surface, screenHeight, screenWidth, timeout, "Plasma Pec1");
+	fractalPec1Effect = new FractalPec1Effect(surface, screenHeight, screenWidth, timeout, "Fractal Pec1");
+	distortionPec1Effect = new DistortionPec1Effect(surface, screenHeight, screenWidth, timeout, "Distortion Pec1", "uoc.png");
 }
 
 Uint32 getRandomColor()
@@ -98,6 +101,7 @@ void Pec1AudioEffect::init()
 	flockingEffect->init();
 	plasmaPec1Effect->init();
 	fractalPec1Effect->init();
+	distortionPec1Effect->init();
 }
 
 void Pec1AudioEffect::update(float deltaTime)
@@ -143,6 +147,7 @@ void Pec1AudioEffect::update(float deltaTime)
 	case 6: //Section 2
 		break;
 	case 7: // Section 3
+		distortionPec1Effect->update(deltaTime);
 		break;
 	case 8: // Section 3 bis
 		break;
@@ -265,14 +270,17 @@ void Pec1AudioEffect::render()
 		changeBackgroundColor();
 		break;
 	case 7: // Section 3
+		distortionPec1Effect->render();
+
+		break;
+	case 8: // Section 3 bis
+		//changeBackgroundColor();
 		changeBackgroundColor();
 		if (flashtime > 0)
 		{
 			renderFlash(flashTexture, (Uint8)(255 * (1.f - flashtime / (float)(FLASH_MAX_TIME))));
 		}
-		break;
-	case 8: // Section 3 bis
-		changeBackgroundColor();
+
 		break;
 	case 10: // Section 1
 		//changeBackgroundColor();
@@ -327,7 +335,6 @@ void Pec1AudioEffect::render()
 		break;
 	case 19: // Ending
 		fadeOut();
-		//SDL_FillRect(surface, NULL, 0);
 		break;
 	}
 
@@ -359,6 +366,7 @@ Pec1AudioEffect::~Pec1AudioEffect()
 	delete flockingEffect;
 	delete fractalPec1Effect;
 	delete plasmaPec1Effect;
+	delete distortionPec1Effect;
 
 	delete[] sections;
 	SDL_FreeSurface(blackSurface);
