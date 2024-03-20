@@ -12,11 +12,13 @@
 #include "PlasmaPec1Effect.h"
 #include "FractalPec1Effect.h"
 #include "DistortionPec1Effect.h"
+#include "SpyralEffect.h"
 
 FlockingEffect *flockingEffect = NULL;
 PlasmaPec1Effect* plasmaPec1Effect = NULL;
 FractalPec1Effect* fractalPec1Effect = NULL;
 DistortionPec1Effect* distortionPec1Effect = NULL;
+SpyralEffect* spyralEffect = NULL;
 
 Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
@@ -34,6 +36,7 @@ Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int scr
 	plasmaPec1Effect = new PlasmaPec1Effect(surface, screenHeight, screenWidth, timeout, "Plasma Pec1");
 	fractalPec1Effect = new FractalPec1Effect(surface, screenHeight, screenWidth, timeout, "Fractal Pec1");
 	distortionPec1Effect = new DistortionPec1Effect(surface, screenHeight, screenWidth, timeout, "Distortion Pec1", "uoc.png");
+	spyralEffect = new SpyralEffect(surface, screenHeight, screenWidth, timeout, "Galaxy");
 }
 
 Uint32 getRandomColor()
@@ -102,6 +105,7 @@ void Pec1AudioEffect::init()
 	plasmaPec1Effect->init();
 	fractalPec1Effect->init();
 	distortionPec1Effect->init();
+	spyralEffect->init();
 }
 
 void Pec1AudioEffect::update(float deltaTime)
@@ -158,6 +162,7 @@ void Pec1AudioEffect::update(float deltaTime)
 		fractalPec1Effect->update(deltaTime);
 		break;
 	case 12: // Section 4
+		spyralEffect->update(deltaTime);
 		break;
 	case 13: // Section 4 bis
 		break;
@@ -297,7 +302,8 @@ void Pec1AudioEffect::render()
 		*/
 		break;
 	case 12: // Section 4
-		changeBackgroundColor();
+		//changeBackgroundColor();
+		spyralEffect->render();
 		break;
 	case 13: // Section 4 bis
 		changeBackgroundColor();
@@ -356,7 +362,7 @@ void Pec1AudioEffect::fadeOut()
 	{
 		fadeOutTime -= Clock::getInstance().getDeltaTime();
 		int alpha = (Uint8)255 * (1. - fadeOutTime / FADEOUT_TIME);
-		std::cout << fadeOutTime << " -- " << FADEOUT_TIME << " => " << alpha << std::endl;
+		//std::cout << fadeOutTime << " -- " << FADEOUT_TIME << " => " << alpha << std::endl;
 		renderFlash(blackSurface, 255);
 	}
 }

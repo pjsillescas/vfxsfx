@@ -23,7 +23,7 @@ void SpyralEffect::init() {
 	for (i = 0; i < MAXSTARS / 8; i++)
 	{
 		float radius = MIN_RADIUS + (MAX_RADIUS - MIN_RADIUS) * ((float)i * step);
-		
+
 		stars[k].radius = radius;
 		stars[k].theta = 0;
 		k++;
