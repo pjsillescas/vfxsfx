@@ -103,8 +103,8 @@ void FractalPec1Effect::update(float deltaTime)
 void FractalPec1Effect::render()
 {
 	// display the old fractal, zooming in or out
-	if (zoom_in) Zoom((double)j / (screenHeight / 2));
-	else Zoom(1.0f - (double)j / (screenHeight / 2));
+	Zoom((zoom_in) ? (double)j / (screenHeight / 2) : 1.0f - (double)j / (screenHeight / 2));
+	
 	// select some new colours
 	//updatePalette(k * 100 + j);
 }

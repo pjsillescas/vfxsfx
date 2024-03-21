@@ -34,9 +34,9 @@ public:
 
 private:
 	float getRandomFloat();
-	void updateParticle(TParticle& particle, int i);
+	void updateParticle(int i);
 	void wrapEdges(TParticle& particle);
-	void updateLeadParticle(int i, float deltaTime);
+	//void updateLeadParticle(int i, float deltaTime);
 	float getCircleDistance2(float x1, float y1, float x2, float y2);
 	float getDy2(float x1, float y1, float x2, float y2);
 	float getDx2(float x1, float y1, float x2, float y2);

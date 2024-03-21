@@ -1,6 +1,5 @@
 #include "FlockingEffect.h"
 
-#include <iostream>
 #include <stdlib.h>
 #include <math.h>
 
@@ -19,6 +18,7 @@ const float SEPARATION_DISTANCE = 25.f;
 const float MAX_SPEED = 3.f;
 const float PERCEPTION_RADIUS = 50.f;
 const float SEPARATION_DISTANCE = 50.f;
+const float MIN_DISTANCE2 = 0.1f;
 
 const float PERCEPTION_RADIUS2 = PERCEPTION_RADIUS * PERCEPTION_RADIUS;
 const float SEPARATION_DISTANCE2 = SEPARATION_DISTANCE * SEPARATION_DISTANCE;
@@ -102,22 +102,14 @@ float FlockingEffect::getDx2(float x1, float y1, float x2, float y2)
 	return getMinimum3(dx1, dx2, dx3);
 }
 
-void FlockingEffect::updateParticle(TParticle& particle, int i)
+void FlockingEffect::updateParticle(int i)
 {
-	if (i == 0)
-	{
-		std::cout << "(" << particle.x << "," << particle.y << ") + (" << particle.vx << "," << particle.vy << ") = " << std::endl;
-	}
-	
-	particle.x += particle.vx;
-	particle.y += particle.vy;
+	TParticle* particle = &particles[i];
 
-	if (i == 0)
-	{
-		std::cout << "(" << particle.x << "," << particle.y << ")" << std::endl;
-	}
+	particle->x += particle->vx;
+	particle->y += particle->vy;
 
-	wrapEdges(particle);
+	wrapEdges(*particle);
 
 	float avgX = 0;
 	float avgY = 0;
@@ -139,10 +131,10 @@ void FlockingEffect::updateParticle(TParticle& particle, int i)
 
 		TParticle* currentParticle = &(particles[k]);
 
-		float dX = getDx2(currentParticle->x, currentParticle->y, particle.x, particle.y);
-		float dY = getDy2(currentParticle->x, currentParticle->y, particle.x, particle.y);
+		float dX = getDx2(currentParticle->x, currentParticle->y, particle->x, particle->y);
+		float dY = getDy2(currentParticle->x, currentParticle->y, particle->x, particle->y);
 		float distance2 = dX * dX + dY * dY;
-		if (distance2 < PERCEPTION_RADIUS2)
+		if (distance2 >= MIN_DISTANCE2 && distance2 < PERCEPTION_RADIUS2)
 		{
 			avgX += currentParticle->x;
 			avgY += currentParticle->y;
@@ -160,7 +152,7 @@ void FlockingEffect::updateParticle(TParticle& particle, int i)
 		}
 	}
 
-	if (numNeighbors > 0)
+	if (numNeighbors > 1)
 	{
 		avgX /= (float) numNeighbors;
 		avgY /= (float) numNeighbors;
@@ -173,24 +165,25 @@ void FlockingEffect::updateParticle(TParticle& particle, int i)
 	}
 
 	// velocity update
-	particle.vx += avgVx * 0.02f;
-	particle.vy += avgVy * 0.02f;
+	particle->vx += avgVx * 0.02f;
+	particle->vy += avgVy * 0.02f;
 
-	particle.vx += avgX * 0.01f;
-	particle.vy += avgY * 0.01f;
+	particle->vx += avgX * 0.01f;
+	particle->vy += avgY * 0.01f;
 
-	particle.vx -= avgSeparationX * 0.03f;
-	particle.vy -= avgSeparationY * 0.03f;
+	particle->vx -= avgSeparationX * 0.03f;
+	particle->vy -= avgSeparationY * 0.03f;
 
 	// velocity normalization to MAX_SPEED
-	float speed = sqrtf(particle.vx * particle.vx + particle.vy * particle.vy);
+	float speed = sqrtf(particle->vx * particle->vx + particle->vy * particle->vy);
 	if (speed > 0.1)
 	{
-		particle.vx = particle.vx * MAX_SPEED / speed;
-		particle.vy = particle.vy * MAX_SPEED / speed;
+		particle->vx = particle->vx * MAX_SPEED / speed;
+		particle->vy = particle->vy * MAX_SPEED / speed;
 	}
 }
 
+/*
 float phi = 0;
 float deltaPhi = M_PI / 40.f;
 
@@ -209,17 +202,20 @@ void FlockingEffect::updateLeadParticle(int i, float deltaTime) {
 	}
 }
 
-void FlockingEffect::update(float deltaTime) {
+*/
+void FlockingEffect::update(float deltaTime)
+{
 	
-	updateLeadParticle(0, deltaTime);
+	//updateLeadParticle(0, deltaTime);
 	// update all stars
-	for (int i = 1; i < MAX_PARTICLES; i++)
+	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
-		updateParticle(particles[i], i);
+		updateParticle(i);
 	}
 }
 
-void FlockingEffect::render() {
+void FlockingEffect::render()
+{
 	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
 	// update all stars
 	for (int i = 0; i < MAX_PARTICLES; i++)
