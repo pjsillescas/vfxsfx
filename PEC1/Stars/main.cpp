@@ -133,6 +133,7 @@ int main(int argc, char* args[])
 			//new FlockingEffect(screenSurface, screenHeight, screenWidth, 215, "Flocking")
 			//new SpyralEffect(screenSurface,screenHeight,screenWidth,200, "Galaxy")
 			//new BarsEffect(screenSurface,screenHeight,screenWidth,200, "Bars"),
+			//new WhirlpoolEffect(screenSurface,screenHeight,screenWidth,200, "Whirlpool", 3, 0, 5.f),
 		};
 
 		//Main loop flag

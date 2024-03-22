@@ -14,6 +14,7 @@
 #include "DistortionPec1Effect.h"
 #include "SpyralEffect.h"
 #include "BarsEffect.h"
+#include "WhirlpoolEffect.h"
 
 FlockingEffect *flockingEffect = NULL;
 PlasmaPec1Effect* plasmaPec1Effect = NULL;
@@ -21,6 +22,7 @@ FractalPec1Effect* fractalPec1Effect = NULL;
 DistortionPec1Effect* distortionPec1Effect = NULL;
 SpyralEffect* spyralEffect = NULL;
 BarsEffect* barsEffect = NULL;
+WhirlpoolEffect* whirlpoolEffect = NULL;
 
 Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
@@ -40,6 +42,7 @@ Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int scr
 	distortionPec1Effect = new DistortionPec1Effect(surface, screenHeight, screenWidth, timeout, "Distortion Pec1", "uoc.png");
 	spyralEffect = new SpyralEffect(surface, screenHeight, screenWidth, timeout, "Galaxy");
 	barsEffect = new BarsEffect(surface, screenHeight, screenWidth, timeout, "Bars");
+	whirlpoolEffect = new WhirlpoolEffect(surface, screenHeight, screenWidth, timeout, "Whirlpool", 3, 0, 5.f);
 }
 
 Uint32 getRandomColor()
@@ -110,6 +113,7 @@ void Pec1AudioEffect::init()
 	distortionPec1Effect->init();
 	spyralEffect->init();
 	barsEffect->init();
+	whirlpoolEffect->init();
 }
 
 void Pec1AudioEffect::update(float deltaTime)
@@ -170,6 +174,7 @@ void Pec1AudioEffect::update(float deltaTime)
 		spyralEffect->update(deltaTime);
 		break;
 	case 13: // Section 4 bis
+		whirlpoolEffect->update(deltaTime);
 		break;
 	case 15: // Section 1
 		flockingEffect->update(deltaTime);
@@ -313,11 +318,14 @@ void Pec1AudioEffect::render()
 		spyralEffect->render();
 		break;
 	case 13: // Section 4 bis
+		/*
 		changeBackgroundColor();
 		if (flashtime > 0)
 		{
 			renderFlash(flashTexture, (Uint8)(255 * (1.f - flashtime / (float)(FLASH_MAX_TIME))));
 		}
+		*/
+		whirlpoolEffect->render();
 		break;
 	case 15: // Section 1
 		//changeBackgroundColor();
