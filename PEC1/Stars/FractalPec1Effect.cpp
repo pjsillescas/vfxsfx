@@ -27,15 +27,9 @@ void FractalPec1Effect::init()
 	DoneFrac();
 
 	// adjust zooming coefficient for next view
-	if (zoom_in)
-	{
-		zx *= ZOOM_IN_FACTOR;
-		zy *= ZOOM_IN_FACTOR;
-	}
-	else {
-		zx *= ZOOM_OUT_FACTOR;
-		zy *= ZOOM_OUT_FACTOR;
-	}
+	zx *= (zoom_in) ? ZOOM_IN_FACTOR : ZOOM_OUT_FACTOR;
+	zy *= (zoom_in) ? ZOOM_IN_FACTOR : ZOOM_OUT_FACTOR;
+
 	// start calculating the next fractal
 	StartFrac(OR - zx, OI - zy, OR + zx, OI + zy);
 	j = 0;

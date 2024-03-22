@@ -13,12 +13,14 @@
 #include "FractalPec1Effect.h"
 #include "DistortionPec1Effect.h"
 #include "SpyralEffect.h"
+#include "BarsEffect.h"
 
 FlockingEffect *flockingEffect = NULL;
 PlasmaPec1Effect* plasmaPec1Effect = NULL;
 FractalPec1Effect* fractalPec1Effect = NULL;
 DistortionPec1Effect* distortionPec1Effect = NULL;
 SpyralEffect* spyralEffect = NULL;
+BarsEffect* barsEffect = NULL;
 
 Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
@@ -37,6 +39,7 @@ Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int scr
 	fractalPec1Effect = new FractalPec1Effect(surface, screenHeight, screenWidth, timeout, "Fractal Pec1");
 	distortionPec1Effect = new DistortionPec1Effect(surface, screenHeight, screenWidth, timeout, "Distortion Pec1", "uoc.png");
 	spyralEffect = new SpyralEffect(surface, screenHeight, screenWidth, timeout, "Galaxy");
+	barsEffect = new BarsEffect(surface, screenHeight, screenWidth, timeout, "Bars");
 }
 
 Uint32 getRandomColor()
@@ -106,6 +109,7 @@ void Pec1AudioEffect::init()
 	fractalPec1Effect->init();
 	distortionPec1Effect->init();
 	spyralEffect->init();
+	barsEffect->init();
 }
 
 void Pec1AudioEffect::update(float deltaTime)
@@ -149,6 +153,7 @@ void Pec1AudioEffect::update(float deltaTime)
 		fractalPec1Effect->update(deltaTime);
 		break;
 	case 6: //Section 2
+		barsEffect->update(deltaTime);
 		break;
 	case 7: // Section 3
 		distortionPec1Effect->update(deltaTime);
@@ -173,6 +178,7 @@ void Pec1AudioEffect::update(float deltaTime)
 		fractalPec1Effect->update(deltaTime);
 		break;
 	case 17: // Section 1
+		flockingEffect->update(deltaTime);
 		break;
 	case 18: // Section 1 bis
 		plasmaPec1Effect->update(deltaTime);
@@ -200,7 +206,7 @@ void Pec1AudioEffect::onBeat()
 	}
 }
 
-const int PHASE2_MSEC = 128 * 73;
+//const int PHASE2_MSEC = 128 * 73;
 
 void Pec1AudioEffect::changeBackgroundColor()
 {
@@ -272,7 +278,8 @@ void Pec1AudioEffect::render()
 		*/
 		break;
 	case 6: //Section 2
-		changeBackgroundColor();
+		//changeBackgroundColor();
+		barsEffect->render();
 		break;
 	case 7: // Section 3
 		distortionPec1Effect->render();
@@ -327,7 +334,8 @@ void Pec1AudioEffect::render()
 		*/
 		break;
 	case 17: // Section 1
-		changeBackgroundColor();
+		//changeBackgroundColor();
+		flockingEffect->render();
 		break;
 	case 18: // Section 1 bis
 		plasmaPec1Effect->render();

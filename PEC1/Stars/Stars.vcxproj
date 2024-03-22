@@ -142,6 +142,7 @@
     <ClCompile Include="DistortionPec1Effect.cpp" />
     <ClCompile Include="EffectTemplate.cpp" />
     <ClCompile Include="FireEffect.cpp" />
+    <ClCompile Include="BarsEffect.cpp" />
     <ClCompile Include="FlockingEffect.cpp" />
     <ClCompile Include="FlowEffect.cpp" />
     <ClCompile Include="FractalEffect.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="TunnelEffect.cpp" />
     <ClCompile Include="Vector.cpp" />
     <ClCompile Include="VortexEffect.cpp" />
+    <ClCompile Include="WhirlpoolEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BumpmapEffect.h" />
@@ -177,6 +179,7 @@
     <ClInclude Include="DistortionPec1Effect.h" />
     <ClInclude Include="EffectTemplate.h" />
     <ClInclude Include="FireEffect.h" />
+    <ClInclude Include="BarsEffect.h" />
     <ClInclude Include="FlockingEffect.h" />
     <ClInclude Include="FlowEffect.h" />
     <ClInclude Include="FractalEffect.h" />
@@ -201,6 +204,7 @@
     <ClInclude Include="TunnelEffect.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VortexEffect.h" />
+    <ClInclude Include="WhirlpoolEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PEC1.rc" />

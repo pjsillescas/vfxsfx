@@ -32,6 +32,8 @@
 #include "Pec1AudioEffect.h"
 #include "FlockingEffect.h"
 #include "SpyralEffect.h"
+#include "BarsEffect.h"
+#include "WhirlpoolEffect.h"
 
 const int FONT_SIZE = 12;
 const int TIME_TO_DISPLAY_EFFECT = 10;
@@ -130,6 +132,7 @@ int main(int argc, char* args[])
 			(new Pec1AudioEffect(screenSurface, screenHeight, screenWidth, 215, "PEC1 Audio", uocFileName))->setIsLateInit(true),
 			//new FlockingEffect(screenSurface, screenHeight, screenWidth, 215, "Flocking")
 			//new SpyralEffect(screenSurface,screenHeight,screenWidth,200, "Galaxy")
+			//new BarsEffect(screenSurface,screenHeight,screenWidth,200, "Bars"),
 		};
 
 		//Main loop flag
