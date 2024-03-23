@@ -17,7 +17,7 @@ void WhirlpoolEffect::init() {
 }
 
 void WhirlpoolEffect::update(float deltaTime) {
-	offset += speed;
+	offset += speed * deltaTime / 1000.f;
 
 	if (offset > screenWidth)
 	{

@@ -15,6 +15,7 @@
 #include "SpyralEffect.h"
 #include "BarsEffect.h"
 #include "WhirlpoolEffect.h"
+#include "BlackScreenEffect.h"
 
 FlockingEffect *flockingEffect = NULL;
 PlasmaPec1Effect* plasmaPec1Effect = NULL;
@@ -23,6 +24,7 @@ DistortionPec1Effect* distortionPec1Effect = NULL;
 SpyralEffect* spyralEffect = NULL;
 BarsEffect* barsEffect = NULL;
 WhirlpoolEffect* whirlpoolEffect = NULL;
+BlackScreenEffect* blackScreenEffect = NULL;
 
 Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
@@ -34,6 +36,10 @@ Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int scr
 
 Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
+	//float whirlpoolSpeed = 500.f;
+	
+	float whirlpoolSpeed = screenWidth / 2.f * 1000.f / MSEG_BPM;
+	
 	// load the texture
 	flashTexture = loadImage(fileName);
 	flockingEffect = new FlockingEffect(surface, screenHeight, screenWidth, timeout, "Flocking");
@@ -42,7 +48,8 @@ Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int scr
 	distortionPec1Effect = new DistortionPec1Effect(surface, screenHeight, screenWidth, timeout, "Distortion Pec1", "uoc.png");
 	spyralEffect = new SpyralEffect(surface, screenHeight, screenWidth, timeout, "Galaxy");
 	barsEffect = new BarsEffect(surface, screenHeight, screenWidth, timeout, "Bars");
-	whirlpoolEffect = new WhirlpoolEffect(surface, screenHeight, screenWidth, timeout, "Whirlpool", 3, 0, 5.f);
+	whirlpoolEffect = new WhirlpoolEffect(surface, screenHeight, screenWidth, timeout, "Whirlpool", 5, 0, whirlpoolSpeed);
+	blackScreenEffect = new BlackScreenEffect(surface, screenHeight, screenWidth, timeout, "Black Screen");
 }
 
 Uint32 getRandomColor()
@@ -114,6 +121,7 @@ void Pec1AudioEffect::init()
 	spyralEffect->init();
 	barsEffect->init();
 	whirlpoolEffect->init();
+	blackScreenEffect->init();
 }
 
 void Pec1AudioEffect::update(float deltaTime)
@@ -144,6 +152,7 @@ void Pec1AudioEffect::update(float deltaTime)
 	case 3: // Percussion beat
 	case 9: // Percussion beat
 	case 14: // Percussion beat
+		blackScreenEffect->update(deltaTime);
 		break;
 	case 1: // Intro 1
 		plasmaPec1Effect->update(deltaTime);
@@ -255,7 +264,7 @@ void Pec1AudioEffect::render()
 	case 3: // Percussion beat
 	case 9: // Percussion beat
 	case 14: // Percussion beat
-		SDL_FillRect(surface, NULL, 0);
+		blackScreenEffect->render();
 		break;
 	case 1: // Intro 1
 		plasmaPec1Effect->render();

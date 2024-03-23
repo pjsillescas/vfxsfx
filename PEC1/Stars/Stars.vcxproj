@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BlackScreenEffect.cpp" />
     <ClCompile Include="BumpmapEffect.cpp" />
     <ClCompile Include="C3DEffect.cpp" />
     <ClCompile Include="CircleTransitionEffect.cpp" />
@@ -170,6 +171,7 @@
     <ClCompile Include="WhirlpoolEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BlackScreenEffect.h" />
     <ClInclude Include="BumpmapEffect.h" />
     <ClInclude Include="C3DEffect.h" />
     <ClInclude Include="CircleTransitionEffect.h" />
