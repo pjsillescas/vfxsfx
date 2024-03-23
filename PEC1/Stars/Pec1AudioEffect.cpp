@@ -16,6 +16,7 @@
 #include "BarsEffect.h"
 #include "WhirlpoolEffect.h"
 #include "BlackScreenEffect.h"
+#include "FlashEffect.h"
 
 FlockingEffect *flockingEffect = NULL;
 PlasmaPec1Effect* plasmaPec1Effect = NULL;
@@ -25,6 +26,7 @@ SpyralEffect* spyralEffect = NULL;
 BarsEffect* barsEffect = NULL;
 WhirlpoolEffect* whirlpoolEffect = NULL;
 BlackScreenEffect* blackScreenEffect = NULL;
+FlashEffect* flashEffect = NULL;
 
 Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
@@ -50,6 +52,7 @@ Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int scr
 	barsEffect = new BarsEffect(surface, screenHeight, screenWidth, timeout, "Bars");
 	whirlpoolEffect = new WhirlpoolEffect(surface, screenHeight, screenWidth, timeout, "Whirlpool", 5, 0, whirlpoolSpeed);
 	blackScreenEffect = new BlackScreenEffect(surface, screenHeight, screenWidth, timeout, "Black Screen");
+	flashEffect = new FlashEffect(surface, screenHeight, screenWidth, timeout, "Black Screen", "uoc.png",FLASH_MAX_TIME);
 }
 
 Uint32 getRandomColor()
@@ -122,6 +125,7 @@ void Pec1AudioEffect::init()
 	barsEffect->init();
 	whirlpoolEffect->init();
 	blackScreenEffect->init();
+	flashEffect->init();
 }
 
 void Pec1AudioEffect::update(float deltaTime)
@@ -158,6 +162,7 @@ void Pec1AudioEffect::update(float deltaTime)
 		plasmaPec1Effect->update(deltaTime);
 		break;
 	case 2: //Intro 2
+		flashEffect->update(deltaTime);
 		break;
 	case 4: // Section 1
 		flockingEffect->update(deltaTime);
@@ -172,6 +177,7 @@ void Pec1AudioEffect::update(float deltaTime)
 		distortionPec1Effect->update(deltaTime);
 		break;
 	case 8: // Section 3 bis
+		flashEffect->update(deltaTime);
 		break;
 	case 10: // Section 1
 		flockingEffect->update(deltaTime);
@@ -271,11 +277,14 @@ void Pec1AudioEffect::render()
 		//changeBackgroundColor();
 		break;
 	case 2: //Intro 2
+		/*
 		changeBackgroundColor();
 		if (flashtime > 0)
 		{
 			renderFlash(flashTexture, (Uint8)(255 * (1.f - flashtime / (float)(FLASH_MAX_TIME))));
 		}
+		*/
+		flashEffect->render();
 		break;
 	case 4: // Section 1
 		//changeBackgroundColor();
@@ -301,11 +310,14 @@ void Pec1AudioEffect::render()
 		break;
 	case 8: // Section 3 bis
 		//changeBackgroundColor();
+		/*
 		changeBackgroundColor();
 		if (flashtime > 0)
 		{
 			renderFlash(flashTexture, (Uint8)(255 * (1.f - flashtime / (float)(FLASH_MAX_TIME))));
 		}
+		*/
+		flashEffect->render();
 
 		break;
 	case 10: // Section 1
@@ -394,6 +406,11 @@ void Pec1AudioEffect::fadeOut()
 
 Pec1AudioEffect::~Pec1AudioEffect()
 {
+	delete flashEffect;
+	delete blackScreenEffect;
+	delete whirlpoolEffect;
+	delete barsEffect;
+	delete spyralEffect;
 	delete flockingEffect;
 	delete fractalPec1Effect;
 	delete plasmaPec1Effect;

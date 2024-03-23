@@ -144,6 +144,7 @@
     <ClCompile Include="EffectTemplate.cpp" />
     <ClCompile Include="FireEffect.cpp" />
     <ClCompile Include="BarsEffect.cpp" />
+    <ClCompile Include="FlashEffect.cpp" />
     <ClCompile Include="FlockingEffect.cpp" />
     <ClCompile Include="FlowEffect.cpp" />
     <ClCompile Include="FractalEffect.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="EffectTemplate.h" />
     <ClInclude Include="FireEffect.h" />
     <ClInclude Include="BarsEffect.h" />
+    <ClInclude Include="FlashEffect.h" />
     <ClInclude Include="FlockingEffect.h" />
     <ClInclude Include="FlowEffect.h" />
     <ClInclude Include="FractalEffect.h" />
