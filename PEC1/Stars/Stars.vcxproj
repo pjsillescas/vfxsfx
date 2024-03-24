@@ -142,6 +142,7 @@
     <ClCompile Include="DistortionEffect.cpp" />
     <ClCompile Include="DistortionPec1Effect.cpp" />
     <ClCompile Include="EffectTemplate.cpp" />
+    <ClCompile Include="EffectWithTransition.cpp" />
     <ClCompile Include="FireEffect.cpp" />
     <ClCompile Include="BarsEffect.cpp" />
     <ClCompile Include="FlashEffect.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="DistortionEffect.h" />
     <ClInclude Include="DistortionPec1Effect.h" />
     <ClInclude Include="EffectTemplate.h" />
+    <ClInclude Include="EffectWithTransition.h" />
     <ClInclude Include="FireEffect.h" />
     <ClInclude Include="BarsEffect.h" />
     <ClInclude Include="FlashEffect.h" />

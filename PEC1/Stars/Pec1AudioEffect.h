@@ -2,8 +2,10 @@
 
 #include "EffectTemplate.h"
 #include <SDL_mixer.h>
+#include <vector>
 
 struct Section;
+class EffectWithTransition;
 
 class Pec1AudioEffect : public EffectTemplate
 {
@@ -27,6 +29,29 @@ private:
 	Section* sections;
 	int currentSection;
 	int currentBeatInSection;
+	std::vector<EffectTemplate*> effects;
+	SDL_Surface* auxSurface;
+
+	EffectWithTransition* effectWithTransition1;
+	EffectWithTransition* effectWithTransition2;
+	EffectWithTransition* effectWithTransition3;
+	EffectWithTransition* effectWithTransition4;
+	EffectWithTransition* effectWithTransition5;
+	EffectWithTransition* effectWithTransition6;
+	EffectWithTransition* effectWithTransition7;
+	EffectWithTransition* effectWithTransition8;
+	EffectWithTransition* effectWithTransition9;
+	EffectWithTransition* effectWithTransition10;
+	EffectWithTransition* effectWithTransition11;
+	EffectWithTransition* effectWithTransition12;
+	EffectWithTransition* effectWithTransition13;
+	EffectWithTransition* effectWithTransition14;
+	EffectWithTransition* effectWithTransition15;
+	EffectWithTransition* effectWithTransition16;
+	EffectWithTransition* effectWithTransition17;
+	EffectWithTransition* effectWithTransition18;
+	EffectWithTransition* effectWithTransition19;
+
 
 public:
 
@@ -38,10 +63,5 @@ public:
 	virtual void update(float deltaTime) override;
 	virtual void render() override;
 	virtual void onBeat();
-
-private:
-	void renderFlash(SDL_Surface* surf, Uint8 alpha);
-	void changeBackgroundColor();
-	void fadeOut();
 
 };
