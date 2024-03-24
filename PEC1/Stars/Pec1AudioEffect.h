@@ -55,7 +55,6 @@ private:
 
 public:
 
-	Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
 	Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName);
 	~Pec1AudioEffect();
 

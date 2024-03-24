@@ -5,7 +5,7 @@
 
 SDL_Surface* image;
 
-BarsEffect::BarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
+BarsEffect::BarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	// two fire buffers
 	bars1 = new unsigned char[screenWidth * screenHeight];
@@ -14,7 +14,7 @@ BarsEffect::BarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth, 
 
 	tmp = NULL;
 
-	image = loadImage("uoc.png");
+	image = loadImage((fileName) ? fileName : "uoc.png");
 }
 
 void BarsEffect::init() {

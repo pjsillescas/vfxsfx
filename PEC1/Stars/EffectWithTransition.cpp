@@ -10,7 +10,6 @@ EffectWithTransition::EffectWithTransition(SDL_Surface* surface, int screenHeigh
 	this->oldEffect = oldEffect;
 	this->transitionEffect = getNewTransition(surface, screenHeight, screenWidth, oldEffect, effect);
 	isInitialized = false;
-	//auxSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
 	this->auxSurface = auxSurface;
 	isTransitionEnded = false;
 
@@ -88,5 +87,5 @@ void EffectWithTransition::render()
 
 EffectWithTransition::~EffectWithTransition()
 {
-	//SDL_FreeSurface(auxSurface);
+	;
 }

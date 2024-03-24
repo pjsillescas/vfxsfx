@@ -20,7 +20,7 @@ private:
 
 public:
 
-	BarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
+	BarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName);
 	~BarsEffect();
 
 	virtual void init() override;
