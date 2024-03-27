@@ -165,6 +165,7 @@
     <ClCompile Include="StarsEffectChallenge2.cpp" />
     <ClCompile Include="SyncEffect.cpp" />
     <ClCompile Include="TerraEffect.cpp" />
+    <ClCompile Include="TexturizationEffect.cpp" />
     <ClCompile Include="TextUtils.cpp" />
     <ClCompile Include="TransitionEffect.cpp" />
     <ClCompile Include="TunnelEffect.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="StarsEffectChallenge2.h" />
     <ClInclude Include="SyncEffect.h" />
     <ClInclude Include="TerraEffect.h" />
+    <ClInclude Include="TexturizationEffect.h" />
     <ClInclude Include="TextUtils.h" />
     <ClInclude Include="TransitionEffect.h" />
     <ClInclude Include="TunnelEffect.h" />

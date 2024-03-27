@@ -34,6 +34,7 @@
 #include "SpyralEffect.h"
 #include "BarsEffect.h"
 #include "WhirlpoolEffect.h"
+#include "TexturizationEffect.h"
 
 const int FONT_SIZE = 12;
 const int TIME_TO_DISPLAY_EFFECT = 10;
@@ -105,7 +106,8 @@ int main(int argc, char* args[])
 	else
 	{
 		auxSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
-
+		//float speedX = 1.f / 16.f;
+		//float speedY = 1.f / 32.f;
 		std::vector<EffectTemplate*> effects{
 			//new VortexEffect(screenSurface, screenHeight, screenWidth, 100, "Vortex"),
 			//new FlowEffect(screenSurface, screenHeight, screenWidth, 100, "Flow"),
@@ -134,6 +136,7 @@ int main(int argc, char* args[])
 			//new SpyralEffect(screenSurface,screenHeight,screenWidth,200, "Galaxy")
 			//new BarsEffect(screenSurface,screenHeight,screenWidth,200, "Bars"),
 			//new WhirlpoolEffect(screenSurface,screenHeight,screenWidth,200, "Whirlpool", 3, 0, 5.f),
+			//new TexturizationEffect(screenSurface,screenHeight,screenWidth,200, "Texturization", "textureflower2.jpg", speedX, speedY),
 		};
 
 		//Main loop flag

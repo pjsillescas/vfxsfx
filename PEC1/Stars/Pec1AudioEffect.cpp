@@ -19,6 +19,7 @@
 #include "BlackScreenEffect.h"
 #include "FlashEffect.h"
 #include "EffectWithTransition.h"
+#include "TexturizationEffect.h"
 
 FlockingEffect *flockingEffect = NULL;
 PlasmaPec1Effect* plasmaPec1Effect = NULL;
@@ -29,21 +30,20 @@ BarsEffect* barsEffect = NULL;
 WhirlpoolEffect* whirlpoolEffect = NULL;
 BlackScreenEffect* blackScreenEffect = NULL;
 FlashEffect* flashEffect = NULL;
-/*
-Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
-{
-	// load the texture
-	flashTexture = loadImage("uoc.png");
+TexturizationEffect* texturizationEffect = NULL;
 
-	flockingEffect = new FlockingEffect(surface,screenHeight,screenWidth,timeout, "flocking");
-}
-*/
 Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	//float whirlpoolSpeed = 500.f;
 	
 	float whirlpoolSpeed = screenWidth / 2.f * 1000.f / MSEG_BPM;
-	
+
+	float texSpeedX = 8.f / BPM_MUSIC;
+	float texSpeedY = 4.f / BPM_MUSIC;
+
+	//float texSpeedX = 1.f / 16.f;
+	//float texSpeedY = 1.f / 32.f;
+
 	// load the texture
 	flashTexture = loadImage(fileName);
 	flockingEffect = new FlockingEffect(surface, screenHeight, screenWidth, timeout, "Flocking");
@@ -55,6 +55,7 @@ Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int scr
 	whirlpoolEffect = new WhirlpoolEffect(surface, screenHeight, screenWidth, timeout, "Whirlpool", 5, 0, whirlpoolSpeed);
 	blackScreenEffect = new BlackScreenEffect(surface, screenHeight, screenWidth, timeout, "Black Screen");
 	flashEffect = new FlashEffect(surface, screenHeight, screenWidth, timeout, "Black Screen", "galaxy.png",FLASH_MAX_TIME);
+	texturizationEffect = new TexturizationEffect(surface, screenHeight, screenWidth, 200, "Texturization", "textureflower2.jpg", texSpeedX, texSpeedY);
 }
 
 Uint32 getRandomColor()
@@ -128,6 +129,7 @@ void Pec1AudioEffect::init()
 	whirlpoolEffect->init();
 	blackScreenEffect->init();
 	flashEffect->init();
+	texturizationEffect->init();
 	/*
 	effects.insert(effects.begin() + 0, (EffectTemplate*) blackScreenEffect); // 0 Anacrusa
 	effects.insert(effects.begin() + 1, (EffectTemplate*)plasmaPec1Effect); // 1 Intro 1
@@ -162,6 +164,7 @@ void Pec1AudioEffect::init()
 	EffectTemplate* section3BisEffect = whirlpoolEffect;
 	EffectTemplate* section4Effect = flashEffect;
 	EffectTemplate* section4BisEffect = fractalPec1Effect;
+	EffectTemplate* section1Effect2 = texturizationEffect;
 
 	auxSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
 	EffectWithTransition* effectWithTransition1 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Intro 1", anacrusaEffect, intro1Effect, auxSurface);
@@ -173,15 +176,15 @@ void Pec1AudioEffect::init()
 	EffectWithTransition* effectWithTransition7 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 3", section2Effect, section3Effect, auxSurface);
 	EffectWithTransition* effectWithTransition8 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 3 bis", section3Effect, section3BisEffect, auxSurface);
 	EffectWithTransition* effectWithTransition9 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Percussion beat", section3BisEffect, percussionBeatEffect, auxSurface);
-	EffectWithTransition* effectWithTransition10 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 1", percussionBeatEffect, section1Effect, auxSurface);
-	EffectWithTransition* effectWithTransition11 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 1 bis", section1Effect, section1BisEffect, auxSurface);
+	EffectWithTransition* effectWithTransition10 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 1", percussionBeatEffect, section1Effect2, auxSurface);
+	EffectWithTransition* effectWithTransition11 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 1 bis", section1Effect2, section1BisEffect, auxSurface);
 	EffectWithTransition* effectWithTransition12 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 4", section1BisEffect, section4Effect, auxSurface);
 	EffectWithTransition* effectWithTransition13 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 4 bis", section4Effect, section4BisEffect, auxSurface);
 	EffectWithTransition* effectWithTransition14 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Percussion beat", section4BisEffect, percussionBeatEffect, auxSurface);
 	EffectWithTransition* effectWithTransition15 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 1", percussionBeatEffect, section1Effect, auxSurface);
 	EffectWithTransition* effectWithTransition16 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 1 bis", section1Effect, section1BisEffect, auxSurface);
-	EffectWithTransition* effectWithTransition17 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 1", section1BisEffect, section1Effect, auxSurface);
-	EffectWithTransition* effectWithTransition18 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 1 bis", section1Effect, intro1Effect, auxSurface);
+	EffectWithTransition* effectWithTransition17 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 1", section1BisEffect, section1Effect2, auxSurface);
+	EffectWithTransition* effectWithTransition18 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 1 bis", section1Effect2, intro1Effect, auxSurface);
 	EffectWithTransition* effectWithTransition19 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Ending", intro1Effect, percussionBeatEffect, auxSurface);
 	
 	effects.insert(effects.begin() + 0, (EffectTemplate*)anacrusaEffect); // 0 Anacrusa
