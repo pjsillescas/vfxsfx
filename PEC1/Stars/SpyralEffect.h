@@ -3,12 +3,7 @@
 #include "EffectTemplate.h"
 
 // this record contains the information for one star
-struct TSpyralStar
-{
-	float x, y;             // position of the star
-	float theta;	// angle
-	float radius;
-};
+struct TSpyralStar;
 
 class SpyralEffect : public EffectTemplate
 {
@@ -16,6 +11,7 @@ public:
 	// Stars
 	// change this to adjust the number of stars
 	const int MAXSTARS = 256;
+	const float STAR_VELOCITY = 80.f;
 
 private:
 	// this is a pointer to an array of stars

@@ -3,7 +3,13 @@
 #include <stdlib.h>
 #include <math.h>
 
-const float STAR_VELOCITY = 80.f;
+struct TSpyralStar
+{
+	float x, y;		// position of the star
+	float theta;	// angle
+	float radius;
+	Uint32 color;
+};
 
 
 SpyralEffect::SpyralEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
@@ -19,41 +25,53 @@ void SpyralEffect::init() {
 	int k = 0;
 	int i;
 
+	Uint32 minColor = 0xFF0000FF;
+	Uint32 maxColor = 0xFFFF0000;
+
 	float step = 8.f / MAXSTARS;
 	for (i = 0; i < MAXSTARS / 8; i++)
 	{
+		Uint32 currentColor = minColor + (maxColor - minColor) * i;
 		float radius = MIN_RADIUS + (MAX_RADIUS - MIN_RADIUS) * ((float)i * step);
 
 		stars[k].radius = radius;
 		stars[k].theta = 0;
+		stars[k].color = currentColor;
 		k++;
 		
 		stars[k].radius = radius;
 		stars[k].theta = M_PI / 4.f;
+		stars[k].color = currentColor;
 		k++;
 
 		stars[k].radius = radius;
 		stars[k].theta = M_PI / 2.f;
+		stars[k].color = currentColor;
 		k++;
 
 		stars[k].radius = radius;
 		stars[k].theta = 3.f* M_PI / 4.f;
+		stars[k].color = currentColor;
 		k++;
 
 		stars[k].radius = radius;
 		stars[k].theta = M_PI;
+		stars[k].color = currentColor;
 		k++;
 
 		stars[k].radius = radius;
 		stars[k].theta = 5.f * M_PI / 4.f;
+		stars[k].color = currentColor;
 		k++;
 
 		stars[k].radius = radius;
 		stars[k].theta = 3.f * M_PI / 2.f;
+		stars[k].color = currentColor;
 		k++;
 		
 		stars[k].radius = radius;
 		stars[k].theta = 7.f * M_PI / 4.f;
+		stars[k].color = currentColor;
 		k++;
 	}
 
@@ -98,7 +116,8 @@ void SpyralEffect::render() {
 	for (int i = 0; i < MAXSTARS; i++)
 	{
 		// draw this star, with a colour depending on the plane
-		Uint32 color = 0xffffffff;
+		//Uint32 color = 0xffffffff;
+		Uint32 color = stars[i].color;
 		putPixel(surface, (int)stars[i].x, (int)stars[i].y, color);
 		putPixel(surface, (int)stars[i].x + 1, (int)stars[i].y, color);
 		putPixel(surface, (int)stars[i].x, (int)stars[i].y + 1, color);
