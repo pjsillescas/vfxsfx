@@ -325,7 +325,7 @@ bool initSDL(int screenWidth, int screenHeight) {
 	IMG_Init(IMG_INIT_PNG);
 
 	//Create window
-	window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("PEC 1 - Demoscene Gracia", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN);
 
 	if (window == NULL)
 	{
