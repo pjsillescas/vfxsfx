@@ -31,7 +31,7 @@ void SpyralEffect::init() {
 	float step = 8.f / MAXSTARS;
 	for (i = 0; i < MAXSTARS / 8; i++)
 	{
-		Uint32 currentColor = minColor + (maxColor - minColor) * i;
+		Uint32 currentColor = minColor + (maxColor - minColor) * ((float)i * 8.f / MAXSTARS);
 		float radius = MIN_RADIUS + (MAX_RADIUS - MIN_RADIUS) * ((float)i * step);
 
 		stars[k].radius = radius;
