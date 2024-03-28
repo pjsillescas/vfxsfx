@@ -25,10 +25,11 @@ private:
 	int tiling;
 	float offset;
 	float speed;
+	bool applyNoise;
 
 public:
 
-	WhirlpoolEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, int tiling, float offset, float speed);
+	WhirlpoolEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, int tiling, float offset, float speed, bool applyNoise);
 	~WhirlpoolEffect();
 
 	virtual void init() override;
@@ -40,5 +41,6 @@ private:
 	void sharpen(unsigned char* src, unsigned char* dst);
 
 	Uint8* getImagePosition(int i, int j, float tiling, float offset);
+	int noise(int k, int n);
 };
 

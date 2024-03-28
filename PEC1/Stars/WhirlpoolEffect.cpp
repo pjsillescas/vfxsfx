@@ -4,13 +4,14 @@
 #include <iostream>
 #include "Clock.h"
 
-WhirlpoolEffect::WhirlpoolEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, int tiling, float offset, float speed) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
+WhirlpoolEffect::WhirlpoolEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, int tiling, float offset, float speed, bool applyNoise) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	image = loadImage("gradient.png");
 
 	this->tiling = tiling;
 	this->offset = offset;
 	this->speed = speed;
+	this->applyNoise = applyNoise;
 }
 
 void WhirlpoolEffect::init() {
@@ -22,6 +23,29 @@ void WhirlpoolEffect::update(float deltaTime) {
 	if (offset > screenWidth)
 	{
 		offset -= screenWidth;
+	}
+}
+
+int WhirlpoolEffect::noise(int k, int n)
+{
+	if (!applyNoise)
+	{
+		return k;
+	}
+
+	int r = rand() % 3;
+	switch (r)
+	{
+	case 0:
+		return (k == 0) ? n - 1 : k - 1;
+		break;
+	case 1:
+		return k;
+		break;
+	case 2:
+	default:
+		return (k == n - 1) ? 0 : k + 1;
+		break;
 	}
 }
 
@@ -41,7 +65,9 @@ void WhirlpoolEffect::render()
 
 		for (int i = 0; i < screenWidth; i++)
 		{
-			src = getImagePosition(i,j, tiling, offset);
+			int iStar = noise(i, screenWidth);
+			int jStar = noise(j, screenHeight);
+			src = getImagePosition(iStar,jStar, tiling, offset);
 			*(Uint32*)dst = *(Uint32*)src;
 
 			dst += bpp;

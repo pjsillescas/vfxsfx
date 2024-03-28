@@ -52,7 +52,7 @@ Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int scr
 	distortionPec1Effect = new DistortionPec1Effect(surface, screenHeight, screenWidth, timeout, "Distortion Pec1", "orbit.jpg");
 	spyralEffect = new SpyralEffect(surface, screenHeight, screenWidth, timeout, "Galaxy");
 	barsEffect = new BarsEffect(surface, screenHeight, screenWidth, timeout, "Bars", "castle.jpg");
-	whirlpoolEffect = new WhirlpoolEffect(surface, screenHeight, screenWidth, timeout, "Whirlpool", 5, 0, whirlpoolSpeed);
+	whirlpoolEffect = new WhirlpoolEffect(surface, screenHeight, screenWidth, timeout, "Whirlpool", 5, 0, whirlpoolSpeed, false);
 	blackScreenEffect = new BlackScreenEffect(surface, screenHeight, screenWidth, timeout, "Black Screen");
 	flashEffect = new FlashEffect(surface, screenHeight, screenWidth, timeout, "Black Screen", "galaxy.png",FLASH_MAX_TIME);
 	texturizationEffect = new TexturizationEffect(surface, screenHeight, screenWidth, 200, "Texturization", "textureflower2.jpg", texSpeedX, texSpeedY);
