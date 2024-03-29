@@ -35,9 +35,16 @@
 #include "BarsEffect.h"
 #include "WhirlpoolEffect.h"
 #include "TexturizationEffect.h"
+#include "Pec1FlashEffect.h"
 
 const int FONT_SIZE = 12;
 const int TIME_TO_DISPLAY_EFFECT = 10;
+
+const bool SHOW_FPS = false;
+const bool SHOW_TITLE = false;
+const bool SHOW_TIME = false;
+const bool SHOW_SECTION = false;
+
 
 //The window we'll be rendering to
 SDL_Window* window = NULL;
@@ -131,12 +138,13 @@ int main(int argc, char* args[])
 			new TerraEffect(screenSurface, screenHeight, screenWidth, 10, "Terra"),
 			(new SyncEffect(screenSurface, screenHeight, screenWidth, 143, "Synch", uocFileName))->setIsLateInit(true),
 			*/
-			(new Pec1AudioEffect(screenSurface, screenHeight, screenWidth, 215, "PEC1 Audio", uocFileName))->setIsLateInit(true),
+			(new Pec1AudioEffect(screenSurface, screenHeight, screenWidth, 215, "PEC1 Audio", uocFileName, SHOW_SECTION))->setIsLateInit(true),
 			//new FlockingEffect(screenSurface, screenHeight, screenWidth, 215, "Flocking")
 			//new SpyralEffect(screenSurface,screenHeight,screenWidth,200, "Galaxy")
 			//new BarsEffect(screenSurface,screenHeight,screenWidth,200, "Bars"),
 			//new WhirlpoolEffect(screenSurface,screenHeight,screenWidth,200, "Whirlpool", 3, 0, 5.f),
 			//new TexturizationEffect(screenSurface,screenHeight,screenWidth,200, "Texturization", "textureflower2.jpg", speedX, speedY),
+			//new Pec1FlashEffect(screenSurface,screenHeight,screenWidth,200, "Pec1 Flash", "uoc.png", 300),
 		};
 
 		//Main loop flag
@@ -266,6 +274,11 @@ static void drawText(SDL_Surface* screen, char* string, int size, int x, int y, 
 
 void renderFPS()
 {
+	if (!SHOW_FPS)
+	{
+		return;
+	}
+
 	SDL_Color fg = { 0x00,0x00,0xff }, bg = { 0xff,0xff,0xff };      // Blue text on white background
 	char fpsText[100];
 
@@ -275,6 +288,11 @@ void renderFPS()
 
 void renderTitle(const char* title)
 {
+	if (!SHOW_TITLE)
+	{
+		return;
+	}
+
 	SDL_Color fg = { 0x00,0x00,0xff }, bg = { 0xff,0xff,0xff };      // Blue text on white background
 	char titleText[100];
 
@@ -284,6 +302,11 @@ void renderTitle(const char* title)
 
 void renderTime(int time)
 {
+	if (!SHOW_TIME)
+	{
+		return;
+	}
+
 	if (time > 0)
 	{
 		SDL_Color fg = { 0x00,0x00,0xff }, bg = { 0xff,0xff,0xff };      // Blue text on white background

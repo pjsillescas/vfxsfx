@@ -155,6 +155,7 @@
     <ClCompile Include="ParticleEffect.cpp" />
     <ClCompile Include="ParticleEffectOptimized.cpp" />
     <ClCompile Include="Pec1AudioEffect.cpp" />
+    <ClCompile Include="Pec1FlashEffect.cpp" />
     <ClCompile Include="PlasmaEffect.cpp" />
     <ClCompile Include="PlasmaEffectChallenge3.cpp" />
     <ClCompile Include="PlasmaPec1Effect.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="ParticleEffect.h" />
     <ClInclude Include="ParticleEffectOptimized.h" />
     <ClInclude Include="Pec1AudioEffect.h" />
+    <ClInclude Include="Pec1FlashEffect.h" />
     <ClInclude Include="PlasmaEffect.h" />
     <ClInclude Include="PlasmaEffectChallenge3.h" />
     <ClInclude Include="PlasmaPec1Effect.h" />

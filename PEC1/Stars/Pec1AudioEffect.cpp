@@ -17,9 +17,10 @@
 #include "BarsEffect.h"
 #include "WhirlpoolEffect.h"
 #include "BlackScreenEffect.h"
-#include "FlashEffect.h"
+#include "Pec1FlashEffect.h"
 #include "EffectWithTransition.h"
 #include "TexturizationEffect.h"
+#include "Pec1FlashEffect.h"
 
 FlockingEffect *flockingEffect = NULL;
 PlasmaPec1Effect* plasmaPec1Effect = NULL;
@@ -29,12 +30,14 @@ SpyralEffect* spyralEffect = NULL;
 BarsEffect* barsEffect = NULL;
 WhirlpoolEffect* whirlpoolEffect = NULL;
 BlackScreenEffect* blackScreenEffect = NULL;
-FlashEffect* flashEffect = NULL;
+Pec1FlashEffect* flashEffect = NULL;
 TexturizationEffect* texturizationEffect = NULL;
 
-Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
+Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName, bool showSection) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	//float whirlpoolSpeed = 500.f;
+
+	this->showSection = showSection;
 	
 	float whirlpoolSpeed = screenWidth / 2.f * 1000.f / MSEG_BPM;
 
@@ -54,7 +57,7 @@ Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int scr
 	barsEffect = new BarsEffect(surface, screenHeight, screenWidth, timeout, "Bars", "castle.jpg");
 	whirlpoolEffect = new WhirlpoolEffect(surface, screenHeight, screenWidth, timeout, "Whirlpool", 5, 0, whirlpoolSpeed, false);
 	blackScreenEffect = new BlackScreenEffect(surface, screenHeight, screenWidth, timeout, "Black Screen");
-	flashEffect = new FlashEffect(surface, screenHeight, screenWidth, timeout, "Black Screen", "galaxy.png",FLASH_MAX_TIME);
+	flashEffect = new Pec1FlashEffect(surface, screenHeight, screenWidth, timeout, "Black Screen", "galaxy.png",FLASH_MAX_TIME);
 	texturizationEffect = new TexturizationEffect(surface, screenHeight, screenWidth, 200, "Texturization", "textureflower2.jpg", texSpeedX, texSpeedY);
 }
 
@@ -385,9 +388,12 @@ void Pec1AudioEffect::render()
 	*/
 	effects[currentSection]->render();
 
-	const int FONT_SIZE = 12;
-	SDL_Color fg = { 0x00,0x00,0xff }, bg = { 0xff,0xff,0xff };      // Blue text on white background
-	TextUtils::drawText(surface, sections[currentSection].name, FONT_SIZE, 10 * FONT_SIZE, 0, fg, bg);
+	if (showSection)
+	{
+		const int FONT_SIZE = 12;
+		SDL_Color fg = { 0x00,0x00,0xff }, bg = { 0xff,0xff,0xff };      // Blue text on white background
+		TextUtils::drawText(surface, sections[currentSection].name, FONT_SIZE, 10 * FONT_SIZE, 0, fg, bg);
+	}
 }
 
 Pec1AudioEffect::~Pec1AudioEffect()

@@ -19,6 +19,7 @@ private:
 	const int FLASH_MAX_TIME = MSEG_BPM; // 300;
 	const float FADEOUT_TIME = 2.f * MSEG_BPM * 4.f;
 
+	bool showSection;
 	int flashtime;
 	int MusicCurrentTime;
 	int MusicCurrentTimeBeat;
@@ -55,7 +56,7 @@ private:
 
 public:
 
-	Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName);
+	Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName, bool showSection);
 	~Pec1AudioEffect();
 
 	virtual void init() override;
