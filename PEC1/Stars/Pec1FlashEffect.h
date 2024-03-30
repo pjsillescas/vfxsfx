@@ -8,8 +8,6 @@ private:
 	const int NUM_FLASH_IMAGES = 15;
 
 	Uint32 Backgroundcolor;
-	//SDL_Surface* flashTexture;
-	SDL_Surface* blackSurface;
 	SDL_Surface** textures;
 
 	int currentImage;

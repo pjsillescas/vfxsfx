@@ -35,8 +35,6 @@ TexturizationEffect* texturizationEffect = NULL;
 
 Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName, bool showSection) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
-	//float whirlpoolSpeed = 500.f;
-
 	this->showSection = showSection;
 	
 	float whirlpoolSpeed = screenWidth / 2.f * 1000.f / MSEG_BPM;
@@ -44,21 +42,18 @@ Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int scr
 	float texSpeedX = 8.f / BPM_MUSIC;
 	float texSpeedY = 4.f / BPM_MUSIC;
 
-	//float texSpeedX = 1.f / 16.f;
-	//float texSpeedY = 1.f / 32.f;
-
 	// load the texture
-	flashTexture = loadImage(fileName);
+	//flashTexture = loadImage(fileName);
 	flockingEffect = new FlockingEffect(surface, screenHeight, screenWidth, timeout, "Flocking");
 	plasmaPec1Effect = new PlasmaPec1Effect(surface, screenHeight, screenWidth, timeout, "Plasma Pec1");
 	fractalPec1Effect = new FractalPec1Effect(surface, screenHeight, screenWidth, timeout, "Fractal Pec1");
-	distortionPec1Effect = new DistortionPec1Effect(surface, screenHeight, screenWidth, timeout, "Distortion Pec1", "orbit.jpg");
+	distortionPec1Effect = new DistortionPec1Effect(surface, screenHeight, screenWidth, timeout, "Distortion Pec1", "pec1-assets/orbit.jpg");
 	spyralEffect = new SpyralEffect(surface, screenHeight, screenWidth, timeout, "Galaxy");
-	barsEffect = new BarsEffect(surface, screenHeight, screenWidth, timeout, "Bars", "castle.jpg");
+	barsEffect = new BarsEffect(surface, screenHeight, screenWidth, timeout, "Bars", "pec1-assets/castle.jpg");
 	whirlpoolEffect = new WhirlpoolEffect(surface, screenHeight, screenWidth, timeout, "Whirlpool", 5, 0, whirlpoolSpeed, false);
 	blackScreenEffect = new BlackScreenEffect(surface, screenHeight, screenWidth, timeout, "Black Screen");
-	flashEffect = new Pec1FlashEffect(surface, screenHeight, screenWidth, timeout, "Black Screen", "galaxy.png",FLASH_MAX_TIME);
-	texturizationEffect = new TexturizationEffect(surface, screenHeight, screenWidth, 200, "Texturization", "textureflower2.jpg", texSpeedX, texSpeedY);
+	flashEffect = new Pec1FlashEffect(surface, screenHeight, screenWidth, timeout, "Black Screen", "pec1-assets/galaxy.png",FLASH_MAX_TIME);
+	texturizationEffect = new TexturizationEffect(surface, screenHeight, screenWidth, 200, "Texturization", "pec1-assets/textureflower2.jpg", texSpeedX, texSpeedY);
 }
 
 Uint32 getRandomColor()
@@ -77,25 +72,6 @@ SDL_Surface* blackSurface;
 
 void Pec1AudioEffect::init()
 {
-	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
-	Mix_Init(MIX_INIT_OGG);
-	mySong = Mix_LoadMUS("road-to-nowhere_long.mp3");
-	if (!mySong)
-	{
-		std::cout << "Error loading Music: " << Mix_GetError() << std::endl;
-		exit(1);
-	}
-	Mix_PlayMusic(mySong, 0);
-	flashtime = 0;
-	MusicCurrentTime = 0;
-	MusicCurrentTimeBeat = 0;
-	MusicCurrentBeat = 0;
-	MusicPreviousBeat = -1;
-	Backgroundcolor = getRandomColor();
-
-	blackSurface = SDL_CreateRGBSurfaceWithFormat(0,screenWidth,screenHeight,32, SDL_PIXELFORMAT_RGBA32);
-	SDL_FillRect(blackSurface, NULL, SDL_MapRGB(blackSurface->format, 0, 0, 0));
-
 	numBeats = 0;
 	sections = new Section[NUM_SECTIONS]
 	{
@@ -133,28 +109,6 @@ void Pec1AudioEffect::init()
 	blackScreenEffect->init();
 	flashEffect->init();
 	texturizationEffect->init();
-	/*
-	effects.insert(effects.begin() + 0, (EffectTemplate*) blackScreenEffect); // 0 Anacrusa
-	effects.insert(effects.begin() + 1, (EffectTemplate*)plasmaPec1Effect); // 1 Intro 1
-	effects.insert(effects.begin() + 2, (EffectTemplate*)flashEffect); // 2 Intro 2
-	effects.insert(effects.begin() + 3, (EffectTemplate*) blackScreenEffect); // 3 Percussion beat
-	effects.insert(effects.begin() + 4, (EffectTemplate*)flockingEffect); // 4 Section 1
-	effects.insert(effects.begin() + 5, (EffectTemplate*)fractalPec1Effect); // 5 Section 1 bis
-	effects.insert(effects.begin() + 6, (EffectTemplate*) barsEffect); //6 Section 2
-	effects.insert(effects.begin() + 7, (EffectTemplate*) distortionPec1Effect); // 7 Section 3
-	effects.insert(effects.begin() + 8, (EffectTemplate*) flashEffect); // 8 Section 3 bis
-	effects.insert(effects.begin() + 9, (EffectTemplate*)blackScreenEffect); // 9 Percussion beat
-	effects.insert(effects.begin() + 10, (EffectTemplate*) flockingEffect); // 10 Section 1
-	effects.insert(effects.begin() + 11, (EffectTemplate*) fractalPec1Effect); // 11 Section 1 bis
-	effects.insert(effects.begin() + 12, (EffectTemplate*) spyralEffect); // 12 Section 4
-	effects.insert(effects.begin() + 13, (EffectTemplate*) whirlpoolEffect); // 13 Section 4 bis
-	effects.insert(effects.begin() + 14, (EffectTemplate*)blackScreenEffect); // 14 Percussion beat
-	effects.insert(effects.begin() + 15, (EffectTemplate*) flockingEffect); // 15 Section 1
-	effects.insert(effects.begin() + 16, (EffectTemplate*) fractalPec1Effect); // 16 Section 1 bis
-	effects.insert(effects.begin() + 17, (EffectTemplate*) flockingEffect); // 17 Section 1
-	effects.insert(effects.begin() + 18, (EffectTemplate*) plasmaPec1Effect); // 18 Section 1 bis
-	effects.insert(effects.begin() + 19, (EffectTemplate*) blackScreenEffect); // 19 Ending
-	*/
 
 	EffectTemplate* anacrusaEffect = blackScreenEffect;
 	EffectTemplate* intro1Effect = plasmaPec1Effect;
@@ -189,7 +143,7 @@ void Pec1AudioEffect::init()
 	EffectWithTransition* effectWithTransition17 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 1", section1BisEffect, section1Effect2, auxSurface);
 	EffectWithTransition* effectWithTransition18 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Section 1 bis", section1Effect2, intro1Effect, auxSurface);
 	EffectWithTransition* effectWithTransition19 = new EffectWithTransition(surface, screenHeight, screenWidth, timeout, "Transition to Ending", intro1Effect, percussionBeatEffect, auxSurface);
-	
+
 	effects.insert(effects.begin() + 0, (EffectTemplate*)anacrusaEffect); // 0 Anacrusa
 	effects.insert(effects.begin() + 1, (EffectTemplate*)effectWithTransition1); // 1 Intro 1
 	effects.insert(effects.begin() + 2, (EffectTemplate*)effectWithTransition2); // 2 Intro 2
@@ -210,6 +164,26 @@ void Pec1AudioEffect::init()
 	effects.insert(effects.begin() + 17, (EffectTemplate*)effectWithTransition17); // 17 Section 1
 	effects.insert(effects.begin() + 18, (EffectTemplate*)effectWithTransition18); // 18 Section 1 bis
 	effects.insert(effects.begin() + 19, (EffectTemplate*)effectWithTransition19); // 19 Ending
+	
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
+	Mix_Init(MIX_INIT_OGG);
+	mySong = Mix_LoadMUS("pec1-assets/road-to-nowhere_long.mp3");
+	if (!mySong)
+	{
+		std::cout << "Error loading Music: " << Mix_GetError() << std::endl;
+		exit(1);
+	}
+	Mix_PlayMusic(mySong, 0);
+	flashtime = 0;
+	MusicCurrentTime = 0;
+	MusicCurrentTimeBeat = 0;
+	MusicCurrentBeat = 0;
+	MusicPreviousBeat = -1;
+	Backgroundcolor = getRandomColor();
+
+	blackSurface = SDL_CreateRGBSurfaceWithFormat(0,screenWidth,screenHeight,32, SDL_PIXELFORMAT_RGBA32);
+	SDL_FillRect(blackSurface, NULL, SDL_MapRGB(blackSurface->format, 0, 0, 0));
+
 
 }
 
@@ -235,65 +209,6 @@ void Pec1AudioEffect::update(float deltaTime)
 		flashtime = 0;
 	}
 	
-	/*
-	switch (currentSection)
-	{
-	case 0: // Anacrusa
-	case 3: // Percussion beat
-	case 9: // Percussion beat
-	case 14: // Percussion beat
-		blackScreenEffect->update(deltaTime);
-		break;
-	case 1: // Intro 1
-		plasmaPec1Effect->update(deltaTime);
-		break;
-	case 2: //Intro 2
-		flashEffect->update(deltaTime);
-		break;
-	case 4: // Section 1
-		flockingEffect->update(deltaTime);
-		break;
-	case 5: // Section 1 bis
-		fractalPec1Effect->update(deltaTime);
-		break;
-	case 6: //Section 2
-		barsEffect->update(deltaTime);
-		break;
-	case 7: // Section 3
-		distortionPec1Effect->update(deltaTime);
-		break;
-	case 8: // Section 3 bis
-		flashEffect->update(deltaTime);
-		break;
-	case 10: // Section 1
-		flockingEffect->update(deltaTime);
-		break;
-	case 11: // Section 1 bis
-		fractalPec1Effect->update(deltaTime);
-		break;
-	case 12: // Section 4
-		spyralEffect->update(deltaTime);
-		break;
-	case 13: // Section 4 bis
-		whirlpoolEffect->update(deltaTime);
-		break;
-	case 15: // Section 1
-		flockingEffect->update(deltaTime);
-		break;
-	case 16: // Section 1 bis
-		fractalPec1Effect->update(deltaTime);
-		break;
-	case 17: // Section 1
-		flockingEffect->update(deltaTime);
-		break;
-	case 18: // Section 1 bis
-		plasmaPec1Effect->update(deltaTime);
-		break;
-	case 19: // Ending
-		blackScreenEffect->update(deltaTime);
-		break;
-	}
-	*/
 	effects[currentSection]->update(deltaTime);
 
 	if (!Mix_PlayingMusic())
@@ -327,65 +242,6 @@ void Pec1AudioEffect::render()
 	std::cout << std::endl;
 	*/
 
-	/*
-	switch (currentSection)
-	{
-	case 0: // Anacrusa
-	case 3: // Percussion beat
-	case 9: // Percussion beat
-	case 14: // Percussion beat
-		blackScreenEffect->render();
-		break;
-	case 1: // Intro 1
-		plasmaPec1Effect->render();
-		break;
-	case 2: //Intro 2
-		flashEffect->render();
-		break;
-	case 4: // Section 1
-		flockingEffect->render();
-		break;
-	case 5: // Section 1 bis
-		fractalPec1Effect->render();
-		break;
-	case 6: //Section 2
-		barsEffect->render();
-		break;
-	case 7: // Section 3
-		distortionPec1Effect->render();
-		break;
-	case 8: // Section 3 bis
-		flashEffect->render();
-		break;
-	case 10: // Section 1
-		flockingEffect->render();
-		break;
-	case 11: // Section 1 bis
-		fractalPec1Effect->render();
-		break;
-	case 12: // Section 4
-		spyralEffect->render();
-		break;
-	case 13: // Section 4 bis
-		whirlpoolEffect->render();
-		break;
-	case 15: // Section 1
-		flockingEffect->render();
-		break;
-	case 16: // Section 1 bis
-		fractalPec1Effect->render();
-		break;
-	case 17: // Section 1
-		flockingEffect->render();
-		break;
-	case 18: // Section 1 bis
-		plasmaPec1Effect->render();
-		break;
-	case 19: // Ending
-		blackScreenEffect->render();
-		break;
-	}
-	*/
 	effects[currentSection]->render();
 
 	if (showSection)

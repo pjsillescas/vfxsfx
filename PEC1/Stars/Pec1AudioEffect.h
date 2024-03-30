@@ -11,7 +11,7 @@ class Pec1AudioEffect : public EffectTemplate
 {
 private:
 	Uint32 Backgroundcolor;
-	SDL_Surface* flashTexture;
+	//SDL_Surface* flashTexture;
 
 	Mix_Music* mySong;
 	const float BPM_MUSIC = 140.f;

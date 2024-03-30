@@ -6,7 +6,7 @@
 
 WhirlpoolEffect::WhirlpoolEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, int tiling, float offset, float speed, bool applyNoise) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
-	image = loadImage("gradient.png");
+	image = loadImage("pec1-assets/gradient.png");
 
 	this->tiling = tiling;
 	this->offset = offset;
