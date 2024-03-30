@@ -36,7 +36,8 @@ void PlasmaPec1Effect::init()
 	}
 }
 
-void PlasmaPec1Effect::buildPalette() {
+void PlasmaPec1Effect::buildPalette()
+{
 	int currentTime = Clock::getInstance().getCurrentTime();
 	for (int i = 0; i < MAX_PALETTE; i++)
 	{
@@ -45,7 +46,6 @@ void PlasmaPec1Effect::buildPalette() {
 		palette[i].B = (unsigned char)(128 - 127 * cos(i * M_PI / 128 + (double)currentTime / 810));
 	}
 }
-
 
 void PlasmaPec1Effect::update(float deltaTime)
 {
@@ -56,12 +56,6 @@ void PlasmaPec1Effect::update(float deltaTime)
 	buildPalette();
 
 	// move plasma with more sine functions :)
-	/*
-	int Windowx1 = (screenWidth / 2) + (int)((((double)screenWidth / 2) - 1) * cos((double)currentTime / 970));
-	int Windowx2 = (screenWidth / 2) + (int)((((double)screenWidth / 2) - 1) * sin((double)-currentTime / 1140));
-	int Windowy1 = (screenHeight / 2) + (int)((((double)screenHeight / 2) - 1) * sin((double)currentTime / 1230));
-	int Windowy2 = (screenHeight / 2) + (int)((((double)screenHeight / 2) - 1) * cos((double)-currentTime / 750));
-	*/
 	float omega1 = 1.f / (2.f*140.f);
 	float omega2 = 1.f / (4.f*140.f);
 	float omega3 = 1.f / (6.f*140.f);

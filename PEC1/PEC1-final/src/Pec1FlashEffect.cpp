@@ -1,13 +1,13 @@
 #include "Pec1FlashEffect.h"
 
-
-#include <SDL.h>
-#include <SDL_image.h>
-#include <iostream>
-#include <cmath>
-
 Pec1FlashEffect::Pec1FlashEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName, float flashMaxTime) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
+	currentTime = 0;
+	currentImage = 0;
+	previousTime = 0;
+	flashtime = 0;
+	Backgroundcolor = getRandomColor();
+
 	this->flashMaxTime = flashMaxTime;
 
 	textures = new SDL_Surface * [NUM_FLASH_IMAGES];
@@ -33,7 +33,6 @@ void Pec1FlashEffect::init()
 	Backgroundcolor = getRandomColor();
 }
 
-int count = 0;
 void Pec1FlashEffect::update(float deltaTime)
 {
 	currentTime += (int)deltaTime;
@@ -41,8 +40,6 @@ void Pec1FlashEffect::update(float deltaTime)
 
 	if (currentTime >= flashMaxTime)
 	{
-		//count++;
-		//std::cout << count << std::endl;
 		currentImage = (currentImage + 1) % NUM_FLASH_IMAGES;
 		currentTime = 0;
 		flashtime = flashMaxTime;
@@ -79,7 +76,6 @@ void Pec1FlashEffect::render()
 
 Pec1FlashEffect::~Pec1FlashEffect()
 {
-
 	for (int i = 0; i < NUM_FLASH_IMAGES; i++)
 	{
 		SDL_FreeSurface(textures[i]);
@@ -94,4 +90,3 @@ void Pec1FlashEffect::renderFlash(SDL_Surface* surf, Uint8 alpha)
 	SDL_BlitSurface(surf, NULL, surface, NULL);
 	SDL_SetSurfaceAlphaMod(surf, 255);
 }
-

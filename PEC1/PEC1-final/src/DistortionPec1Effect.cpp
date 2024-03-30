@@ -7,29 +7,28 @@
 #include "Clock.h"
 
 
-DistortionPec1Effect::DistortionPec1Effect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
-{
-	// load the background image
-	image = loadImage("uoc.png");
-}
-
 DistortionPec1Effect::DistortionPec1Effect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	// load the background image
 	image = loadImage(fileName);
-}
-
-void DistortionPec1Effect::init() {
-
+	
 	// two buffers
 	dispX = new char[screenWidth * screenHeight * 4];
 	dispY = new char[screenWidth * screenHeight * 4];
-	// create two distortion functions
-	precalculate();
-
+	windowx1 = 0;
+	windowx2 = 0;
+	windowy1 = 0;
+	windowy2 = 0;
 }
 
-void DistortionPec1Effect::update(float deltaTime) {
+void DistortionPec1Effect::init()
+{
+	// create two distortion functions
+	precalculate();
+}
+
+void DistortionPec1Effect::update(float deltaTime)
+{
 	int currentTime = Clock::getInstance().getCurrentTime();
 	// move distortion buffer
 	windowx1 = (screenWidth / 2) + (int)(((screenWidth / 2) - 1) * cos((double)currentTime / 2050));
@@ -38,14 +37,17 @@ void DistortionPec1Effect::update(float deltaTime) {
 	windowy2 = (screenHeight / 2) + (int)(((screenHeight / 2) - 1) * cos((double)-currentTime / 2240));
 }
 
-void DistortionPec1Effect::render() {
+void DistortionPec1Effect::render()
+{
 	int currentTime = Clock::getInstance().getCurrentTime();
 
 	// draw the effect showing without filter and with filter each 2 seconds
-	if ((currentTime & 2048) < 1024) {
+	if ((currentTime & 2048) < 1024)
+	{
 		Distort();
 	}
-	else {
+	else
+	{
 		Distort_Bili();
 	}
 }
@@ -77,15 +79,6 @@ void DistortionPec1Effect::precalculate()
 			dispX[dst] = (signed char)(8 * (2 * sin(x / 20) + sin(x * y / 2000)));
 			dispY[dst] = (signed char)(8 * (cos(x / 31) + cos(x * y / 1783)));
 
-			// Uncomment this to take another beautiful distorsion
-			/*
-			dispX[dst] = (signed char)(8 * (2 * (sin(x / 20) + sin(x*y / 2000)
-				+ sin((x + y) / 100) + sin((y - x) / 70) + sin((x + 4 * y) / 70)
-				+ 2 * sin(hypot(256 - x, (150 - y / 8)) / 40))));
-			dispY[dst] = (signed char)(8 * ((cos(x / 31) + cos(x*y / 1783) +
-				+2 * cos((x + y) / 137) + cos((y - x) / 55) + 2 * cos((x + 8 * y) / 57)
-				+ cos(hypot(384 - x, (274 - y / 9)) / 51))));
-			*/
 			dst++;
 		}
 	}

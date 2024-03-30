@@ -2,7 +2,7 @@
 
 ColumnTransitionEffect::ColumnTransitionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, EffectTemplate* src, EffectTemplate* dst) : TransitionEffect(surface, screenHeight, screenWidth, src, dst)
 {
-	;
+	deltaLines = 0;
 }
 
 ColumnTransitionEffect::~ColumnTransitionEffect()

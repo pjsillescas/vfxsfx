@@ -56,7 +56,7 @@ void TexturizationEffect::render()
 {
 	int currentTime = Clock::getInstance().getCurrentTime();
 
-	DrawHole(currentTime * speedX, currentTime * speedY);
+	DrawHole((int) ((float)currentTime * speedX), (int)((float) currentTime * speedY));
 }
 
 TexturizationEffect::~TexturizationEffect()

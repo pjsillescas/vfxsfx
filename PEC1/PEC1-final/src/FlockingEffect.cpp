@@ -5,15 +5,7 @@
 
 // https://medium.com/@pramodayajayalath/flocking-algorithm-simulating-collective-behavior-in-nature-inspired-systems-dc6d7fb884cc
 
-//const int MAX_PARTICLES = 150;
-
 const int MAX_PARTICLES = 500;
-
-/*
-const float MAX_SPEED = 2.f;
-const float PERCEPTION_RADIUS = 50.f;
-const float SEPARATION_DISTANCE = 25.f;
-*/
 
 const float MAX_SPEED = 3.f;
 const float PERCEPTION_RADIUS = 50.f;
@@ -35,7 +27,8 @@ float FlockingEffect::getRandomFloat()
 	return 2.f * ((float)rand() / RAND_MAX) - 1.f;
 }
 
-void FlockingEffect::init() {
+void FlockingEffect::init()
+{
 	// randomly generate some stars
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
@@ -44,21 +37,20 @@ void FlockingEffect::init() {
 		particles[i].vx = MAX_SPEED * getRandomFloat();
 		particles[i].vy = MAX_SPEED * getRandomFloat();
 		particles[i].color = 0xFF000000 | ((rand() % 256) << 16) | ((rand() % 256) << 8) | (rand() % 256);
-		//std::cout << i << " (" << particles[i].vx << "," << particles[i].vy << ")" << std::endl;
 	}
 }
 
-void FlockingEffect::wrapEdges(TParticle& particle)
+void FlockingEffect::wrapEdges(TParticle& particle) const
 {
 	// Check and update the entity's position to wrap around the screen edges
 	if (particle.x < 0)
 	{
-		particle.x = screenWidth - 1;
+		particle.x = (float) (screenWidth - 1);
 	}
 	
 	if (particle.y < 0)
 	{
-		particle.y = screenHeight - 1;
+		particle.y = (float)(screenHeight - 1);
 	}
 
 	if (particle.x >= screenWidth)
@@ -86,18 +78,18 @@ float getMinimum3(float d1, float d2, float d3)
 
 float FlockingEffect::getDy2(float x1, float y1, float x2, float y2)
 {
-	float dy1 = fabs(y1 - y2);
-	float dy2 = fabs(y1 - y2 + screenHeight);
-	float dy3 = fabs(y1 - y2 - screenHeight);
+	float dy1 = fabsf(y1 - y2);
+	float dy2 = fabsf(y1 - y2 + screenHeight);
+	float dy3 = fabsf(y1 - y2 - screenHeight);
 
 	return getMinimum3(dy1, dy2, dy3);
 }
 
 float FlockingEffect::getDx2(float x1, float y1, float x2, float y2)
 {
-	float dx1 = fabs(x1 - x2);
-	float dx2 = fabs(x1 - x2 + screenWidth);
-	float dx3 = fabs(x1 - x2 - screenWidth);
+	float dx1 = fabsf(x1 - x2);
+	float dx2 = fabsf(x1 - x2 + screenWidth);
+	float dx3 = fabsf(x1 - x2 - screenWidth);
 
 	return getMinimum3(dx1, dx2, dx3);
 }
@@ -183,31 +175,8 @@ void FlockingEffect::updateParticle(int i)
 	}
 }
 
-/*
-float phi = 0;
-float deltaPhi = M_PI / 40.f;
-
-void FlockingEffect::updateLeadParticle(int i, float deltaTime) {
-	const float r = (screenHeight / 2.f) * 0.8f;
-	TParticle* leader = &particles[i];
-
-	leader->x = r * cosf(phi) + (float) screenWidth / 2.f;
-	leader->y = r * sinf(phi) + (float) screenHeight / 2.f;
-
-	phi += deltaPhi;
-
-	if (phi > 2 * M_PI)
-	{
-		phi = 0;
-	}
-}
-
-*/
 void FlockingEffect::update(float deltaTime)
 {
-	
-	//updateLeadParticle(0, deltaTime);
-	// update all stars
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
 		updateParticle(i);

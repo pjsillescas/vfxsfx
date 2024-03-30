@@ -2,12 +2,9 @@
 
 
 #include <SDL.h>
-#include <SDL_image.h>
-#include <iostream>
-#include <cmath>
 #include "Clock.h"
 
-TransitionEffect::TransitionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, EffectTemplate* src, EffectTemplate* dst) : EffectTemplate(surface, screenHeight, screenWidth, 0, "trans"/*dst->getTitle()*/)
+TransitionEffect::TransitionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, EffectTemplate* src, EffectTemplate* dst) : EffectTemplate(surface, screenHeight, screenWidth, 0, "trans")
 {
 	this->src = src;
 	this->dst = dst;
@@ -24,17 +21,6 @@ void TransitionEffect::init() {
 
 	startTime = Clock::getInstance().getCurrentTime();
 	currentTime = Clock::getInstance().getCurrentTime();
-	/*
-	if (src)
-	{
-		src->init();
-	}
-
-	if (dst)
-	{
-		dst->init();
-	}
-	*/
 }
 
 void TransitionEffect::update(float deltaTime)

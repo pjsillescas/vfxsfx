@@ -7,19 +7,6 @@
 class WhirlpoolEffect : public EffectTemplate
 {
 private:
-	const int MAX_PALETTE = 256;
-	struct RGBColor { unsigned char R, G, B; };
-	RGBColor* palette;
-
-	// two fire buffers
-	unsigned char* bars1;
-	unsigned char* bars2;
-	// a temporary variable to swap the two previous buffers
-	unsigned char* tmp;
-
-	int minValue;
-	int maxValue;
-
 	SDL_Surface* image;
 
 	int tiling;
@@ -29,7 +16,7 @@ private:
 
 public:
 
-	WhirlpoolEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, int tiling, float offset, float speed, bool applyNoise);
+	WhirlpoolEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* texture, int tiling, float offset, float speed, bool applyNoise);
 	~WhirlpoolEffect();
 
 	virtual void init() override;
@@ -37,10 +24,7 @@ public:
 	virtual void render() override;
 
 private:
-	void seed(unsigned char* dst);
-	void sharpen(unsigned char* src, unsigned char* dst);
-
 	Uint8* getImagePosition(int i, int j, float tiling, float offset);
-	int noise(int k, int n);
+	int noise(int k, int n) const;
 };
 

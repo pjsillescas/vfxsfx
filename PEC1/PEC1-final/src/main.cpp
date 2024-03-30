@@ -13,12 +13,6 @@
 #include "ColumnTransitionEffect.h"
 #include "CircleTransitionEffect.h"
 #include "Pec1AudioEffect.h"
-#include "FlockingEffect.h"
-#include "SpyralEffect.h"
-#include "BarsEffect.h"
-#include "WhirlpoolEffect.h"
-#include "TexturizationEffect.h"
-#include "Pec1FlashEffect.h"
 
 const int FONT_SIZE = 12;
 const int TIME_TO_DISPLAY_EFFECT = 10;
@@ -46,7 +40,6 @@ void renderFPS();
 void renderTitle(const char* title);
 void runEffect(EffectTemplate* effect, bool& quit, SDL_Event& e);
 void renderTime(int time);
-TTF_Font* getFont(int size);
 
 int transitionNum = 1;
 
@@ -96,38 +89,8 @@ int main(int argc, char* args[])
 	else
 	{
 		auxSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
-		//float speedX = 1.f / 16.f;
-		//float speedY = 1.f / 32.f;
 		std::vector<EffectTemplate*> effects{
-			//new VortexEffect(screenSurface, screenHeight, screenWidth, 100, "Vortex"),
-			//new FlowEffect(screenSurface, screenHeight, screenWidth, 100, "Flow"),
-			/*
-			new StarsEffect(screenSurface, screenHeight, screenWidth, 10, "Stars"),
-			new StarsEffectChallenge2(screenSurface, screenHeight, screenWidth, 10, "Stars Reto 2"),
-
-			new PlasmaEffect(screenSurface, screenHeight, screenWidth, 10, "Plasma"),
-			new PlasmaEffectChallenge3(screenSurface, screenHeight, screenWidth, 10, "Plasma Reto 3"),
-			new FireEffect(screenSurface, screenHeight, screenWidth, 10, "Fire"),
-			new DistortionEffect(screenSurface, screenHeight, screenWidth, 10, "Distortion", uocFileName),
-			new BumpmapEffect(screenSurface, screenHeight, screenWidth, 10, "Bumpmap", wallFileName, bumpFileName),
-			new FractalEffect(screenSurface, screenHeight, screenWidth, 10, "Fractal"),
-			new TunnelEffect(screenSurface, screenHeight, screenWidth, 10, "Tunnel"),
-			new RotozoomEffect(screenSurface, screenHeight, screenWidth, 10, "Rotozoom"),
-			(new ParticleEffect(screenSurface, screenHeight, screenWidth, 10, "Particles"))->setIsLateInit(true),
-
-			//(new ParticleEffectOptimized(screenSurface, screenHeight, screenWidth, 10))->setIsLateInit(true),
-
-			new C3DEffect(screenSurface, screenHeight, screenWidth, 10, "C3D"),
-			new TerraEffect(screenSurface, screenHeight, screenWidth, 10, "Terra"),
-			(new SyncEffect(screenSurface, screenHeight, screenWidth, 143, "Synch", uocFileName))->setIsLateInit(true),
-			*/
 			(new Pec1AudioEffect(screenSurface, screenHeight, screenWidth, 215, "PEC1 Audio", uocFileName, SHOW_SECTION))->setIsLateInit(true),
-			//new FlockingEffect(screenSurface, screenHeight, screenWidth, 215, "Flocking")
-			//new SpyralEffect(screenSurface,screenHeight,screenWidth,200, "Galaxy")
-			//new BarsEffect(screenSurface,screenHeight,screenWidth,200, "Bars"),
-			//new WhirlpoolEffect(screenSurface,screenHeight,screenWidth,200, "Whirlpool", 3, 0, 5.f),
-			//new TexturizationEffect(screenSurface,screenHeight,screenWidth,200, "Texturization", "textureflower2.jpg", speedX, speedY),
-			//new Pec1FlashEffect(screenSurface,screenHeight,screenWidth,200, "Pec1 Flash", "uoc.png", 300),
 		};
 
 		//Main loop flag
@@ -223,7 +186,7 @@ void runEffect(EffectTemplate* effect, bool& quit, SDL_Event&e)
 		effect->update((float)Clock::getInstance().getDeltaTime());
 
 		//Render
-		render(effect);
+		effect->render();
 
 		renderFPS();
 		renderTitle(effect->getTitle());
@@ -239,21 +202,6 @@ void runEffect(EffectTemplate* effect, bool& quit, SDL_Event&e)
 		isEnded = effect->isEnded() || timeout > 0 && elapsedTime > timeout;
 	}
 }
-
-/*
-static void drawText(SDL_Surface* screen, char* string, int size, int x, int y, SDL_Color fgC, SDL_Color bgC)
-{
-	// Remember to call TTF_Init(), TTF_Quit(), before/after using this function.
-	TTF_Font* font = getFont(size);
-	TTF_SetFontStyle(font, TTF_STYLE_BOLD);
-	//SDL_Surface* textSurface = TTF_RenderText_Solid(font, string, fgC);     // aliased glyphs
-	SDL_Surface* textSurface = TTF_RenderText_Shaded(font, string, fgC, bgC);   // anti-aliased glyphs
-	SDL_Rect textLocation = { x, y, 0, 0 };
-	SDL_BlitSurface(textSurface, NULL, screen, &textLocation);
-	SDL_FreeSurface(textSurface);
-	TTF_CloseFont(font);
-}
-*/
 
 void renderFPS()
 {
@@ -299,19 +247,7 @@ void renderTime(int time)
 		TextUtils::drawText(screenSurface, timeText, FONT_SIZE, 0, 5 * FONT_SIZE, fg, bg);
 	}
 }
-/*
-TTF_Font* getFont(int size)
-{
-	// Remember to call TTF_Init(), TTF_Quit(), before/after using this function.
-	TTF_Font* font = TTF_OpenFont("LEMONMILK-Regular.otf", size);
-	if (!font) {
-		std::cout << "[ERROR] TTF_OpenFont() Failed with: " << TTF_GetError() << std::endl;
-		exit(2);
-	}
 
-	return font;
-}
-*/
 bool initSDL(int screenWidth, int screenHeight) {
 
 	//Initialize SDL
@@ -341,13 +277,6 @@ bool initSDL(int screenWidth, int screenHeight) {
 	//Get window surface
 	screenSurface = SDL_GetWindowSurface(window);
 	return true;
-}
-
-void render(EffectTemplate* effect) {
-	//Fill with black
-	//SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0, 0, 0));
-
-	effect->render();
 }
 
 void close() {

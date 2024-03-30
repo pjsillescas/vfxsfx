@@ -5,8 +5,12 @@
 
 SDL_Surface* image;
 
-BarsEffect::BarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
+BarsEffect::BarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName, float speed) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
+	maxValue = -1;
+	minValue = -1;
+
+	this->speed = speed;
 	// two fire buffers
 	bars1 = new unsigned char[screenWidth * screenHeight];
 	bars2 = new unsigned char[screenWidth * screenHeight];
@@ -14,17 +18,19 @@ BarsEffect::BarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth, 
 
 	tmp = NULL;
 
-	image = loadImage((fileName) ? fileName : "uoc.png");
+	image = loadImage(fileName);
 }
 
-void BarsEffect::init() {
+void BarsEffect::init()
+{
 	buildPalette();
 	// clear the buffers
 	memset(bars1, 0, screenWidth * screenHeight);
 	memset(bars2, 0, screenWidth * screenHeight);
 }
 
-void BarsEffect::update(float deltaTime) {
+void BarsEffect::update(float deltaTime)
+{
 	// swap our two fire buffers
 	tmp = bars1;
 	bars1 = bars2;
@@ -36,7 +42,7 @@ void BarsEffect::update(float deltaTime) {
 	sharpen(bars1, bars2);
 }
 
-int clampIndex(int index, int min, int max)
+int BarsEffect::clampIndex(int index, int min, int max)
 {
 	if (index < min)
 	{
@@ -50,7 +56,8 @@ int clampIndex(int index, int min, int max)
 	return index;
 }
 
-void BarsEffect::render() {
+void BarsEffect::render()
+{
 	Uint8* dst;
 	int src = 0;
 	long i, j;
@@ -79,8 +86,6 @@ void BarsEffect::render() {
 			src++;
 		}
 	}
-
-
 	SDL_UnlockSurface(surface);
 }
 
@@ -89,7 +94,6 @@ BarsEffect::~BarsEffect()
 	delete[] palette;
 	delete[] bars1;
 	delete[] bars2;
-
 }
 
 void BarsEffect::buildPalette()
@@ -140,8 +144,6 @@ void BarsEffect::sharpen(unsigned char* src, unsigned char* dst)
 {
 	int offs = 0;
 	unsigned char b;
-	//float omega = 1.f / 140.f;
-	float omega = 1.f / 140.f;
 	float time = Clock::getInstance().getCurrentTime();
 
 	minValue = -1;
@@ -158,7 +160,7 @@ void BarsEffect::sharpen(unsigned char* src, unsigned char* dst)
 				+ src[offs + (screenWidth - 1)] + src[offs + (screenWidth)] + src[offs + (screenWidth + 1)]
 				+ src[offs - (screenWidth - 1)] + src[offs - screenWidth] + src[offs - (screenWidth + 1)])/8;
 			// store the pixel
-			int threshold = 150 + 150 * sinf(time * omega);
+			int threshold = 150 + 150 * sinf(speed * time);
 			dst[offs] = (threshold > 0 && b > threshold) ? b : 0;
 
 			offs++;

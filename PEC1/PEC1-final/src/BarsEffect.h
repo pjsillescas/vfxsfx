@@ -18,9 +18,11 @@ private:
 	int minValue;
 	int maxValue;
 
+	float speed;
+
 public:
 
-	BarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName);
+	BarsEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName, float speed);
 	~BarsEffect();
 
 	virtual void init() override;
@@ -28,6 +30,7 @@ public:
 	virtual void render() override;
 
 private:
+	int clampIndex(int index, int min, int max);
 	void buildPalette();
 	void shadePal(int s, int e, int r1, int g1, int b1, int r2, int g2, int b2);
 	void seed(unsigned char* dst);

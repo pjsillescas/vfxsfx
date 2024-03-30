@@ -7,8 +7,6 @@ class Clock
 private:
 	const float FPS = 60.f;
 
-	//static Clock instance;
-
 	int lastTime = 0;
 	int currentTime = 0;
 	int deltaTime = 0;

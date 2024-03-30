@@ -12,7 +12,17 @@ FractalPec1Effect::FractalPec1Effect(SDL_Surface* surface, int screenHeight, int
 	// allocate memory for our fractal
 	frac1 = new unsigned char[screenWidth * screenHeight * 4];
 	frac2 = new unsigned char[screenWidth * screenHeight * 4];
-	;
+
+	di = 0;
+	dr = 0;
+	pr = 0;
+	pi = 0;
+	sr = 0;
+	si = 0;
+	offs = 0;
+	fractmp = 0;
+	i = 0;
+	j = 0;
 }
 
 void FractalPec1Effect::init()
@@ -50,19 +60,22 @@ void FractalPec1Effect::buildPalette()
 void FractalPec1Effect::update(float deltaTime)
 {
 	buildPalette();
-	if (j < (screenHeight / 2)) {
+	if (j < (screenHeight / 2))
+	{
 		j++;
 		// calc another few lines
 		ComputeFrac();
 	}
-	else {
+	else
+	{
 		// adjust zooming coefficient for next view
 		if (zoom_in)
 		{
 			zx *= ZOOM_IN_FACTOR;
 			zy *= ZOOM_IN_FACTOR;
 		}
-		else {
+		else
+		{
 			zx *= ZOOM_OUT_FACTOR;
 			zy *= ZOOM_OUT_FACTOR;
 		}
@@ -76,11 +89,13 @@ void FractalPec1Effect::update(float deltaTime)
 		{
 			// if so, reverse direction
 			zoom_in = !zoom_in;
-			if (zoom_in) {
+			if (zoom_in)
+			{
 				zx *= ZOOM_IN_FACTOR;
 				zy *= ZOOM_IN_FACTOR;
 			}
-			else {
+			else
+			{
 				zx *= ZOOM_OUT_FACTOR;
 				zy *= ZOOM_OUT_FACTOR;
 			}
@@ -199,16 +214,7 @@ void FractalPec1Effect::Zoom(double z)
 		dst = initbuffer + j * surface->pitch;
 		for (int i = 0; i < screenWidth; i++)
 		{
-			// load the bilinear filtered texel
 			unsigned int Color = 0;
-			// Uncomment for bilinear filter
-			/*
-			Color =
-				(frac2[(py >> 16) * (screenWidth * 2) + (px >> 16)] * (0x100 - ((py >> 8) & 0xff)) * (0x100 - ((px >> 8) & 0xff))
-					+ frac2[(py >> 16) * (screenWidth * 2) + ((px >> 16) + 1)] * (0x100 - ((py >> 8) & 0xff)) * ((px >> 8) & 0xff)
-					+ frac2[((py >> 16) + 1) * (screenWidth * 2) + (px >> 16)] * ((py >> 8) & 0xff) * (0x100 - ((px >> 8) & 0xff))
-					+ frac2[((py >> 16) + 1) * (screenWidth * 2) + ((px >> 16) + 1)] * ((py >> 8) & 0xff) * ((px >> 8) & 0xff)) >> 16;
-			*/
 			int indexColor = frac2[(py >> 16) * (screenWidth * 2) + (px >> 16)]; // Direct Pixel color
 			Color = 0xFF000000 + (palette[indexColor].R << 16) + (palette[indexColor].G << 8) + palette[indexColor].B;
 			*(Uint32*)dst = Color;

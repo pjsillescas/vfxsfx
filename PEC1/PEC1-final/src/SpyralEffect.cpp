@@ -18,7 +18,8 @@ SpyralEffect::SpyralEffect(SDL_Surface* surface, int screenHeight, int screenWid
 	stars = new TSpyralStar[MAXSTARS];
 }
 
-void SpyralEffect::init() {
+void SpyralEffect::init()
+{
 	const float MIN_RADIUS = 20.f;
 	const float MAX_RADIUS = 0.9f * ((float)screenHeight / 2);
 
@@ -100,7 +101,8 @@ float clampCircular(float x, float xf)
 	return x;
 }
 
-void SpyralEffect::update(float deltaTime) {
+void SpyralEffect::update(float deltaTime)
+{
 	// update all stars
 	for (int i = 0; i < MAXSTARS; i++)
 	{
@@ -110,13 +112,13 @@ void SpyralEffect::update(float deltaTime) {
 	updateStarsPosition();
 }
 
-void SpyralEffect::render() {
+void SpyralEffect::render()
+{
 	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
 	// update all stars
 	for (int i = 0; i < MAXSTARS; i++)
 	{
 		// draw this star, with a colour depending on the plane
-		//Uint32 color = 0xffffffff;
 		Uint32 color = stars[i].color;
 		putPixel(surface, (int)stars[i].x, (int)stars[i].y, color);
 		putPixel(surface, (int)stars[i].x + 1, (int)stars[i].y, color);
@@ -142,7 +144,8 @@ void SpyralEffect::putPixel(SDL_Surface* surface, int x, int y, Uint32 pixel) co
 	// Here p is the address to the pixel we want to set
 	Uint8* p = (Uint8*)surface->pixels + y * surface->pitch + x * bpp;
 
-	switch (bpp) {
+	switch (bpp)
+	{
 	case 1:
 		*p = pixel;
 		break;
@@ -152,12 +155,14 @@ void SpyralEffect::putPixel(SDL_Surface* surface, int x, int y, Uint32 pixel) co
 		break;
 
 	case 3:
-		if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+		if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+		{
 			p[0] = (pixel >> 16) & 0xff;
 			p[1] = (pixel >> 8) & 0xff;
 			p[2] = pixel & 0xff;
 		}
-		else {
+		else
+		{
 			p[0] = pixel & 0xff;
 			p[1] = (pixel >> 8) & 0xff;
 			p[2] = (pixel >> 16) & 0xff;

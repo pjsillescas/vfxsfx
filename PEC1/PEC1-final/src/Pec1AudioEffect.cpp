@@ -42,6 +42,8 @@ Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int scr
 	float texSpeedX = 8.f / BPM_MUSIC;
 	float texSpeedY = 4.f / BPM_MUSIC;
 
+	float barSpeed = 1.f / BPM_MUSIC;
+
 	// load the texture
 	//flashTexture = loadImage(fileName);
 	flockingEffect = new FlockingEffect(surface, screenHeight, screenWidth, timeout, "Flocking");
@@ -49,8 +51,8 @@ Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int scr
 	fractalPec1Effect = new FractalPec1Effect(surface, screenHeight, screenWidth, timeout, "Fractal Pec1");
 	distortionPec1Effect = new DistortionPec1Effect(surface, screenHeight, screenWidth, timeout, "Distortion Pec1", "pec1-assets/orbit.jpg");
 	spyralEffect = new SpyralEffect(surface, screenHeight, screenWidth, timeout, "Galaxy");
-	barsEffect = new BarsEffect(surface, screenHeight, screenWidth, timeout, "Bars", "pec1-assets/castle.jpg");
-	whirlpoolEffect = new WhirlpoolEffect(surface, screenHeight, screenWidth, timeout, "Whirlpool", 5, 0, whirlpoolSpeed, false);
+	barsEffect = new BarsEffect(surface, screenHeight, screenWidth, timeout, "Bars", "pec1-assets/castle.jpg", barSpeed);
+	whirlpoolEffect = new WhirlpoolEffect(surface, screenHeight, screenWidth, timeout, "Whirlpool", "pec1-assets/gradient.png", 5, 0, whirlpoolSpeed, false);
 	blackScreenEffect = new BlackScreenEffect(surface, screenHeight, screenWidth, timeout, "Black Screen");
 	flashEffect = new Pec1FlashEffect(surface, screenHeight, screenWidth, timeout, "Black Screen", "pec1-assets/galaxy.png",FLASH_MAX_TIME);
 	texturizationEffect = new TexturizationEffect(surface, screenHeight, screenWidth, 200, "Texturization", "pec1-assets/textureflower2.jpg", texSpeedX, texSpeedY);

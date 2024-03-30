@@ -19,7 +19,8 @@ TransitionEffect* EffectWithTransition::getNewTransition(SDL_Surface* screenSurf
 {
 
 	int transitionNum = (rand()) % 3;
-	switch (transitionNum) {
+	switch (transitionNum)
+	{
 	case 1:
 		return new ColumnTransitionEffect(screenSurface, screenHeight, screenWidth, oldEffect, effect);
 		break;

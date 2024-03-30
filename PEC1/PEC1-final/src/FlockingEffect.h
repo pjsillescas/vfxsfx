@@ -12,11 +12,6 @@ struct TParticle
 
 class FlockingEffect : public EffectTemplate
 {
-public:
-	// Stars
-	// change this to adjust the number of stars
-	//const int MAX_PARTICLES = 150;
-
 private:
 	// this is a pointer to an array of stars
 	TParticle* particles = NULL;
@@ -35,9 +30,7 @@ public:
 private:
 	float getRandomFloat();
 	void updateParticle(int i);
-	void wrapEdges(TParticle& particle);
-	//void updateLeadParticle(int i, float deltaTime);
-	float getCircleDistance2(float x1, float y1, float x2, float y2);
+	void wrapEdges(TParticle& particle) const;
 	float getDy2(float x1, float y1, float x2, float y2);
 	float getDx2(float x1, float y1, float x2, float y2);
 };

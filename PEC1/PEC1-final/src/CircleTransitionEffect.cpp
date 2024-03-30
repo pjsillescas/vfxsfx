@@ -4,7 +4,9 @@
 
 CircleTransitionEffect::CircleTransitionEffect(SDL_Surface* surface, int screenHeight, int screenWidth, EffectTemplate* src, EffectTemplate* dst) : TransitionEffect(surface, screenHeight, screenWidth, src, dst)
 {
-	;
+	deltaRadius = 0;
+	radius = 0;
+	maxRadius = 0;
 }
 
 CircleTransitionEffect::~CircleTransitionEffect()

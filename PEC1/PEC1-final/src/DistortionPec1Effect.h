@@ -14,7 +14,6 @@ private:
 
 public:
 
-	DistortionPec1Effect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title);
 	DistortionPec1Effect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName);
 	~DistortionPec1Effect();
 
