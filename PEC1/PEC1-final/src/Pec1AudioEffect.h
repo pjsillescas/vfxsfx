@@ -56,7 +56,7 @@ private:
 
 public:
 
-	Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName, bool showSection);
+	Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, bool showSection);
 	~Pec1AudioEffect();
 
 	virtual void init() override;

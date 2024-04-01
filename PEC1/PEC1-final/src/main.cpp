@@ -17,10 +17,10 @@
 const int FONT_SIZE = 12;
 const int TIME_TO_DISPLAY_EFFECT = 10;
 
-const bool SHOW_FPS = false;
-const bool SHOW_TITLE = false;
-const bool SHOW_TIME = false;
-const bool SHOW_SECTION = false;
+const bool SHOW_FPS = false; // Show FPS in screen
+const bool SHOW_TITLE = false; // Show current effect title in screen
+const bool SHOW_TIME = false; // Show remaining time in screen
+const bool SHOW_SECTION = false; // Show current section in screen
 
 
 //The window we'll be rendering to
@@ -61,24 +61,10 @@ static TransitionEffect* getNewTransition(SDL_Surface* screenSurface, int screen
 	}
 }
 
-//#define FULL_SCREEN
-
 int main(int argc, char* args[])
 {
-#ifndef FULL_SCREEN
-
 	int screenWidth = 640;
 	int screenHeight = 480;
-	const char* uocFileName = "uoc.png";
-	const char* wallFileName = "wall.png";
-	const char* bumpFileName = "bump.png";
-#else
-	int screenWidth = 1440;
-	int screenHeight = 1080;
-	const char* uocFileName = "uoc1920.png";
-	const char* wallFileName = "wall1920.png";
-	const char* bumpFileName = "bump1920.png";
-#endif // FULL_SCREEN
 
 	//Start up SDL and create window
 	if (!initSDL(screenWidth, screenHeight))
@@ -90,7 +76,7 @@ int main(int argc, char* args[])
 	{
 		auxSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
 		std::vector<EffectTemplate*> effects{
-			(new Pec1AudioEffect(screenSurface, screenHeight, screenWidth, 215, "PEC1 Audio", uocFileName, SHOW_SECTION))->setIsLateInit(true),
+			(new Pec1AudioEffect(screenSurface, screenHeight, screenWidth, 215, "PEC1 Audio", SHOW_SECTION))->setIsLateInit(true),
 		};
 
 		//Main loop flag

@@ -33,7 +33,7 @@ BlackScreenEffect* blackScreenEffect = NULL;
 Pec1FlashEffect* flashEffect = NULL;
 TexturizationEffect* texturizationEffect = NULL;
 
-Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, const char* fileName, bool showSection) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
+Pec1AudioEffect::Pec1AudioEffect(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, bool showSection) : EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	this->showSection = showSection;
 	
