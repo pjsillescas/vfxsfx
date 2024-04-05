@@ -7,6 +7,7 @@ and may not be redistributed without written permission.*/
 #include <GL\GLU.h>
 #include <stdio.h>
 #include <string>
+#include <iostream>
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -150,6 +151,23 @@ void update()
 	//No per frame update needed
 }
 
+void renderChallenge2()
+{
+	//Clear color buffer
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	//Render quad
+	if (gRenderQuad)
+	{
+		GLclampf r = (float)(rand() % 100) / 100.f;
+		GLclampf g = (float)(rand() % 100) / 100.f;
+		GLclampf b = (float)(rand() % 100) / 100.f;
+
+		glClearColor(r, g, b, 1.f);
+		//glClear(GL_COLOR_BUFFER_BIT);
+	}
+}
+
 void render()
 {
 	//Clear color buffer
@@ -216,7 +234,7 @@ int main(int argc, char* args[])
 			}
 
 			//Render quad
-			render();
+			renderChallenge2();
 
 			//Update screen
 			SDL_GL_SwapWindow(gWindow);
