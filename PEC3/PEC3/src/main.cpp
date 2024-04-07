@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 #include <iostream>
 #include <vector>
 
@@ -60,6 +61,18 @@ int main(int argc, char* args[])
 			1,0,0,1,0,0,0,1,4,1,
 			1,1,1,1,1,1,1,1,1,1,
 		};
+
+		Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
+		Mix_Init(MIX_INIT_OGG);
+		/*
+		Mix_Music* mySong;
+		mySong = Mix_LoadMUS("pec1-assets/road-to-nowhere_long.mp3");
+		if (!mySong)
+		{
+			std::cout << "Error loading Music: " << Mix_GetError() << std::endl;
+			exit(1);
+		}
+		*/
 
 		auxSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
 		std::vector<EffectTemplate*> effects{
@@ -273,6 +286,7 @@ void close() {
 
 	SDL_FreeSurface(auxSurface);
 
+	Mix_CloseAudio();
 	//Destroy window
 	SDL_DestroyWindow(window);
 	//Quit SDL subsystems

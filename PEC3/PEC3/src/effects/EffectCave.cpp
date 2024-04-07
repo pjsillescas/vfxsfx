@@ -1,8 +1,12 @@
 #include "EffectCave.h"
 
+#include <SDL_mixer.h>
 #include "../utils/TextUtils.h"
 #include "Player.h"
 #include <iostream>
+
+Mix_Chunk* stepSound;
+Mix_Chunk* crashSound;
 
 EffectCave::EffectCave(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, short board[10][10]): EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
@@ -14,6 +18,9 @@ EffectCave::EffectCave(SDL_Surface* surface, int screenHeight, int screenWidth, 
 	this->player = 0;
 	this->startSquare = NULL;
 	this->exitSquare = NULL;
+	this->monsterSquare = NULL;
+	this->originalMonsterSquare = NULL;
+
 	for (int i = 0; i < MAX_SQUARES; i++)
 	{
 		for (int j = 0; j < MAX_SQUARES; j++)
@@ -46,10 +53,15 @@ EffectCave::EffectCave(SDL_Surface* surface, int screenHeight, int screenWidth, 
 	}
 
 	player = new Player();
+
+	stepSound = Mix_LoadWAV("assets/footstep.wav");
+	crashSound = Mix_LoadWAV("assets/crash.wav");
 }
 
 EffectCave::~EffectCave()
 {
+	//SDL_FreeWAV(stepSound);
+
 	delete[] board;
 	delete player;
 }
@@ -255,6 +267,7 @@ TSquare* EffectCave::getNextSquare(TSquare* initialSquare, TDirection direction)
 void EffectCave::onWallHit()
 {
 	std::cout << "wall" << std::endl;
+	Mix_PlayChannel(-1, crashSound, 0);
 
 	moveMonster();
 }
@@ -319,6 +332,7 @@ void EffectCave::onMonsterHit()
 void EffectCave::onStep()
 {
 	std::cout << "tap" << std::endl;
+	Mix_PlayChannel(-1, stepSound, 0);
 }
 
 void EffectCave::updateEnvironment()
