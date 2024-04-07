@@ -7,12 +7,22 @@
 
 Mix_Chunk* stepSound;
 Mix_Chunk* crashSound;
+Mix_Chunk* eatingSound;
+
+Mix_Music* gameOverMusic;
+Mix_Music* exitMusic;
+Mix_Chunk* waterfallSound;
+Mix_Chunk* snoreSound;
+
+int snoreChannel = 0;
+int waterfallChannel = 0;
 
 EffectCave::EffectCave(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, short board[10][10]): EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	this->previousResult = TResult::RS_NONE;
 
 	this->isGameOver = false;
+	this->isEnding = false;
 	this->renderDebug = false;
 	this->board = new TSquare[MAX_SQUARES * MAX_SQUARES];
 	this->player = 0;
@@ -56,12 +66,17 @@ EffectCave::EffectCave(SDL_Surface* surface, int screenHeight, int screenWidth, 
 
 	stepSound = Mix_LoadWAV("assets/footstep.wav");
 	crashSound = Mix_LoadWAV("assets/crash.wav");
+	eatingSound = Mix_LoadWAV("assets/zombies-eating.wav");
+	
+	gameOverMusic = Mix_LoadMUS("assets/game-over-music.mp3");
+	exitMusic = Mix_LoadMUS("assets/exit-music.mp3");
+
+	waterfallSound = Mix_LoadWAV("assets/exit-waterfall.mp3");
+	snoreSound = Mix_LoadWAV("assets/monster-snore.mp3");
 }
 
 EffectCave::~EffectCave()
 {
-	//SDL_FreeWAV(stepSound);
-
 	delete[] board;
 	delete player;
 }
@@ -69,19 +84,49 @@ EffectCave::~EffectCave()
 void EffectCave::init()
 {
 	this->isGameOver = false;
+	this->isEnding = false;
 	player->square = startSquare;
 	player->direction = TDirection::NORTH;
 	monsterSquare = originalMonsterSquare;
+
+	snoreChannel = Mix_PlayChannel(1,snoreSound,0);
+	waterfallChannel = Mix_PlayChannel(2,waterfallSound, 0);
+
+	updateEnvironment();
 }
 
 void EffectCave::update(float deltaTime)
 {
-	;
+	if (this->isEnding)
+	{
+		if (!Mix_PlayingMusic())
+		{
+			this->isGameOver = true;
+			this->isEnding = false;
+		}
+	}
+	else
+	{
+		if (!isGameOver)
+		{
+			if (!Mix_Playing(snoreChannel))
+			{
+				std::cout << "reset snore" << std::endl;
+				snoreChannel = Mix_PlayChannel(1, snoreSound, 0);
+			}
+
+			if (!Mix_Playing(waterfallChannel))
+			{
+				std::cout << "reset waterfall" << std::endl;
+				waterfallChannel = Mix_PlayChannel(2, waterfallSound, 0);
+			}
+		}
+	}
 }
 
 void EffectCave::onKeyPressed(SDL_Scancode key)
 {
-	if (key == SDL_SCANCODE_W && !isGameOver)
+	if (key == SDL_SCANCODE_W && !isGameOver && !isEnding)
 	{
 		TSquare* nextSquare = getNextSquare(player->square, player->direction);
 
@@ -106,18 +151,18 @@ void EffectCave::onKeyPressed(SDL_Scancode key)
 		
 		updateEnvironment();
 	}
-	if (key == SDL_SCANCODE_D && !isGameOver)
+	if (key == SDL_SCANCODE_D && !isGameOver && !isEnding)
 	{
 		player->turnRight();
 		onStep();
 	}
-	if (key == SDL_SCANCODE_A && !isGameOver)
+	if (key == SDL_SCANCODE_A && !isGameOver && !isEnding)
 	{
 		player->turnLeft();
 		onStep();
 	}
 
-	if (key == SDL_SCANCODE_T && !isGameOver)
+	if (key == SDL_SCANCODE_T && !isGameOver && !isEnding)
 	{
 		renderDebug = !renderDebug;
 	}
@@ -266,7 +311,7 @@ TSquare* EffectCave::getNextSquare(TSquare* initialSquare, TDirection direction)
 
 void EffectCave::onWallHit()
 {
-	std::cout << "wall" << std::endl;
+	//std::cout << "wall" << std::endl;
 	Mix_PlayChannel(-1, crashSound, 0);
 
 	moveMonster();
@@ -308,6 +353,9 @@ void EffectCave::moveMonster()
 	{
 		monsterSquare = nextMonsterSquare;
 
+		int channel = Mix_PlayChannel(-1, stepSound, 0);
+		Mix_SetReverseStereo(channel,1);
+
 		if (monsterSquare == player->square)
 		{
 			onMonsterHit();
@@ -318,29 +366,89 @@ void EffectCave::moveMonster()
 void EffectCave::onExitReached()
 {
 	this->previousResult = TResult::RS_EXIT;
-	std::cout << "exit yay" << std::endl;
+	//std::cout << "exit yay" << std::endl;
+	Mix_PlayMusic(exitMusic, 0);
 	gameOver();
 }
 
 void EffectCave::onMonsterHit()
 {
 	this->previousResult = TResult::RS_MONSTER;
-	std::cout << "game over" << std::endl;
+	//std::cout << "game over" << std::endl;
+	Mix_PlayChannel(-1, eatingSound, 0);
+
+	Mix_PlayMusic(gameOverMusic, 0);
+
 	gameOver();
 }
 
 void EffectCave::onStep()
 {
-	std::cout << "tap" << std::endl;
+	//std::cout << "tap" << std::endl;
 	Mix_PlayChannel(-1, stepSound, 0);
+}
+
+const float BOARD_DIAGONAL = 10 * sqrtf(2);
+
+Uint8 getDistance(TSquare* sq1, TSquare* sq2, float normalizationDistance)
+{
+	int di = sq1->i - sq2->i;
+	int dj = sq1->j - sq2->j;
+
+	float rawDistance = sqrtf(di * di + dj * dj);
+	float d = (rawDistance > normalizationDistance ? BOARD_DIAGONAL * 0.95f : rawDistance) / BOARD_DIAGONAL * 255.f;
+	//std::cout << "d(" << (int)sq1->i << ", " << (int)sq1->j << "), (" << sq2->i << "," << sq2->j << ")" << std::endl;
+
+	return (Uint8) d;
+}
+
+Sint16 getAngle(TSquare* sq1, TSquare* sq2, TDirection direction)
+{
+	float di = sq2->i - sq1->i;
+	float dj = sq2->j - sq1->j;
+	float d = sqrtf(di * di + dj * dj);
+
+	float dx = (direction == TDirection::NORTH ? 1 : direction == TDirection::SOUTH ? -1 : 0);
+	float dy = (direction == TDirection::WEST ? -1 : direction == TDirection::EAST ? 1 : 0);
+
+	float y = dj / d * dy;
+	float x = di / d * dx;
+	//std::cout << "di " << di << " dj " << dj << " dx " << dx << " dy " << dy << " " << y << " " << x << std::endl;
+
+	//float angle = atan2f(y , x) * 180.f / M_PI;
+	float angle = acosf(y + x) * 180.f / M_PI;
+	//std::cout << "di " << di << " dj " << dj << " dx " << dx << " dy " << dy << " " << y << " " << x << " " << angle << " " << (Sint16) angle << std::endl;
+	return (Sint16)angle;
 }
 
 void EffectCave::updateEnvironment()
 {
-	;
+	// waterfall
+	Uint8 exitDistance = getDistance(player->square, exitSquare, BOARD_DIAGONAL);
+	Sint16 exitAngle = getAngle(player->square, exitSquare, player->direction);
+	//std::cout << "waterfall d: " << (int) exitDistance << " a: " << exitAngle << std::endl;
+	//sprintf_s(str, 100, "waterfall d: %d a:%d", exitDistance, exitAngle);
+	
+	Mix_SetPosition(waterfallChannel, exitAngle, exitDistance);
+
+	// monster
+	
+	Uint8 monsterDistance = getDistance(player->square, monsterSquare, 3.f);
+	Sint16 monsterAngle = getAngle(player->square, monsterSquare, player->direction);
+	std::cout << "monster d: " << (int) monsterDistance << " a: " << monsterAngle << std::endl;
+
+	Mix_SetPosition(snoreChannel, monsterAngle, monsterDistance);
 }
 
 void EffectCave::gameOver()
 {
-	this->isGameOver = true;
+	this->isEnding = true;
+
+	std::cout << "halting channels" << std::endl;
+
+	Mix_HaltChannel(snoreChannel);
+	Mix_HaltChannel(waterfallChannel);
+	std::cout << "channels halted" << std::endl;
+
+	//this->isGameOver = true;
 }

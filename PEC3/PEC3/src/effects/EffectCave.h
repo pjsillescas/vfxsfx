@@ -30,6 +30,7 @@ private:
 
 	bool renderDebug;
 	bool isGameOver;
+	bool isEnding;
 
 public:
 
