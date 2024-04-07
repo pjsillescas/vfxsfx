@@ -15,6 +15,7 @@ void Player::turnLeft()
 		direction = TDirection::EAST;
 		break;
 	case TDirection::EAST:
+	default:
 		direction = TDirection::NORTH;
 		break;
 	}
@@ -34,6 +35,7 @@ void Player::turnRight()
 		direction = TDirection::WEST;
 		break;
 	case TDirection::EAST:
+	default:
 		direction = TDirection::SOUTH;
 		break;
 	}

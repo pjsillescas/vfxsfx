@@ -1,7 +1,6 @@
 #pragma once
 
 struct TSquare {
-	bool isMonster;
 	bool isWall;
 	int i;
 	int j;

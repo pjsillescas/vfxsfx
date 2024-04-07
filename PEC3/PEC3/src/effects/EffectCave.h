@@ -7,6 +7,12 @@ class Player;
 struct TSquare;
 enum class TDirection;
 
+enum class TResult {
+	RS_EXIT,
+	RS_MONSTER,
+	RS_NONE,
+};
+
 class EffectCave : public EffectTemplate
 {
 public:
@@ -17,6 +23,13 @@ private:
 	Player* player;
 	TSquare* startSquare;
 	TSquare* exitSquare;
+	TSquare* originalMonsterSquare;
+	TSquare* monsterSquare;
+
+	TResult previousResult;
+
+	bool renderDebug;
+	bool isGameOver;
 
 public:
 
@@ -35,5 +48,9 @@ private:
 	void onMonsterHit();
 	void onStep();
 	void updateEnvironment();
+	void renderDebugGraphics();
+	void gameOver();
+	void moveMonster();
+	TDirection intToDirection(int n);
 };
 
