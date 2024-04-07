@@ -4,7 +4,7 @@ and may not be redistributed without written permission.*/
 //Using SDL, SDL OpenGL, standard IO, and strings
 #include <SDL.h>
 #include <SDL_opengl.h>
-#include <GL\GLU.h>
+//#include <glad/gl.h>
 #include <stdio.h>
 #include <string>
 #include <iostream>
@@ -107,7 +107,7 @@ bool initGL()
 	error = glGetError();
 	if (error != GL_NO_ERROR)
 	{
-		printf("Error initializing OpenGL! %s\n", gluErrorString(error));
+		//printf("Error initializing OpenGL! %s\n", gluErrorString(error));
 		success = false;
 	}
 
@@ -119,7 +119,7 @@ bool initGL()
 	error = glGetError();
 	if (error != GL_NO_ERROR)
 	{
-		printf("Error initializing OpenGL! %s\n", gluErrorString(error));
+		//printf("Error initializing OpenGL! %s\n", gluErrorString(error));
 		success = false;
 	}
 
@@ -130,7 +130,7 @@ bool initGL()
 	error = glGetError();
 	if (error != GL_NO_ERROR)
 	{
-		printf("Error initializing OpenGL! %s\n", gluErrorString(error));
+		//printf("Error initializing OpenGL! %s\n", gluErrorString(error));
 		success = false;
 	}
 
@@ -149,6 +149,14 @@ void handleKeys(unsigned char key, int x, int y)
 void update()
 {
 	//No per frame update needed
+}
+
+void renderChallenge3()
+{
+	//Clear color buffer
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	
 }
 
 void renderChallenge2()
@@ -204,6 +212,18 @@ int main(int argc, char* args[])
 	}
 	else
 	{
+		float vertices[] = {
+		-0.5f, -0.5f, 0.0f,
+		 0.5f, -0.5f, 0.0f,
+		 0.0f,  0.5f, 0.0f
+		};
+		
+		unsigned int VBO;
+		glGenBuffers(1, &VBO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+
 		//Main loop flag
 		bool quit = false;
 
