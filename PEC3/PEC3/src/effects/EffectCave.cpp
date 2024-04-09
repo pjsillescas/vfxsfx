@@ -155,11 +155,13 @@ void EffectCave::onKeyPressed(SDL_Scancode key)
 	{
 		player->turnRight();
 		onStep();
+		updateEnvironment();
 	}
 	if (key == SDL_SCANCODE_A && !isGameOver && !isEnding)
 	{
 		player->turnLeft();
 		onStep();
+		updateEnvironment();
 	}
 
 	if (key == SDL_SCANCODE_T && !isGameOver && !isEnding)
@@ -408,15 +410,16 @@ Sint16 getAngle(TSquare* sq1, TSquare* sq2, TDirection direction)
 	float dj = sq2->j - sq1->j;
 	float d = sqrtf(di * di + dj * dj);
 
-	float dx = (direction == TDirection::NORTH ? 1 : direction == TDirection::SOUTH ? -1 : 0);
+	float dx = (direction == TDirection::NORTH ? -1 : direction == TDirection::SOUTH ? 1 : 0);
 	float dy = (direction == TDirection::WEST ? -1 : direction == TDirection::EAST ? 1 : 0);
 
-	float y = dj / d * dy;
-	float x = di / d * dx;
+	float y = dj / d;
+	float x = di / d;
 	//std::cout << "di " << di << " dj " << dj << " dx " << dx << " dy " << dy << " " << y << " " << x << std::endl;
 
 	//float angle = atan2f(y , x) * 180.f / M_PI;
-	float angle = acosf(y + x) * 180.f / M_PI;
+	//float angle = acosf(y * dy + x * dx) * 180.f / M_PI;
+	float angle = atan2f(x * dy - y * dx , y * dy + x * dx) * 180.f / M_PI;
 	//std::cout << "di " << di << " dj " << dj << " dx " << dx << " dy " << dy << " " << y << " " << x << " " << angle << " " << (Sint16) angle << std::endl;
 	return (Sint16)angle;
 }
@@ -426,11 +429,10 @@ void EffectCave::updateEnvironment()
 	// waterfall
 	Uint8 exitDistance = getDistance(player->square, exitSquare, BOARD_DIAGONAL);
 	Sint16 exitAngle = getAngle(player->square, exitSquare, player->direction);
-	//std::cout << "waterfall d: " << (int) exitDistance << " a: " << exitAngle << std::endl;
+	std::cout << "waterfall d: " << (int) exitDistance << " a: " << exitAngle << std::endl;
 	//sprintf_s(str, 100, "waterfall d: %d a:%d", exitDistance, exitAngle);
 	
 	Mix_SetPosition(waterfallChannel, exitAngle, exitDistance);
-
 	// monster
 	
 	Uint8 monsterDistance = getDistance(player->square, monsterSquare, 3.f);
