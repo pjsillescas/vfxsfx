@@ -9,7 +9,7 @@ TTF_Font* TextUtils::getFont(int size)
 	if (font == NULL)
 	{
 		// Remember to call TTF_Init(), TTF_Quit(), before/after using this function.
-		font = TTF_OpenFont("LEMONMILK-Regular.otf", size);
+		font = TTF_OpenFont("assets/fonts/LEMONMILK-Regular.otf", size);
 		if (!font) {
 			std::cout << "[ERROR] TTF_OpenFont() Failed with: " << TTF_GetError() << std::endl;
 			exit(2);
