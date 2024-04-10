@@ -43,7 +43,7 @@ public:
 	virtual void onKeyPressed(SDL_Scancode key) override;
 
 private:
-	TSquare* getNextSquare(TSquare* initialSquare, TDirection direction);
+	TSquare* getNextSquare(TSquare* initialSquare, TDirection direction, bool goForward);
 	void onWallHit();
 	void onExitReached();
 	void onMonsterHit();
@@ -53,5 +53,6 @@ private:
 	void gameOver();
 	void moveMonster();
 	TDirection intToDirection(int n);
+	void movePlayer(bool goForward);
 };
 

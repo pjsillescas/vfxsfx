@@ -64,15 +64,15 @@ EffectCave::EffectCave(SDL_Surface* surface, int screenHeight, int screenWidth, 
 
 	player = new Player();
 
-	stepSound = Mix_LoadWAV("assets/footstep.wav");
-	crashSound = Mix_LoadWAV("assets/crash.wav");
-	eatingSound = Mix_LoadWAV("assets/zombies-eating.wav");
+	stepSound = Mix_LoadWAV("assets/audio/footstep.wav");
+	crashSound = Mix_LoadWAV("assets/audio/crash.wav");
+	eatingSound = Mix_LoadWAV("assets/audio/zombies-eating.wav");
 	
-	gameOverMusic = Mix_LoadMUS("assets/game-over-music.mp3");
-	exitMusic = Mix_LoadMUS("assets/exit-music.mp3");
+	gameOverMusic = Mix_LoadMUS("assets/audio/game-over-music.mp3");
+	exitMusic = Mix_LoadMUS("assets/audio/exit-music.mp3");
 
-	waterfallSound = Mix_LoadWAV("assets/exit-waterfall.mp3");
-	snoreSound = Mix_LoadWAV("assets/monster-snore.mp3");
+	waterfallSound = Mix_LoadWAV("assets/audio/exit-waterfall.mp3");
+	snoreSound = Mix_LoadWAV("assets/audio/monster-snore.mp3");
 }
 
 EffectCave::~EffectCave()
@@ -124,32 +124,41 @@ void EffectCave::update(float deltaTime)
 	}
 }
 
+void EffectCave::movePlayer(bool goForward)
+{
+	TSquare* nextSquare = getNextSquare(player->square, player->direction, goForward);
+
+	if (nextSquare->isWall)
+	{
+		onWallHit();
+	}
+	else
+	{
+		player->square = nextSquare;
+		onStep();
+
+		if (nextSquare == monsterSquare)
+		{
+			onMonsterHit();
+		}
+		else if (nextSquare == exitSquare)
+		{
+			onExitReached();
+		}
+	}
+
+	updateEnvironment();
+}
+
 void EffectCave::onKeyPressed(SDL_Scancode key)
 {
 	if (key == SDL_SCANCODE_W && !isGameOver && !isEnding)
 	{
-		TSquare* nextSquare = getNextSquare(player->square, player->direction);
-
-		if (nextSquare->isWall)
-		{
-			onWallHit();
-		}
-		else
-		{
-			player->square = nextSquare;
-			onStep();
-
-			if (nextSquare == monsterSquare)
-			{
-				onMonsterHit();
-			}
-			else if (nextSquare == exitSquare)
-			{
-				onExitReached();
-			}
-		}
-		
-		updateEnvironment();
+		movePlayer(true);
+	}
+	if (key == SDL_SCANCODE_S && !isGameOver && !isEnding)
+	{
+		movePlayer(false);
 	}
 	if (key == SDL_SCANCODE_D && !isGameOver && !isEnding)
 	{
@@ -279,28 +288,51 @@ void EffectCave::renderDebugGraphics()
 	}
 }
 
-TSquare* EffectCave::getNextSquare(TSquare* initialSquare, TDirection direction)
+TSquare* EffectCave::getNextSquare(TSquare* initialSquare, TDirection direction, bool goForward)
 {
 	if (initialSquare != NULL)
 	{
 		int i = initialSquare->i;
 		int j = initialSquare->j;
 
-		switch (direction)
+		if (goForward)
 		{
-		case TDirection::NORTH:
-			i--;
-			break;
-		case TDirection::SOUTH:
-			i++;
-			break;
-		case TDirection::EAST:
-			j++;
-			break;
-		case TDirection::WEST:
-		default:
-			j--;
-			break;
+			switch (direction)
+			{
+			case TDirection::NORTH:
+				i--;
+				break;
+			case TDirection::SOUTH:
+				i++;
+				break;
+			case TDirection::EAST:
+				j++;
+				break;
+			case TDirection::WEST:
+			default:
+				j--;
+				break;
+			}
+		}
+		else
+		{
+			switch (direction)
+			{
+			case TDirection::NORTH:
+				i++;
+				break;
+			case TDirection::SOUTH:
+				i--;
+				break;
+			case TDirection::EAST:
+				j--;
+				break;
+			case TDirection::WEST:
+			default:
+				j++;
+				break;
+			}
+
 		}
 
 		if (0 <= i && i < MAX_SQUARES && 0 <= j && j < MAX_SQUARES)
@@ -347,7 +379,7 @@ void EffectCave::moveMonster()
 	int k = 0;
 	while (k < 4 && (nextMonsterSquare == NULL || nextMonsterSquare->isWall))
 	{
-		nextMonsterSquare = getNextSquare(monsterSquare, intToDirection((move + k) % 4));
+		nextMonsterSquare = getNextSquare(monsterSquare, intToDirection((move + k) % 4), true);
 		k++;
 	}
 
