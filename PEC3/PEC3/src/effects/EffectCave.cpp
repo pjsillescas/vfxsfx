@@ -71,12 +71,20 @@ EffectCave::EffectCave(SDL_Surface* surface, int screenHeight, int screenWidth, 
 	gameOverMusic = Mix_LoadMUS("assets/audio/game-over-music.mp3");
 	exitMusic = Mix_LoadMUS("assets/audio/exit-music.mp3");
 
-	waterfallSound = Mix_LoadWAV("assets/audio/exit-waterfall.mp3");
-	snoreSound = Mix_LoadWAV("assets/audio/monster-snore.mp3");
+	waterfallSound = Mix_LoadWAV("assets/audio/exit-waterfall.wav");
+	snoreSound = Mix_LoadWAV("assets/audio/monster-snore.wav");
 }
 
 EffectCave::~EffectCave()
 {
+	Mix_FreeChunk(stepSound);
+	Mix_FreeChunk(crashSound);
+	Mix_FreeChunk(eatingSound);
+	Mix_FreeChunk(waterfallSound);
+	Mix_FreeChunk(snoreSound);
+	Mix_FreeMusic(gameOverMusic);
+	Mix_FreeMusic(exitMusic);
+	
 	delete[] board;
 	delete player;
 }
@@ -91,6 +99,9 @@ void EffectCave::init()
 
 	snoreChannel = Mix_PlayChannel(1,snoreSound,0);
 	waterfallChannel = Mix_PlayChannel(2,waterfallSound, 0);
+
+	Mix_Volume(snoreChannel, MIX_MAX_VOLUME);
+	Mix_Volume(waterfallChannel, MIX_MAX_VOLUME);
 
 	updateEnvironment();
 }
@@ -433,6 +444,7 @@ Uint8 getDistance(TSquare* sq1, TSquare* sq2, float normalizationDistance)
 	float d = (rawDistance > normalizationDistance ? BOARD_DIAGONAL * 0.95f : rawDistance) / BOARD_DIAGONAL * 255.f;
 	//std::cout << "d(" << (int)sq1->i << ", " << (int)sq1->j << "), (" << sq2->i << "," << sq2->j << ")" << std::endl;
 
+	d *= (expf(-0.05f * d));
 	return (Uint8) d;
 }
 
@@ -467,7 +479,7 @@ void EffectCave::updateEnvironment()
 	Mix_SetPosition(waterfallChannel, exitAngle, exitDistance);
 	// monster
 	
-	Uint8 monsterDistance = getDistance(player->square, monsterSquare, 3.f);
+	Uint8 monsterDistance = getDistance(player->square, monsterSquare, BOARD_DIAGONAL);
 	Sint16 monsterAngle = getAngle(player->square, monsterSquare, player->direction);
 	std::cout << "monster d: " << (int) monsterDistance << " a: " << monsterAngle << std::endl;
 

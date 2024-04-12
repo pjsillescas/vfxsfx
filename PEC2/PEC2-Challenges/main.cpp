@@ -4,7 +4,7 @@ and may not be redistributed without written permission.*/
 //Using SDL, SDL OpenGL, standard IO, and strings
 #include <SDL.h>
 #include <SDL_opengl.h>
-//#include <glad/gl.h>
+#include <GL\GLU.h>
 #include <stdio.h>
 #include <string>
 #include <iostream>
@@ -107,7 +107,7 @@ bool initGL()
 	error = glGetError();
 	if (error != GL_NO_ERROR)
 	{
-		//printf("Error initializing OpenGL! %s\n", gluErrorString(error));
+		printf("Error initializing OpenGL! %s\n", gluErrorString(error));
 		success = false;
 	}
 
@@ -119,7 +119,7 @@ bool initGL()
 	error = glGetError();
 	if (error != GL_NO_ERROR)
 	{
-		//printf("Error initializing OpenGL! %s\n", gluErrorString(error));
+		printf("Error initializing OpenGL! %s\n", gluErrorString(error));
 		success = false;
 	}
 
@@ -130,7 +130,7 @@ bool initGL()
 	error = glGetError();
 	if (error != GL_NO_ERROR)
 	{
-		//printf("Error initializing OpenGL! %s\n", gluErrorString(error));
+		printf("Error initializing OpenGL! %s\n", gluErrorString(error));
 		success = false;
 	}
 
@@ -151,36 +151,44 @@ void update()
 	//No per frame update needed
 }
 
-void renderChallenge3()
+const int PERIOD = 1000;
+const float FREQ = 1.f / PERIOD;
+static int nFrames = 0;
+
+void drawTriangle()
 {
-	//Clear color buffer
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	
-}
-
-void renderChallenge2()
-{
-	//Clear color buffer
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	//Render quad
-	if (gRenderQuad)
-	{
-		GLclampf r = (float)(rand() % 100) / 100.f;
-		GLclampf g = (float)(rand() % 100) / 100.f;
-		GLclampf b = (float)(rand() % 100) / 100.f;
-
-		glClearColor(r, g, b, 1.f);
-		//glClear(GL_COLOR_BUFFER_BIT);
-	}
+	float vertices[] = {
+	-0.5f, -0.5f, 0.0f,
+	 0.5f, -0.5f, 0.0f,
+	 0.0f,  0.5f, 0.0f
+	};
 }
 
 void render()
 {
+	nFrames = (nFrames + 1) % PERIOD;
+
 	//Clear color buffer
+	/*
+	if (nFrames > PERIOD)
+	{
+		//float r = (float)rand() / RAND_MAX;
+		//float g = (float)rand() / RAND_MAX;
+		//float b = (float)rand() / RAND_MAX;
+
+		nFrames = 0;
+	}
+	*/
+	float r = sinf(FREQ * nFrames * 2.f * M_PI);
+	float g = 0.2f;
+	float b = 0.5f;
+	std::cout << r << std::endl;
+	glClearColor(r*r, g, b, 1.f);
+
+	
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	/*
 	//Render quad
 	if (gRenderQuad)
 	{
@@ -191,6 +199,7 @@ void render()
 		glVertex2f(-0.5f, 0.5f);
 		glEnd();
 	}
+	*/
 }
 
 void close()
@@ -212,18 +221,6 @@ int main(int argc, char* args[])
 	}
 	else
 	{
-		float vertices[] = {
-		-0.5f, -0.5f, 0.0f,
-		 0.5f, -0.5f, 0.0f,
-		 0.0f,  0.5f, 0.0f
-		};
-		
-		unsigned int VBO;
-		glGenBuffers(1, &VBO);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-
 		//Main loop flag
 		bool quit = false;
 
@@ -254,7 +251,7 @@ int main(int argc, char* args[])
 			}
 
 			//Render quad
-			renderChallenge2();
+			render();
 
 			//Update screen
 			SDL_GL_SwapWindow(gWindow);
