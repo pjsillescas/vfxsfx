@@ -136,6 +136,12 @@
   <ItemGroup>
     <ClCompile Include="..\..\glad\src\glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Challenge2.cpp" />
+    <ClCompile Include="Challenge3.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Challenge2.h" />
+    <ClCompile Include="Challenge3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
