@@ -27,13 +27,21 @@
     <ClCompile Include="Challenge3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Challen ge2.h">
+    <ClCompile Include="Challenge2.h">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="Challenge32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="Challenge3.h">
       <Filter>Header Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Challenge32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
