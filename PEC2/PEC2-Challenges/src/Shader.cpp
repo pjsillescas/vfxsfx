@@ -86,6 +86,11 @@ void Shader::setFloat(const std::string &name, float value) const
 	glUniform1f(glGetUniformLocation(ID, name.c_str()), value); 
 }
 
+void Shader::setVectorF3(const std::string& name, float valuer, float valueg, float valueb) const
+{
+	glUniform3f(glGetUniformLocation(ID, name.c_str()), valuer, valueg, valueb);
+}
+
 // utility function for checking shader compilation/linking errors.
 // ------------------------------------------------------------------------
 void Shader::checkCompileErrors(unsigned int shader, std::string type)

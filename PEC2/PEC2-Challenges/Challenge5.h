@@ -1,16 +1,15 @@
 #pragma once
 
 struct SDL_Window;
-class Shader;
+class Triangle;
 
 class Challenge5
 {
-private:
-	unsigned int VBO, VAO;
-	Shader* shader;
-
 public:
+	const int NUM_TRIANGLES = 10;
 	int run(SDL_Window* gWindow);
+	Triangle* triangles[10];
+
 private:
 	void render();
 	void close();
@@ -19,8 +18,6 @@ private:
 	const float FREQ = 1.f / PERIOD;
 	int nFrames = 0;
 
-	void loadShaders();
-	void initTriangle();
 	bool init();
 	void handleKeys(unsigned char key, int x, int y);
 };
