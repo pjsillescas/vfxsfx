@@ -136,15 +136,17 @@
   <ItemGroup>
     <ClCompile Include="..\..\glad\src\glad.c" />
     <ClCompile Include="Challenge32.cpp" />
+    <ClCompile Include="Challenge5.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Challenge2.cpp" />
     <ClCompile Include="Challenge3.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Challenge2.h" />
-    <ClCompile Include="Challenge3.h" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="Challenge2.h" />
+    <ClInclude Include="Challenge3.h" />
+    <ClInclude Include="Challenge5.h" />
+    <ClInclude Include="src\Shader.h" />
     <ClInclude Include="Challenge32.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

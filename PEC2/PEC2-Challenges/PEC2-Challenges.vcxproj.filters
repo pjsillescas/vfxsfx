@@ -27,20 +27,30 @@
     <ClCompile Include="Challenge3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Challenge2.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="Challenge32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Challenge5.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Challenge3.h">
+    <ClInclude Include="Challenge3.h">
       <Filter>Header Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
+    </ClInclude>
     <ClInclude Include="Challenge32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Challenge2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Challenge5.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
