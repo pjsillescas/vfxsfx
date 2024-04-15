@@ -41,17 +41,38 @@ bool Challenge6::init()
 
 void Challenge6::handleKeys(unsigned char key, int x, int y)
 {
-    ;
+    if (key == 'd')
+    {
+        mix += 0.1f;
+    }
+
+    if (key == 'a')
+    {
+        mix -= 0.1f;
+    }
+
+    if (mix < 0)
+    {
+        mix = 0;
+    }
+
+    if (mix > 1.f)
+    {
+        mix = 1.f;
+    }
+
+    shader->setFloat("mixfloat",mix);
+
 }
 
 void Challenge6::initTextures()
 {
     float vertices[] = {
         // positions          // colors           // texture coords
-         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   2.f, 2.f, // top right
+         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   2.f, 0.0f, // bottom right
         -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 2.f  // top left 
     };
     unsigned int indices[] = {
         0, 1, 3, // first triangle

@@ -11,6 +11,7 @@ private:
 	unsigned int VBO, VAO, EBO;
 	unsigned int texture1, texture2;
 
+	float mix = 0.2f;
 
 public:
 	Challenge6();
