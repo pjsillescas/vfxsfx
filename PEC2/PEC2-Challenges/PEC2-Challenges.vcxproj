@@ -137,6 +137,7 @@
     <ClCompile Include="..\..\glad\src\glad.c" />
     <ClCompile Include="Challenge32.cpp" />
     <ClCompile Include="Challenge5.cpp" />
+    <ClCompile Include="Challenge6.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Challenge2.cpp" />
     <ClCompile Include="Challenge3.cpp" />
@@ -146,8 +147,10 @@
     <ClInclude Include="Challenge2.h" />
     <ClInclude Include="Challenge3.h" />
     <ClInclude Include="Challenge5.h" />
+    <ClInclude Include="Challenge6.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="Challenge32.h" />
+    <ClInclude Include="src\stb\stb_image.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
