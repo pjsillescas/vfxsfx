@@ -1,7 +1,5 @@
 #include "Challenge6.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-
 //Using SDL, SDL OpenGL, standard IO, and strings
 #include <SDL.h>
 #include <glad/glad.h>

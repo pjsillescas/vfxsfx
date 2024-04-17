@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <SourcePath>$(SourcePath)</SourcePath>
-    <IncludePath>D:\efectos\SDL2-2.30.0\include;D:\efectos\glad\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\efectos\SDL2-2.30.0\include;D:\efectos\glad\include;D:\efectos\glm-1.0.1;$(IncludePath)</IncludePath>
     <LibraryPath>D:\efectos\SDL2-2.30.0\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -138,6 +138,7 @@
     <ClCompile Include="Challenge32.cpp" />
     <ClCompile Include="Challenge5.cpp" />
     <ClCompile Include="Challenge6.cpp" />
+    <ClCompile Include="Challenge7.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Challenge2.cpp" />
     <ClCompile Include="Challenge3.cpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="Challenge3.h" />
     <ClInclude Include="Challenge5.h" />
     <ClInclude Include="Challenge6.h" />
+    <ClInclude Include="Challenge7.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="Challenge32.h" />
     <ClInclude Include="src\stb\stb_image.h" />
