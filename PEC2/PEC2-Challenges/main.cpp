@@ -10,6 +10,7 @@
 #include "Challenge5.h"
 #include "Challenge6.h"
 #include "Challenge7.h"
+#include "Challenge8.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 800;
@@ -69,7 +70,8 @@ int main(int argc, char* argv[])
 	//int code = (new Challenge32())->run(gWindow);
 	//int code = (new Challenge5())->run(gWindow);
 	//int code = (new Challenge6())->run(gWindow);
-	int code = (new Challenge7())->run(gWindow);
+	//int code = (new Challenge7())->run(gWindow);
+	int code = (new Challenge8())->run(gWindow);
 
 	close();
 

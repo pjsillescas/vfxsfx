@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -139,6 +139,7 @@
     <ClCompile Include="Challenge5.cpp" />
     <ClCompile Include="Challenge6.cpp" />
     <ClCompile Include="Challenge7.cpp" />
+    <ClCompile Include="Challenge8.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Challenge2.cpp" />
     <ClCompile Include="Challenge3.cpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="Challenge5.h" />
     <ClInclude Include="Challenge6.h" />
     <ClInclude Include="Challenge7.h" />
+    <ClInclude Include="Challenge8.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="Challenge32.h" />
     <ClInclude Include="src\stb\stb_image.h" />
