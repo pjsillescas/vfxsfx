@@ -1,0 +1,30 @@
+#version 330 core
+
+layout (location = 0) in vec3 LVertexPos;
+//layout (location = 1) in vec2 texCoor;
+//layout (location = 2) in vec3 ColorVertex;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+uniform vec3 camPos;
+
+out	vec2 texFragment;
+//out	vec3 colorFragment;
+out	vec4 clipSpace;
+out vec3 cameraVector;
+
+const float tilling = 1.0;
+
+void main(){
+	vec4 modelPosition = model * vec4( LVertexPos.xyz, 1 );
+
+	clipSpace = projection * view * modelPosition;
+	gl_Position = clipSpace;
+	// Convert 0-1 coordinates to -1 +1 coordinates range asdn tilling texture
+	texFragment = vec2(LVertexPos.x/2.0 + 0.5, LVertexPos.z/2.0 + 0.5) * tilling;
+//	colorFragment = ColorVertex;
+
+	cameraVector = camPos - modelPosition.xyz;
+}

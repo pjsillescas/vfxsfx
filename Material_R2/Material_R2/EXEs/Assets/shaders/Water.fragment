@@ -1,0 +1,26 @@
+#version 330 core
+
+//in vec2 texFragment;
+//in vec3 colorFragment;
+in vec4 clipSpace;
+
+out vec4 out_color;
+
+uniform sampler2D texture1; // reflection Texture
+uniform sampler2D texture2; // refraction Texture;
+
+void main() {
+
+	vec2 normalClip = (clipSpace.xy/clipSpace.w);
+	normalClip = (normalClip /2.0) + 0.5;
+	
+	vec2 reflectCoors = vec2(normalClip.x, -normalClip.y); //  Neg beacuse is a reflexion
+	vec2 refractCoors = vec2(normalClip.x, normalClip.y);
+
+	vec4 reflectColor = texture(texture1,reflectCoors);
+	vec4 refractColor = texture(texture2,refractCoors);
+
+	// With A Little Bit of Bluesky
+	out_color = mix (reflectColor,refractColor,0.5)* vec4(0.0,1.0,1.0,1.0);
+
+}
