@@ -54,7 +54,7 @@ void Challenge8::close()
     glDeleteBuffers(1, &EBO);
 }
 
-glm::vec3 transformVector(glm::mat4 transformMatrix, glm::vec3 v)
+glm::vec3 Challenge8::transformVector(glm::mat4 transformMatrix, glm::vec3 v)
 {
     glm::vec4 rotatedVector1 = transformMatrix * glm::vec4(v.x,v.y,v.z, 1.f);
     return glm::vec3(rotatedVector1.x, rotatedVector1.y, rotatedVector1.z);

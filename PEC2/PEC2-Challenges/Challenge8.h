@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 struct SDL_Window;
 
 class Shader;
@@ -24,4 +26,5 @@ private:
 	void handleKeys(unsigned char key, int x, int y);
 	void render();
 	void close();
+	glm::vec3 transformVector(glm::mat4 transformMatrix, glm::vec3 v);
 };
