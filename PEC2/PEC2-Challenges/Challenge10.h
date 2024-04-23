@@ -5,6 +5,7 @@
 struct SDL_Window;
 
 class Shader;
+class Camera;
 
 class Challenge10
 {
@@ -15,12 +16,16 @@ private:
 	Shader* shader;
 	Shader* screenShader;
 
+	Camera* camera;
+
 	unsigned int VBO, VAO, EBO;
 	unsigned int texture1, texture2;
 	unsigned int quadVAO, quadVBO;
 	unsigned int framebuffer;
 	unsigned int textureColorbuffer;
 
+	float deltaTime;
+	float lastFrame;
 
 
 public:
