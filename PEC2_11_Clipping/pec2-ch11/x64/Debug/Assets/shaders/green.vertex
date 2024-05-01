@@ -1,0 +1,12 @@
+#version 330 core
+
+layout (location = 0) in vec2 LVertexPos2D;
+
+uniform float offsetX;
+
+out vec2 position;
+
+void main(){
+	gl_Position = vec4( LVertexPos2D.x + offsetX, -LVertexPos2D.y, 0, 1 );
+	position = LVertexPos2D;
+}
