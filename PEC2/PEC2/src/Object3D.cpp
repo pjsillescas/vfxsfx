@@ -185,7 +185,7 @@ void Object3D::prepareVAO()
 	//Set VAO
 	glBindVertexArray(mVAO);
 	//Do Matrix movements
-	transformMatrix = glm::mat4();
+	transformMatrix = glm::mat4(1.f);
 	transformMatrix = glm::translate(transformMatrix, mPosition);
 	glUniformMatrix4fv(mUniformModelM, 1, GL_FALSE, glm::value_ptr(transformMatrix));
 
