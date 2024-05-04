@@ -1,7 +1,5 @@
 #include "WaterObj.h"
 
-#define WAVE_SPEED 0.001f
-
 WaterObj::WaterObj()
 {
 	mCurrentOffsetWave = 0.0f;
@@ -48,7 +46,7 @@ void WaterObj::render()
 	diableVAO();
 }
 
-void WaterObj::setShader(Shader * p_shader)
+void WaterObj::setShader(Shader* p_shader)
 {
 	mShaderforDraw = p_shader;
 	mUniformModelM = glGetUniformLocation(mShaderforDraw->getID(), "model");

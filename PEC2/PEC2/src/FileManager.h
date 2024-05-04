@@ -1,5 +1,4 @@
-#ifndef FILEMANAGER_H
-#define FILEMANAGER_H
+#pragma once
 
 #include <SDL.h>
 #include "Utils.h"
@@ -13,7 +12,8 @@
 /*!
 	Class for write and read files
 */
-class FileManager{
+class FileManager
+{
 	public:
 		enum OpenMode{READ, WRITE, READ_BINARY, WRITE_BINARY, WRITE_ATE, WRITE_BINARY_ATE, CLOSED};
 		enum PointerPosition{BEGIN, END, CURRENT, NOTHING};
@@ -100,5 +100,3 @@ class FileManager{
 		bool mFileIsOpened;			/*!<  True if the file has been opened*/
 		std::string returnValue;	/*!<  Temp string for return characters*/
 };
-
-#endif /* FILEMANAGER_H */

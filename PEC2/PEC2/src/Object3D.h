@@ -4,10 +4,10 @@
 #include <string>
 
 #include <glad/glad.h>
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include "SDL_opengl.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <SDL_opengl.h>
 
 #include "Shader.h"
 
@@ -67,4 +67,3 @@ protected:
 	glm::vec3	mRotationDegrees;
 	glm::vec3	mScale;
 };
-

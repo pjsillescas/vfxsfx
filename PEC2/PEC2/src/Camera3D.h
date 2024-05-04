@@ -1,6 +1,6 @@
 #pragma once
 
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 
 class Camera3D
 {
@@ -24,7 +24,7 @@ public:
 	void setGround(float value) { mGround = value; };
 
 	// Getters
-	glm::vec3 getCameraPos();
+	glm::vec3 getCameraPos() const;
 	void invertPitch();
 
 

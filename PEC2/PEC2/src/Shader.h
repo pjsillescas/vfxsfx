@@ -11,7 +11,7 @@ public:
 
 
 	void init(const GLchar *filename);
-	GLuint getID()			{ return mIDprogram; };
+	GLuint getID() const	{ return mIDprogram; };
 	void Use()				{ if (mAllOK) glUseProgram(mIDprogram); };
 	void deleteProgram()	{ if (mAllOK) glDeleteProgram(mIDprogram); };
 

@@ -43,36 +43,49 @@ void Object3D::loadObjFromDisk(std::string file)
 	bool readVBO = false;
 	bool readEBO = false;
 	FileManager File(file.c_str(), "r");
-	if (File.isOpened()) {
-		while (!File.isEOF()) {
+	if (File.isOpened())
+	{
+		while (!File.isEOF())
+		{
 			line = File.getLine();
-			if (line[0] != '#') {		// Ignore comments
+			if (line[0] != '#')
+			{		// Ignore comments
 				std::string dash = line.substr(0, 3);
-				if (dash == "VBO") {
+				if (dash == "VBO")
+				{
 					readVBO = true;
 					readEBO = false;
 					continue;
 				}
-				if (dash == "EBO") {
+				
+				if (dash == "EBO")
+				{
 					readVBO = false;
 					readEBO = true;
 					continue;
 				}
+				
 				std::vector<std::string> data = splitString(line, ',');
-				if (readVBO) {
-					for (unsigned int i = 0; i < data.size(); i++) {
+				if (readVBO)
+				{
+					for (unsigned int i = 0; i < data.size(); i++)
+					{
 						mVertexData.push_back((GLfloat)(atof(data[i].c_str())));
 					}
 				}
-				if (readEBO) {
-					for (unsigned int i = 0; i < data.size(); i++) {
+				if (readEBO)
+				{
+					for (unsigned int i = 0; i < data.size(); i++)
+					{
 						mIndexData.push_back((GLuint)(atoi(data[i].c_str())));
 					}
 				}
 			}
 		}
+
 		File.close();
 	}
+
 	prepareObjGL();
 }
 
@@ -81,7 +94,8 @@ void Object3D::loadTextureFromDisk(std::string file)
 	//Create Texture
 	SDL_Surface* tempSurface;
 	tempSurface = IMG_Load(file.c_str());
-	if (tempSurface == NULL) {
+	if (tempSurface == NULL)
+	{
 		std::cout << "Texture:" << file.c_str() << " not load!" << std::endl;
 		return;
 	}
@@ -119,10 +133,13 @@ void Object3D::generateObj()
 		0, 1, 2,   0, 2, 3
 	};
 
-	for (int i = 0; i < bytesData; i++) {
+	for (int i = 0; i < bytesData; i++)
+	{
 		mVertexData.push_back(vertexData[i]);
 	}
-	for (int i = 0; i < 6; i++) {
+	
+	for (int i = 0; i < 6; i++)
+	{
 		mIndexData.push_back(indexData[i]);
 	}
 	prepareObjGL();
@@ -164,7 +181,8 @@ void Object3D::update()
 void Object3D::render()
 {
 	//Sets texture
-	if (mTexture != -1) {
+	if (mTexture != -1)
+	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, mTexture);
 	}

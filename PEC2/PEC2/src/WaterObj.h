@@ -1,8 +1,12 @@
 #pragma once
+
 #include "Object3D.h"
+
 class WaterObj :
 	public Object3D
 {
+private:
+	const float WAVE_SPEED = 0.001f;
 public:
 	WaterObj();
 	~WaterObj();
@@ -11,17 +15,17 @@ public:
 	void setShader(Shader* p_shader);
 
 	void setTexture2(GLuint id) { mTexture2 = id; };
-	GLuint getTexture2() { return mTexture2; };
+	GLuint getTexture2() const { return mTexture2; };
 
 	void setTexture3(GLuint id) { mTexture3 = id; };
-	GLuint getTexture3() { return mTexture3; };
+	GLuint getTexture3() const { return mTexture3; };
 
 	void setTexture4(GLuint id) { mTexture4 = id; };
-	GLuint getTexture4() { return mTexture4; };
+	GLuint getTexture4() const { return mTexture4; };
 
-	int getUniformCamPos() { return mUniformCamPos; };
-	int getUniformLightColor() { return mUniformLightColor; };
-	int getUniformLightPos() { return mUniformLightPos; };
+	int getUniformCamPos() const { return mUniformCamPos; };
+	int getUniformLightColor() const { return mUniformLightColor; };
+	int getUniformLightPos() const { return mUniformLightPos; };
 
 
 private:

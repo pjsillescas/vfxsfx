@@ -2,10 +2,10 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <glad/glad.h>
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include "SDL_opengl.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <SDL_opengl.h>
 
 #include "Shader.h"
 #include "Camera3D.h"
@@ -131,7 +131,8 @@ bool init()
 	}
 
 	// Init Movements
-	for (int i = 0; i < _DIR_LAST_; i++) {
+	for (int i = 0; i < _DIR_LAST_; i++)
+	{
 		movement[i] = false;
 	}
 
@@ -163,7 +164,8 @@ void initGL()
 	MyQuad.loadTextureFromDisk("Assets/textures/normaltexture.jpg");
 	MyQuad.setTexture4(MyQuad.getTexture()); // Load texture and change ID to texture 4;
 
-	for (unsigned int i = 0; i < 9; i++) {
+	for (unsigned int i = 0; i < 9; i++)
+	{
 		MyCubes.push_back(new Object3D());
 		MyCubes[i]->loadObjFromDisk("Assets/Cube.txt");
 		MyCubes[i]->loadTextureFromDisk("Assets/textures/texture.png");
@@ -210,7 +212,8 @@ void renderWater()
 	MyQuad.render();
 }
 
-void renderScene(glm::vec4 PclipPlane){
+static void renderScene(glm::vec4 PclipPlane)
+{
 	//Clear color buffer & Z buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -233,7 +236,8 @@ void renderScene(glm::vec4 PclipPlane){
 	underWaterPlane.render();
 }
 
-void render() {
+void render()
+{
 
 	// Enable Clip distance
 	glEnable(GL_CLIP_DISTANCE0);
@@ -309,55 +313,73 @@ int main(int argc, char* args[])
 			//Handle events on queue
 			while (SDL_PollEvent(&e) != 0)
 			{
-				if (e.type == SDL_KEYDOWN) {
-					if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+				if (e.type == SDL_KEYDOWN)
+				{
+					if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+					{
 						quit = true;
 					}
+					
 					// Camera Move setting
 					if ((e.key.keysym.scancode == SDL_SCANCODE_UP) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_W)) {
+						(e.key.keysym.scancode == SDL_SCANCODE_W))
+					{
 						movement[DIR_UP] = true;
 					}
 					if ((e.key.keysym.scancode == SDL_SCANCODE_DOWN) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_S)) {
+						(e.key.keysym.scancode == SDL_SCANCODE_S))
+					{
 						movement[DIR_DOWN] = true;
 					}
 					if ((e.key.keysym.scancode == SDL_SCANCODE_LEFT) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_A)) {
+						(e.key.keysym.scancode == SDL_SCANCODE_A))
+					{
 						movement[DIR_LEFT] = true;
 					}
 					if ((e.key.keysym.scancode == SDL_SCANCODE_RIGHT) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_D)) {
+						(e.key.keysym.scancode == SDL_SCANCODE_D))
+					{
 						movement[DIR_RIGHT] = true;
 					}
 				}
-				if (e.type == SDL_KEYUP) {
+
+				if (e.type == SDL_KEYUP)
+				{
 					// Camera Move Stop
 					if ((e.key.keysym.scancode == SDL_SCANCODE_UP) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_W)) {
+						(e.key.keysym.scancode == SDL_SCANCODE_W))
+					{
 						movement[DIR_UP] = false;
 					}
 					if ((e.key.keysym.scancode == SDL_SCANCODE_DOWN) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_S)) {
+						(e.key.keysym.scancode == SDL_SCANCODE_S))
+					{
 						movement[DIR_DOWN] = false;
 					}
 					if ((e.key.keysym.scancode == SDL_SCANCODE_LEFT) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_A)) {
+						(e.key.keysym.scancode == SDL_SCANCODE_A))
+					{
 						movement[DIR_LEFT] = false;
 					}
 					if ((e.key.keysym.scancode == SDL_SCANCODE_RIGHT) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_D)) {
+						(e.key.keysym.scancode == SDL_SCANCODE_D))
+					{
 						movement[DIR_RIGHT] = false;
 					}
 				}
+				
 				// Capture Mouse
-				if (e.type == SDL_MOUSEMOTION) {
+				if (e.type == SDL_MOUSEMOTION)
+				{
 					FirstCamera.setHeadTurn(e.motion.xrel, e.motion.yrel);
 				}
+				
 				// Capture Mouse wheel for Zoom
-				if (e.type == SDL_MOUSEWHEEL) {
+				if (e.type == SDL_MOUSEWHEEL)
+				{
 					FirstCamera.setAddZoom(e.wheel.y);
 				}
+				
 				//User requests quit
 				if (e.type == SDL_QUIT)
 				{

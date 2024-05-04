@@ -2,8 +2,8 @@
 #include <iostream>
 #include <fstream>
 
-#define DIRECTORY_SHADERS "Assets/shaders/"
-#define BUFFERSIZE_SOURCECODE 8192
+const char* DIRECTORY_SHADERS = "Assets/shaders/";
+const int BUFFERSIZE_SOURCECODE = 8192;
 
 void Shader::init(const GLchar *filename)
 {
@@ -26,7 +26,8 @@ void Shader::init(const GLchar *filename)
 	tempFullFileName += filename;
 	tempFullFileName += ".vertex";
 	srcCodeFile.open(tempFullFileName, std::ios::in | std::ios::binary);
-	if (!srcCodeFile.is_open()) {
+	if (!srcCodeFile.is_open())
+	{
 		std::cerr << "*** No se encuentra: " << filename << ".vertex" << std::endl;
 	}
 	srcCodeFile.read(buffer, BUFFERSIZE_SOURCECODE);
@@ -38,7 +39,8 @@ void Shader::init(const GLchar *filename)
 	glCompileShader(vertexShader);
 	//Test if compile has been successful
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &allOK);
-	if (allOK != GL_TRUE) {
+	if (allOK != GL_TRUE)
+	{
 		glGetShaderInfoLog(vertexShader, 1024, NULL, information);
 		std::cerr << "*** Compilacion del vertex shader " << filename << ": " << information << std::endl;
 	}
@@ -62,7 +64,8 @@ void Shader::init(const GLchar *filename)
 	//Test if compile has been successful
 	allOK = GL_FALSE;
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &allOK);
-	if (allOK != GL_TRUE) {
+	if (allOK != GL_TRUE)
+	{
 		glGetShaderInfoLog(fragmentShader, 1024, NULL, information);
 		std::cerr << "*** Compilacion del fragment shader " << filename << ": ERROR:" << information << std::endl;
 	}
@@ -74,7 +77,8 @@ void Shader::init(const GLchar *filename)
 	//TEst if link shader has been successful
 	allOK = GL_FALSE;
 	glGetProgramiv(mIDprogram, GL_LINK_STATUS, &allOK);
-	if (allOK != GL_TRUE) {
+	if (allOK != GL_TRUE)
+	{
 		glGetProgramInfoLog(mIDprogram, 1024, NULL, information);
 		std::cerr << "*** Enlace de shaders a program: "<< information << std::endl;
 	}                                                                                                                               
@@ -87,7 +91,8 @@ void Shader::init(const GLchar *filename)
 	mAllOK = true;
 }
 
-Shader::Shader() {
+Shader::Shader()
+{
 	mAllOK = false;
 }
 

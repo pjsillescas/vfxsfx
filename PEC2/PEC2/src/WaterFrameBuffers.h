@@ -1,11 +1,12 @@
 #pragma once
+
 #include <glad/glad.h>
 
-#define REFLECTION_WIDTH  320
-#define REFLECTION_HEIGHT  180
+const int REFLECTION_WIDTH = 320;
+const int REFLECTION_HEIGHT = 180;
 
-#define REFRACTION_WIDTH  1280
-#define REFRACTION_HEIGHT  720
+const int REFRACTION_WIDTH = 1280;
+const int REFRACTION_HEIGHT = 720;
 
 
 class WaterFrameBuffers
@@ -14,7 +15,7 @@ class WaterFrameBuffers
 public:
 	WaterFrameBuffers();
 	~WaterFrameBuffers();
-	void cleanUp();
+	void cleanUp() const;
 	void bindReflectionFrameBuffer();
 	void bindRefractionFrameBuffer();
 	void unbindCurrentFrameBuffer();

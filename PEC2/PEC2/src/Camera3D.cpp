@@ -1,8 +1,8 @@
 #include "Camera3D.h"
 
 #include <glad/glad.h>
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 
 Camera3D::Camera3D()
@@ -67,18 +67,22 @@ void Camera3D::update(bool *moveBoolArray)  // 4position up-down-left-right
 	{ 
 		mCameraPos += mCameraSpeed * mCameraFront;
 	}
+	
 	if (moveBoolArray[1])	//down
 	{
 		mCameraPos -= mCameraSpeed * mCameraFront;
 	}
+	
 	if (moveBoolArray[2]) // left
 	{
 		mCameraPos -= glm::normalize(glm::cross(mCameraFront, mCameraUp)) * mCameraSpeed;
 	}
+	
 	if (moveBoolArray[3])	//right
 	{
 		mCameraPos += glm::normalize(glm::cross(mCameraFront, mCameraUp)) * mCameraSpeed;
 	}
+	
 	// No fly goes to ground
 	if (!mCameraFly) {
 		mCameraPos.y = mGround;
@@ -126,25 +130,35 @@ void Camera3D::setHeadTurn(int xOffset, int yOffset)
 	mPitch += yoffset;
 
 	if (mPitch > 89.0f)
+	{
 		mPitch = 89.0f;
+	}
+	
 	if (mPitch < -89.0f)
+	{
 		mPitch = -89.0f;
+	}
 }
 
 void Camera3D::setAddZoom(int value)
 {
-	if (mFov >= 1.0f && mFov <= 45.0f) {
+	if (mFov >= 1.0f && mFov <= 45.0f)
+	{
 		mFov -= value;
 	}
-	if (mFov <= 1.0f) {
+	
+	if (mFov <= 1.0f)
+	{
 		mFov = 1.0f;
 	}
-	if (mFov >= 45.0f) {
+	
+	if (mFov >= 45.0f)
+	{
 		mFov = 45.0f;
 	}
 }
 
-glm::vec3 Camera3D::getCameraPos()
+glm::vec3 Camera3D::getCameraPos() const
 {
 	return mCameraPos;
 }
@@ -154,7 +168,12 @@ void Camera3D::invertPitch()
 	mPitch = -mPitch;
 
 	if (mPitch > 89.0f)
+	{
 		mPitch = 89.0f;
+	}
+
 	if (mPitch < -89.0f)
+	{
 		mPitch = -89.0f;
+	}
 }
