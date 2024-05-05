@@ -1,0 +1,21 @@
+#version 330 core
+
+layout (location = 0) in vec3 LVertexPos;
+layout (location = 1) in vec2 texCoor;
+layout (location = 2) in vec3 ColorVertex;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+out	vec3 colorFragment;
+
+const float tiling = 0.2;
+
+void main(){
+	vec4 modelPosition = model * vec4( LVertexPos.xyz, 1 );
+
+	vec4 clipSpace = projection * view * modelPosition;
+	gl_Position = clipSpace;
+	colorFragment = ColorVertex;
+}

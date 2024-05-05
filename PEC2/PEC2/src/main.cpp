@@ -12,6 +12,7 @@
 #include "Object3D.h"
 #include "WaterFrameBuffers.h"
 #include "WaterObj.h"
+#include "PlayerController.h"
 
 #include <string>
 #include <iostream>
@@ -46,10 +47,16 @@ int UniformPlaneM;
 
 Shader WaterShader;
 Shader TextureMatrixColorShader;
+Shader FireShader;
 Camera3D FirstCamera;
+PlayerController* playerController;
+Object3D* burningCube;
+Object3D* burningCube2;
+
 WaterObj MyQuad;
 std::vector<Object3D*> MyCubes;
 Object3D underWaterPlane;
+Object3D* firePlane;
 // FBO for Water
 WaterFrameBuffers *WaterFBO;
 // Clip Plane
@@ -69,10 +76,6 @@ glm::vec3 cubePositions[] = {
 };
 
 
-enum direction { DIR_UP, DIR_DOWN, DIR_LEFT, DIR_RIGHT, 
-	_DIR_LAST_ };
-bool		movement[_DIR_LAST_];
-
 bool init()
 {
 	//Initialization flag
@@ -82,63 +85,61 @@ bool init()
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
+		return false;
+	}
+
+	//Use OpenGL 3.3 core
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+	//Create window
+	gWindow = SDL_CreateWindow("SDL + OpenGL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+	if (gWindow == NULL)
+	{
+		printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
+		return false;
+	}
+	
+	//Create context
+	gContext = SDL_GL_CreateContext(gWindow);
+	if (gContext == NULL)
+	{
+		printf("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError());
+		return false;
+	}
+	
+	// glad: load all OpenGL function pointers
+	// ---------------------------------------
+	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
+	{
+		std::cout << "Failed to initialize GLAD" << std::endl;
 		success = false;
 	}
-	else
+
+	//Use Vsync
+	if (SDL_GL_SetSwapInterval(1) < 0)
 	{
-		//Use OpenGL 3.3 core
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-		//Create window
-		gWindow = SDL_CreateWindow("SDL + OpenGL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-		if (gWindow == NULL)
-		{
-			printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
-			success = false;
-		}
-		else
-		{
-			//Create context
-			gContext = SDL_GL_CreateContext(gWindow);
-			if (gContext == NULL)
-			{
-				printf("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError());
-				success = false;
-			}
-			else
-			{
-				// glad: load all OpenGL function pointers
-				// ---------------------------------------
-				if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
-				{
-					std::cout << "Failed to initialize GLAD" << std::endl;
-					success = false;
-				}
-
-				//Use Vsync
-				if (SDL_GL_SetSwapInterval(1) < 0)
-				{
-					printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
-				}
-
-				FirstCamera.init();
-				initGL();
-
-			}
-		}
+		printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 	}
 
-	// Init Movements
-	for (int i = 0; i < _DIR_LAST_; i++)
-	{
-		movement[i] = false;
-	}
+	initGL();
+	playerController = new PlayerController(&FirstCamera);
 
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 
 	return success;
+}
+
+static Object3D* createCube(glm::vec3 position)
+{
+	Object3D* object = new Object3D();
+	object->loadObjFromDisk("Assets/Cube.txt");
+	object->loadTextureFromDisk("Assets/textures/texture.png");
+	object->setShader(&TextureMatrixColorShader);
+	object->setPosition(position);
+
+	return object;
 }
 
 void initGL()
@@ -166,28 +167,43 @@ void initGL()
 
 	for (unsigned int i = 0; i < 9; i++)
 	{
+		/*
 		MyCubes.push_back(new Object3D());
 		MyCubes[i]->loadObjFromDisk("Assets/Cube.txt");
 		MyCubes[i]->loadTextureFromDisk("Assets/textures/texture.png");
 		MyCubes[i]->setShader(&TextureMatrixColorShader);
 		MyCubes[i]->setPosition(cubePositions[i]);
+		*/
+
+		MyCubes.push_back(createCube(cubePositions[i]));
+
 	}
+
+	burningCube = createCube(glm::vec3(0.f,0.f,-1.f));
+	burningCube2 = createCube(glm::vec3(0.f, 0.2f, -2.5f));
 
 	underWaterPlane.loadObjFromDisk("Assets/Pool.txt");
 	underWaterPlane.setShader(&TextureMatrixColorShader);
 	underWaterPlane.loadTextureFromDisk("Assets/textures/floor.jpg");
 	underWaterPlane.setPosition(glm::vec3(0.0, -4.0, 0.0));
+
+	FireShader.init("Fire");
+	firePlane = new Object3D();
+	firePlane->loadObjFromDisk("Assets/FirePlane.txt");
+	firePlane->setShader(&FireShader);
+	//firePlane->loadTextureFromDisk("Assets/textures/floor.jpg");
+	firePlane->setPosition(glm::vec3(0.0f, 2.f, -1.0f));
+
 	// Create Frame Buffer Objects (FBO)
-	WaterFBO = new WaterFrameBuffers;
+	WaterFBO = new WaterFrameBuffers();
 }
 
 void update()
 {
-	// Move Camera
-	FirstCamera.update(movement);
+	playerController->update();
 }
 
-void renderWater()
+static void renderWater()
 {
 	//Bind program
 	WaterShader.Use();
@@ -229,11 +245,17 @@ static void renderScene(glm::vec4 PclipPlane)
 	//Sets View Matrix (Camera)
 	FirstCamera.setUniformViewMatrix(UniformViewM);
 
-	for (unsigned int i = 0; i < MyCubes.size(); i++) {
+	for (unsigned int i = 0; i < MyCubes.size(); i++)
+	{
 		// Draw objects
 		MyCubes[i]->render();
 	}
 	underWaterPlane.render();
+
+	// Fire render logic
+	burningCube->render();
+	burningCube2->render();
+	firePlane->render();
 }
 
 void render()
@@ -270,18 +292,26 @@ void render()
 
 void close()
 {
+	delete playerController;
+	delete firePlane;
+
+	delete burningCube;
+	delete burningCube2;
+
 	//Deallocate program
 	WaterShader.deleteProgram();
 	TextureMatrixColorShader.deleteProgram();
 
 	//Destroy data in GPU
 	MyQuad.clearGPU();
-	for (unsigned int i = 0; i < MyCubes.size(); i++) {
+	for (unsigned int i = 0; i < MyCubes.size(); i++)
+	{
 		MyCubes[i]->clearGPU();
 	}
 	underWaterPlane.clearGPU();
 	// Clear FBO Water
 	WaterFBO->cleanUp();
+	delete WaterFBO;
 
 	//Destroy window	
 	SDL_DestroyWindow(gWindow);
@@ -297,104 +327,25 @@ int main(int argc, char* args[])
 	if (!init())
 	{
 		printf("Failed to initialize!\n");
+		return 1;
 	}
-	else
+	
+	printf("* Use WASD and Mouse to walk in 3d World *");
+	//Main loop flag
+	bool quit = false;
+
+	//While application is running
+	while (!quit)
 	{
-		printf("* Use WASD and Mouse to walk in 3d World *");
-		//Main loop flag
-		bool quit = false;
+		quit = playerController->handleInput();
 
-		//Event handler
-		SDL_Event e;
+		//Update
+		update();
+		//Render
+		render();
 
-		//While application is running
-		while (!quit)
-		{
-			//Handle events on queue
-			while (SDL_PollEvent(&e) != 0)
-			{
-				if (e.type == SDL_KEYDOWN)
-				{
-					if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-					{
-						quit = true;
-					}
-					
-					// Camera Move setting
-					if ((e.key.keysym.scancode == SDL_SCANCODE_UP) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_W))
-					{
-						movement[DIR_UP] = true;
-					}
-					if ((e.key.keysym.scancode == SDL_SCANCODE_DOWN) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_S))
-					{
-						movement[DIR_DOWN] = true;
-					}
-					if ((e.key.keysym.scancode == SDL_SCANCODE_LEFT) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_A))
-					{
-						movement[DIR_LEFT] = true;
-					}
-					if ((e.key.keysym.scancode == SDL_SCANCODE_RIGHT) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_D))
-					{
-						movement[DIR_RIGHT] = true;
-					}
-				}
-
-				if (e.type == SDL_KEYUP)
-				{
-					// Camera Move Stop
-					if ((e.key.keysym.scancode == SDL_SCANCODE_UP) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_W))
-					{
-						movement[DIR_UP] = false;
-					}
-					if ((e.key.keysym.scancode == SDL_SCANCODE_DOWN) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_S))
-					{
-						movement[DIR_DOWN] = false;
-					}
-					if ((e.key.keysym.scancode == SDL_SCANCODE_LEFT) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_A))
-					{
-						movement[DIR_LEFT] = false;
-					}
-					if ((e.key.keysym.scancode == SDL_SCANCODE_RIGHT) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_D))
-					{
-						movement[DIR_RIGHT] = false;
-					}
-				}
-				
-				// Capture Mouse
-				if (e.type == SDL_MOUSEMOTION)
-				{
-					FirstCamera.setHeadTurn(e.motion.xrel, e.motion.yrel);
-				}
-				
-				// Capture Mouse wheel for Zoom
-				if (e.type == SDL_MOUSEWHEEL)
-				{
-					FirstCamera.setAddZoom(e.wheel.y);
-				}
-				
-				//User requests quit
-				if (e.type == SDL_QUIT)
-				{
-					quit = true;
-				}
-			}
-
-			//Update
-			update();
-			//Render
-			render();
-
-			//Update screen
-			SDL_GL_SwapWindow(gWindow);
-		}
+		//Update screen
+		SDL_GL_SwapWindow(gWindow);
 	}
 
 	//Free resources and close SDL

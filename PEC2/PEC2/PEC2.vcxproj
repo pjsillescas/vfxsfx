@@ -137,6 +137,7 @@
     <ClCompile Include="src\FileManager.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Object3D.cpp" />
+    <ClCompile Include="src\PlayerController.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Utils.cpp" />
     <ClCompile Include="src\WaterFrameBuffers.cpp" />
@@ -147,10 +148,19 @@
     <ClInclude Include="src\FileManager.h" />
     <ClInclude Include="src\global_defines.h" />
     <ClInclude Include="src\Object3D.h" />
+    <ClInclude Include="src\PlayerController.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Utils.h" />
     <ClInclude Include="src\WaterFrameBuffers.h" />
     <ClInclude Include="src\WaterObj.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\x64\Debug\Assets\shaders\Fire.fragment" />
+    <None Include="..\x64\Debug\Assets\shaders\Fire.vertex" />
+    <None Include="..\x64\Debug\Assets\shaders\TextureMatrixColorClip.fragment" />
+    <None Include="..\x64\Debug\Assets\shaders\TextureMatrixColorClip.vertex" />
+    <None Include="..\x64\Debug\Assets\shaders\Water4.fragment" />
+    <None Include="..\x64\Debug\Assets\shaders\Water4.vertex" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

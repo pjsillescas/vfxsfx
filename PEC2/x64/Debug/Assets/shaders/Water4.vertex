@@ -19,15 +19,15 @@ out vec3 cameraVector;
 
 out vec3 lightVector;
 
-const float tilling = 0.2;
+const float tiling = 0.2;
 
 void main(){
 	vec4 modelPosition = model * vec4( LVertexPos.xyz, 1 );
 
 	clipSpace = projection * view * modelPosition;
 	gl_Position = clipSpace;
-	// Convert 0-1 coordinates to -1 +1 coordinates range asdn tilling texture
-	texFragment = vec2(LVertexPos.x/2.0 + 0.5, LVertexPos.z/2.0 + 0.5) * tilling;
+	// Convert 0-1 coordinates to -1 +1 coordinates range asdn tiling texture
+	texFragment = vec2(LVertexPos.x/2.0 + 0.5, LVertexPos.z/2.0 + 0.5) * tiling;
 //	colorFragment = ColorVertex;
 
 	cameraVector = camPos - modelPosition.xyz;

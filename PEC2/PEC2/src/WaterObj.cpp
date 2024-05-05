@@ -13,28 +13,33 @@ WaterObj::~WaterObj()
 void WaterObj::render()
 {
 	//Sets texture
-	if (mTexture != -1) {
+	if (mTexture != -1)
+	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, mTexture);
 		glUniform1i(mUniformTex, 0);
 	}
-	if (mTexture2 != -1) {
+	if (mTexture2 != -1)
+	{
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, mTexture2);
 		glUniform1i(mUniformTex2, 1);
 	}
-	if (mTexture3 != -1) {
+	if (mTexture3 != -1)
+	{
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, mTexture3);
 		glUniform1i(mUniformTex3, 2);
 	}
-	if (mTexture3 != -1) {
+	if (mTexture3 != -1)
+	{
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, mTexture4);
 		glUniform1i(mUniformTex4, 3);
 	}
 	mCurrentOffsetWave += WAVE_SPEED; // It's better to control with FrameTime 
-	if (mCurrentOffsetWave > 1.0f) {
+	if (mCurrentOffsetWave > 1.0f)
+	{
 		mCurrentOffsetWave -= 1.0;
 	}
 	glUniform1f(mUniformOffsetWave, mCurrentOffsetWave);
