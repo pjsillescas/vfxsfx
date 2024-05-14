@@ -12,6 +12,8 @@
 #include "Object3D.h"
 #include "WaterFrameBuffers.h"
 #include "WaterObj.h"
+#include "FireObj.h"
+#include "FireFrameBuffers.h"
 #include "PlayerController.h"
 
 #include <string>
@@ -48,6 +50,7 @@ int UniformPlaneM;
 Shader WaterShader;
 Shader TextureMatrixColorShader;
 Shader FireShader;
+Shader FlameShader;
 Camera3D FirstCamera;
 PlayerController* playerController;
 Object3D* burningCube;
@@ -56,9 +59,12 @@ Object3D* burningCube2;
 WaterObj MyQuad;
 std::vector<Object3D*> MyCubes;
 Object3D underWaterPlane;
-Object3D* firePlane;
+FireObj* firePlane;
+Object3D* flamePlane;
+
 // FBO for Water
 WaterFrameBuffers *WaterFBO;
+FireFrameBuffers* FireFBO;
 // Clip Plane
 glm::vec4 clipPlane;
 
@@ -167,16 +173,7 @@ void initGL()
 
 	for (unsigned int i = 0; i < 9; i++)
 	{
-		/*
-		MyCubes.push_back(new Object3D());
-		MyCubes[i]->loadObjFromDisk("Assets/Cube.txt");
-		MyCubes[i]->loadTextureFromDisk("Assets/textures/texture.png");
-		MyCubes[i]->setShader(&TextureMatrixColorShader);
-		MyCubes[i]->setPosition(cubePositions[i]);
-		*/
-
-		MyCubes.push_back(createCube(cubePositions[i]));
-
+		//MyCubes.push_back(createCube(cubePositions[i]));
 	}
 
 	burningCube = createCube(glm::vec3(0.f,0.f,-1.f));
@@ -188,14 +185,27 @@ void initGL()
 	underWaterPlane.setPosition(glm::vec3(0.0, -4.0, 0.0));
 
 	FireShader.init("Fire");
-	firePlane = new Object3D();
+	firePlane = new FireObj();
 	firePlane->loadObjFromDisk("Assets/FirePlane.txt");
 	firePlane->setShader(&FireShader);
 	//firePlane->loadTextureFromDisk("Assets/textures/floor.jpg");
-	firePlane->setPosition(glm::vec3(0.0f, 2.f, -1.0f));
+	firePlane->setPosition(glm::vec3(0.0f, 5.f, -1.0f));
+	firePlane->setRotationAxis(glm::vec3(1,0,-1));
 
+	firePlane->loadTextureFromDisk("Assets/textures/waterDUDV.png");
+	firePlane->setTexture3(firePlane->getTexture()); // Load texture and change ID to texture 3;
+	firePlane->loadTextureFromDisk("Assets/textures/normaltexture.jpg");
+	firePlane->setTexture4(firePlane->getTexture()); // Load texture and change ID to texture 4;
+
+	FlameShader.init("Flame");
+	flamePlane = new Object3D();
+	flamePlane->loadObjFromDisk("Assets/FlamePlane.txt");
+	flamePlane->setShader(&FlameShader);
+	flamePlane->setPosition(glm::vec3(0.0f, 2.f, -1.0f));
+	
 	// Create Frame Buffer Objects (FBO)
 	WaterFBO = new WaterFrameBuffers();
+	FireFBO = new FireFrameBuffers();
 }
 
 void update()
@@ -203,8 +213,51 @@ void update()
 	playerController->update();
 }
 
+float time1 = 0;
+
 static void renderWater()
 {
+	glm::vec3 camPos;
+	glm::vec3 lightPos;
+	glm::vec3 lightColor;
+	
+	// fire
+	//Bind program
+	FireShader.Use();
+	UniformViewM = glGetUniformLocation(FireShader.getID(), "view");
+	UniformProjectionM = glGetUniformLocation(FireShader.getID(), "projection");
+	// Active Textures and Set them
+	firePlane->setTexture(FireFBO->getReflectionTexture());
+	firePlane->setTexture2(FireFBO->getRefractionTexture());
+	//Sets Projection Matrix
+	FirstCamera.setUniformProjectionMatrix(SCREEN_WIDTH, SCREEN_HEIGHT, UniformProjectionM);
+	//Sets View Matrix (Camera)
+	FirstCamera.setUniformViewMatrix(UniformViewM);
+	// Give Camera Vector to Shader
+	camPos = FirstCamera.getCameraPos();
+	glUniform3f(firePlane->getUniformCamPos(), camPos.x, camPos.y, camPos.z);
+	// Give an imaginary Sun light position and color
+	lightPos = glm::vec3(-3.0, 10.0, -5.0);
+	lightColor = glm::vec3(1.0, 1.0, 1.0);
+	glUniform3f(firePlane->getUniformLightPos(), lightPos.x, lightPos.y, lightPos.z);
+	glUniform3f(firePlane->getUniformLightColor(), lightColor.x, lightColor.y, lightColor.z);
+
+	// Draw objects
+	firePlane->render();
+
+	FlameShader.Use();
+	glUniform1f(glGetUniformLocation(FlameShader.getID(), "time"), time1);
+	glUniform2f(glGetUniformLocation(FlameShader.getID(), "iResolution"), SCREEN_WIDTH, SCREEN_HEIGHT);
+	//time1 += 0.0000001f;
+	time1 += 0.02f;
+	UniformViewM = glGetUniformLocation(FlameShader.getID(), "view");
+	UniformProjectionM = glGetUniformLocation(FlameShader.getID(), "projection");
+	FirstCamera.setUniformProjectionMatrix(SCREEN_WIDTH, SCREEN_HEIGHT, UniformProjectionM);
+	FirstCamera.setUniformViewMatrix(UniformViewM);
+
+	flamePlane->render();
+	// /fire
+
 	//Bind program
 	WaterShader.Use();
 	UniformViewM = glGetUniformLocation(WaterShader.getID(), "view");
@@ -217,11 +270,11 @@ static void renderWater()
 	//Sets View Matrix (Camera)
 	FirstCamera.setUniformViewMatrix(UniformViewM);
 	// Give Camera Vector to Shader
-	glm::vec3 camPos = FirstCamera.getCameraPos();
+	camPos = FirstCamera.getCameraPos();
 	glUniform3f(MyQuad.getUniformCamPos(), camPos.x, camPos.y, camPos.z);
 	// Give an imaginary Sun light position and color
-	glm::vec3 lightPos = glm::vec3(-3.0, 10.0, -5.0);
-	glm::vec3 lightColor = glm::vec3(1.0, 1.0, 1.0);
+	lightPos = glm::vec3(-3.0, 10.0, -5.0);
+	lightColor = glm::vec3(1.0, 1.0, 1.0);
 	glUniform3f(MyQuad.getUniformLightPos(), lightPos.x, lightPos.y, lightPos.z);
 	glUniform3f(MyQuad.getUniformLightColor(), lightColor.x, lightColor.y, lightColor.z);
 	// Draw objects
@@ -255,7 +308,45 @@ static void renderScene(glm::vec4 PclipPlane)
 	// Fire render logic
 	burningCube->render();
 	burningCube2->render();
-	firePlane->render();
+	//FireShader.Use();
+	//firePlane->render();
+	//std::cout << "render flame begin" << std::endl;
+	//FlameShader.Use();
+	//flamePlane->render();
+	//std::cout << "render flame end" << std::endl;
+}
+
+static void renderFire()
+{
+	// Fire
+	FireFBO->bindReflectionFrameBuffer();
+	// float distance = 2 * (FirstCamera.getCameraPos().z - firePlane->getPosition().z);
+	//glm::vec3 deltaPos(0, -2.5 * firePlane->getPosition().y,  0*distance);
+	//glm::vec3 deltaPos(0,3 -FirstCamera.getCameraPos().y, 0 * distance);
+	//glm::vec3 deltaPos = firePlane->getPosition() - glm::vec3(0, 0, -2);
+	//glm::vec3 oldPosition = FirstCamera.getCameraPos();
+	float distance = 2 * (FirstCamera.getCameraPos().y - firePlane->getPosition().y);
+	FirstCamera.setCameraPos(FirstCamera.getCameraPos().x, FirstCamera.getCameraPos().y - distance, FirstCamera.getCameraPos().z);
+	//glm::vec3 newPosition = oldPosition + deltaPos;
+	//glm::vec3 newPosition = firePlane->getPosition() + glm::vec3(1.5, 1.5, 0);
+	//glm::vec3 newPosition = firePlane->getPosition() + glm::vec3(0,0,1);
+	//FirstCamera.setCameraPos(FirstCamera.getCameraPos().x, FirstCamera.getCameraPos().y - 2*firePlane->getPosition().y, FirstCamera.getCameraPos().z + distance);
+	//FirstCamera.setCameraPos(newPosition.x, newPosition.y, newPosition.z);
+	FirstCamera.update();
+	clipPlane = glm::vec4(0, 0, -1, 0); // 0 Height because water object ar on plane Y = 0
+	renderScene(clipPlane);
+	//FireFBO->unbindCurrentFrameBuffer();
+	/*
+	FireFBO->bindRefractionFrameBuffer();
+	clipPlane = glm::vec4(0, 0, -1, 0); // 0 Height because water object ar on plane Y = 0
+	renderScene(clipPlane);
+	*/
+	//FirstCamera.setCameraPos(FirstCamera.getCameraPos().x, FirstCamera.getCameraPos().y + 2 * firePlane->getPosition().y, FirstCamera.getCameraPos().z - distance);
+	//FirstCamera.setCameraPos(oldPosition.x, oldPosition.y, oldPosition.z);
+	FirstCamera.setCameraPos(FirstCamera.getCameraPos().x, FirstCamera.getCameraPos().y + distance, FirstCamera.getCameraPos().z);
+
+	FirstCamera.update();
+	FireFBO->unbindCurrentFrameBuffer();
 }
 
 void render()
@@ -264,6 +355,10 @@ void render()
 	// Enable Clip distance
 	glEnable(GL_CLIP_DISTANCE0);
 
+	//glDisable(GL_CLIP_DISTANCE0);
+
+	//glEnable(GL_CLIP_DISTANCE0);
+	// Water
 	// Reflection texture render
 	WaterFBO->bindReflectionFrameBuffer();
 	// Recalculate Camera position for Render Reflection
@@ -284,6 +379,10 @@ void render()
 	renderScene(clipPlane);
 	
 	WaterFBO->unbindCurrentFrameBuffer();
+	
+	renderFire();
+
+	
 	glDisable(GL_CLIP_DISTANCE0);
 	renderScene(clipPlane);
 	//Render Water with Reflection and refraction Textures
@@ -294,6 +393,7 @@ void close()
 {
 	delete playerController;
 	delete firePlane;
+	delete flamePlane;
 
 	delete burningCube;
 	delete burningCube2;
@@ -313,6 +413,12 @@ void close()
 	WaterFBO->cleanUp();
 	delete WaterFBO;
 
+	FireFBO->cleanUp();
+	delete FireFBO;
+
+	FireShader.deleteProgram();
+	FlameShader.deleteProgram();
+	
 	//Destroy window	
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;

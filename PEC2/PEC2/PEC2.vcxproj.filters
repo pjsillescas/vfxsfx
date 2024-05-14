@@ -48,6 +48,12 @@
     <ClCompile Include="src\PlayerController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\FireObj.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FireFrameBuffers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera3D.h">
@@ -77,6 +83,12 @@
     <ClInclude Include="src\PlayerController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\FireObj.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FireFrameBuffers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\x64\Debug\Assets\shaders\TextureMatrixColorClip.fragment">
@@ -95,6 +107,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\x64\Debug\Assets\shaders\Fire.vertex">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\x64\Debug\Assets\shaders\Flame.fragment">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\x64\Debug\Assets\shaders\Flame.vertex">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

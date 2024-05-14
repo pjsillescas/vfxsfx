@@ -195,6 +195,10 @@ void Object3D::render()
 	diableVAO();
 	//Unbind program
 	//glUseProgram(NULL);
+	if (mTexture != -1)
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 }
 
 void Object3D::prepareVAO()

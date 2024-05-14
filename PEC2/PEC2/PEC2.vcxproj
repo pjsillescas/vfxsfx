@@ -135,6 +135,8 @@
     <ClCompile Include="..\..\glad\src\glad.c" />
     <ClCompile Include="src\Camera3D.cpp" />
     <ClCompile Include="src\FileManager.cpp" />
+    <ClCompile Include="src\FireFrameBuffers.cpp" />
+    <ClCompile Include="src\FireObj.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Object3D.cpp" />
     <ClCompile Include="src\PlayerController.cpp" />
@@ -146,6 +148,8 @@
   <ItemGroup>
     <ClInclude Include="src\Camera3D.h" />
     <ClInclude Include="src\FileManager.h" />
+    <ClInclude Include="src\FireFrameBuffers.h" />
+    <ClInclude Include="src\FireObj.h" />
     <ClInclude Include="src\global_defines.h" />
     <ClInclude Include="src\Object3D.h" />
     <ClInclude Include="src\PlayerController.h" />
@@ -157,6 +161,8 @@
   <ItemGroup>
     <None Include="..\x64\Debug\Assets\shaders\Fire.fragment" />
     <None Include="..\x64\Debug\Assets\shaders\Fire.vertex" />
+    <None Include="..\x64\Debug\Assets\shaders\Flame.fragment" />
+    <None Include="..\x64\Debug\Assets\shaders\Flame.vertex" />
     <None Include="..\x64\Debug\Assets\shaders\TextureMatrixColorClip.fragment" />
     <None Include="..\x64\Debug\Assets\shaders\TextureMatrixColorClip.vertex" />
     <None Include="..\x64\Debug\Assets\shaders\Water4.fragment" />
