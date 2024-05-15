@@ -31,7 +31,7 @@ void WaterObj::render()
 		glBindTexture(GL_TEXTURE_2D, mTexture3);
 		glUniform1i(mUniformTex3, 2);
 	}
-	if (mTexture3 != -1)
+	if (mTexture4 != -1)
 	{
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, mTexture4);

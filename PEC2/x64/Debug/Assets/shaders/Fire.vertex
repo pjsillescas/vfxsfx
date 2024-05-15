@@ -15,13 +15,14 @@ uniform vec3 lightPos;
 out	vec2 texFragment;
 out	vec3 colorFragment;
 out	vec4 clipSpace;
-out vec3 cameraVector;
+//out vec3 cameraVector;
 
-out vec3 lightVector;
+//out vec3 lightVector;
 
 const float tiling = 0.2;
 
-void main(){
+void main()
+{
 	vec4 modelPosition = model * vec4( LVertexPos.xyz, 1 );
 
 	clipSpace = projection * view * modelPosition;
@@ -30,6 +31,6 @@ void main(){
 	texFragment = vec2(LVertexPos.x/2.0 + 0.5, LVertexPos.z/2.0 + 0.5) * tiling;
 	colorFragment = ColorVertex;
 
-	cameraVector = camPos - modelPosition.xyz;
-	lightVector = modelPosition.xyz - lightPos;
+	//cameraVector = camPos - modelPosition.xyz;
+	//lightVector = modelPosition.xyz - lightPos;
 }

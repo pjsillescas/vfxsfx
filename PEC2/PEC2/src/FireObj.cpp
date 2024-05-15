@@ -16,12 +16,14 @@ FireObj::~FireObj()
 void FireObj::render()
 {
 	//Sets texture
+	
 	if (mTexture != -1)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, mTexture);
 		glUniform1i(mUniformTex, 4);
 	}
+	
 	if (mTexture2 != -1)
 	{
 		glActiveTexture(GL_TEXTURE1);
@@ -34,7 +36,7 @@ void FireObj::render()
 		glBindTexture(GL_TEXTURE_2D, mTexture3);
 		glUniform1i(mUniformTex3, 6);
 	}
-	if (mTexture3 != -1)
+	if (mTexture4 != -1)
 	{
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, mTexture4);

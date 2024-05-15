@@ -185,17 +185,18 @@ void initGL()
 	underWaterPlane.loadTextureFromDisk("Assets/textures/floor.jpg");
 	underWaterPlane.setPosition(glm::vec3(0.0, -4.0, 0.0));
 
-	FireShader.init("Fire");
 	firePlane = new FireObj();
 	firePlane->loadObjFromDisk("Assets/FirePlane.txt");
+	FireShader.init("Fire");
 	firePlane->setShader(&FireShader);
 	firePlane->setPosition(glm::vec3(0.0f, 5.f, -1.0f));
-	firePlane->setRotationAxis(glm::vec3(1,0,-1));
+	firePlane->setScale(glm::vec3(1,1,1));
+	//firePlane->setRotationAxis(glm::vec3(1,0,-1));
 
 	firePlane->loadTextureFromDisk("Assets/textures/waterDUDV.png");
 	firePlane->setTexture3(firePlane->getTexture()); // Load texture and change ID to texture 3;
-	firePlane->loadTextureFromDisk("Assets/textures/normaltexture.jpg");
-	firePlane->setTexture4(firePlane->getTexture()); // Load texture and change ID to texture 4;
+	//firePlane->loadTextureFromDisk("Assets/textures/normaltexture.jpg");
+	//firePlane->setTexture4(firePlane->getTexture()); // Load texture and change ID to texture 4;
 
 	FlameShader.init("Flame");
 	flamePlane = new Object3D();
@@ -289,14 +290,17 @@ static void renderScene(glm::vec4 PclipPlane)
 	burningCube->render();
 	burningCube2->render();
 
+	firePlane->render();
+
 	renderFlame();
 }
 
 static void renderFire()
 {
 	// Fire
+	FireShader.Use();
 	FireFBO->bindRefractionFrameBuffer();
-	clipPlane = glm::vec4(0, 0, 0, -1); // 0 Height because water object ar on plane Y = 0
+	clipPlane = glm::vec4(0, 0, 1, 0); // 0 Height because water object ar on plane Y = 0
 	renderScene(clipPlane);
 
 	FireFBO->unbindCurrentFrameBuffer();
@@ -307,6 +311,8 @@ void render()
 
 	// Enable Clip distance
 	glEnable(GL_CLIP_DISTANCE0);
+	
+	renderFire();
 
 	// Water
 	// Reflection texture render
@@ -330,8 +336,6 @@ void render()
 	
 	WaterFBO->unbindCurrentFrameBuffer();
 	
-	renderFire();
-
 	glDisable(GL_CLIP_DISTANCE0);
 	renderScene(clipPlane);
 	//Render Water with Reflection and refraction Textures
