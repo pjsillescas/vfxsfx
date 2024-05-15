@@ -218,41 +218,11 @@ void update()
 
 float time1 = 0;
 
-static void renderWater()
+static void renderFlame()
 {
-	glm::vec3 camPos;
-	glm::vec3 lightPos;
-	glm::vec3 lightColor;
-	
-	// fire
-	//Bind program
-	FireShader.Use();
-	UniformViewM = glGetUniformLocation(FireShader.getID(), "view");
-	UniformProjectionM = glGetUniformLocation(FireShader.getID(), "projection");
-	// Active Textures and Set them
-	firePlane->setTexture(FireFBO->getReflectionTexture());
-	firePlane->setTexture2(FireFBO->getRefractionTexture());
-	//Sets Projection Matrix
-	FirstCamera.setUniformProjectionMatrix(SCREEN_WIDTH, SCREEN_HEIGHT, UniformProjectionM);
-	//Sets View Matrix (Camera)
-	FirstCamera.setUniformViewMatrix(UniformViewM);
-	// Give Camera Vector to Shader
-	camPos = FirstCamera.getCameraPos();
-	glUniform3f(firePlane->getUniformCamPos(), camPos.x, camPos.y, camPos.z);
-	// Give an imaginary Sun light position and color
-	lightPos = glm::vec3(-3.0, 10.0, -5.0);
-	lightColor = glm::vec3(1.0, 1.0, 1.0);
-	glUniform3f(firePlane->getUniformLightPos(), lightPos.x, lightPos.y, lightPos.z);
-	glUniform3f(firePlane->getUniformLightColor(), lightColor.x, lightColor.y, lightColor.z);
-
-	// Draw objects
-	firePlane->render();
-
 	FlameShader.Use();
 	glUniform1f(glGetUniformLocation(FlameShader.getID(), "time"), time1);
-	//glUniform2f(glGetUniformLocation(FlameShader.getID(), "iResolution"), SCREEN_WIDTH, SCREEN_HEIGHT);
 	glUniform2f(glGetUniformLocation(FlameShader.getID(), "iResolution"), 5, 5);
-	//time1 += 0.0000001f;
 	time1 += 0.02f;
 	UniformViewM = glGetUniformLocation(FlameShader.getID(), "view");
 	UniformProjectionM = glGetUniformLocation(FlameShader.getID(), "projection");
@@ -260,8 +230,14 @@ static void renderWater()
 	FirstCamera.setUniformViewMatrix(UniformViewM);
 
 	flamePlane->render();
-	// /fire
+}
 
+static void renderWater()
+{
+	glm::vec3 camPos;
+	glm::vec3 lightPos;
+	glm::vec3 lightColor;
+	
 	//Bind program
 	WaterShader.Use();
 	UniformViewM = glGetUniformLocation(WaterShader.getID(), "view");
@@ -312,44 +288,17 @@ static void renderScene(glm::vec4 PclipPlane)
 	// Fire render logic
 	burningCube->render();
 	burningCube2->render();
-	//FireShader.Use();
-	//firePlane->render();
-	//std::cout << "render flame begin" << std::endl;
-	//FlameShader.Use();
-	//flamePlane->render();
-	//std::cout << "render flame end" << std::endl;
+
+	renderFlame();
 }
 
 static void renderFire()
 {
 	// Fire
-	FireFBO->bindReflectionFrameBuffer();
-	// float distance = 2 * (FirstCamera.getCameraPos().z - firePlane->getPosition().z);
-	//glm::vec3 deltaPos(0, -2.5 * firePlane->getPosition().y,  0*distance);
-	//glm::vec3 deltaPos(0,3 -FirstCamera.getCameraPos().y, 0 * distance);
-	//glm::vec3 deltaPos = firePlane->getPosition() - glm::vec3(0, 0, -2);
-	//glm::vec3 oldPosition = FirstCamera.getCameraPos();
-	float distance = 2 * (FirstCamera.getCameraPos().y - firePlane->getPosition().y);
-	FirstCamera.setCameraPos(FirstCamera.getCameraPos().x, FirstCamera.getCameraPos().y - distance, FirstCamera.getCameraPos().z);
-	//glm::vec3 newPosition = oldPosition + deltaPos;
-	//glm::vec3 newPosition = firePlane->getPosition() + glm::vec3(1.5, 1.5, 0);
-	//glm::vec3 newPosition = firePlane->getPosition() + glm::vec3(0,0,1);
-	//FirstCamera.setCameraPos(FirstCamera.getCameraPos().x, FirstCamera.getCameraPos().y - 2*firePlane->getPosition().y, FirstCamera.getCameraPos().z + distance);
-	//FirstCamera.setCameraPos(newPosition.x, newPosition.y, newPosition.z);
-	FirstCamera.update();
-	clipPlane = glm::vec4(0, 0, -1, 0); // 0 Height because water object ar on plane Y = 0
-	renderScene(clipPlane);
-	//FireFBO->unbindCurrentFrameBuffer();
-	/*
 	FireFBO->bindRefractionFrameBuffer();
-	clipPlane = glm::vec4(0, 0, -1, 0); // 0 Height because water object ar on plane Y = 0
+	clipPlane = glm::vec4(0, 0, 0, -1); // 0 Height because water object ar on plane Y = 0
 	renderScene(clipPlane);
-	*/
-	//FirstCamera.setCameraPos(FirstCamera.getCameraPos().x, FirstCamera.getCameraPos().y + 2 * firePlane->getPosition().y, FirstCamera.getCameraPos().z - distance);
-	//FirstCamera.setCameraPos(oldPosition.x, oldPosition.y, oldPosition.z);
-	FirstCamera.setCameraPos(FirstCamera.getCameraPos().x, FirstCamera.getCameraPos().y + distance, FirstCamera.getCameraPos().z);
 
-	FirstCamera.update();
 	FireFBO->unbindCurrentFrameBuffer();
 }
 
@@ -359,9 +308,6 @@ void render()
 	// Enable Clip distance
 	glEnable(GL_CLIP_DISTANCE0);
 
-	//glDisable(GL_CLIP_DISTANCE0);
-
-	//glEnable(GL_CLIP_DISTANCE0);
 	// Water
 	// Reflection texture render
 	WaterFBO->bindReflectionFrameBuffer();
@@ -386,7 +332,6 @@ void render()
 	
 	renderFire();
 
-	
 	glDisable(GL_CLIP_DISTANCE0);
 	renderScene(clipPlane);
 	//Render Water with Reflection and refraction Textures
