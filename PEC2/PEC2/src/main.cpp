@@ -177,7 +177,7 @@ void initGL()
 	}
 
 	burningCube = createCube(glm::vec3(0.f,0.f,-1.f));
-	burningCube2 = createCube(glm::vec3(0.f, 0.2f, -2.5f));
+	burningCube2 = createCube(glm::vec3(0.f, 4.f, -2.5f));
 
 	underWaterPlane.loadObjFromDisk("Assets/Pool.txt");
 	underWaterPlane.setShader(&TextureMatrixColorShader);
@@ -202,7 +202,10 @@ void initGL()
 	flamePlane->loadObjFromDisk("Assets/FlamePlane.txt");
 	flamePlane->setShader(&FlameShader);
 	flamePlane->setPosition(glm::vec3(0.0f, 2.f, -1.0f));
-	
+	flamePlane->loadTextureFromDisk("Assets/textures/maskFlame.png");
+	flamePlane->setTexture(flamePlane->getTexture());
+	flamePlane->setTextureIndex(9);
+
 	// Create Frame Buffer Objects (FBO)
 	WaterFBO = new WaterFrameBuffers();
 	FireFBO = new FireFrameBuffers();
@@ -247,7 +250,8 @@ static void renderWater()
 
 	FlameShader.Use();
 	glUniform1f(glGetUniformLocation(FlameShader.getID(), "time"), time1);
-	glUniform2f(glGetUniformLocation(FlameShader.getID(), "iResolution"), SCREEN_WIDTH, SCREEN_HEIGHT);
+	//glUniform2f(glGetUniformLocation(FlameShader.getID(), "iResolution"), SCREEN_WIDTH, SCREEN_HEIGHT);
+	glUniform2f(glGetUniformLocation(FlameShader.getID(), "iResolution"), 5, 5);
 	//time1 += 0.0000001f;
 	time1 += 0.02f;
 	UniformViewM = glGetUniformLocation(FlameShader.getID(), "view");

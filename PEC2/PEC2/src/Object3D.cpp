@@ -14,6 +14,7 @@ Object3D::Object3D()
 	mVBO = -1;;
 	mEBO = -1;
 	mTexture = -1;
+	textureIndex = 0;
 
 	mVertexData.clear();
 	mIndexData.clear();
@@ -197,7 +198,7 @@ void Object3D::render()
 	//glUseProgram(NULL);
 	if (mTexture != -1)
 	{
-		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindTexture(GL_TEXTURE_2D, textureIndex);
 	}
 }
 

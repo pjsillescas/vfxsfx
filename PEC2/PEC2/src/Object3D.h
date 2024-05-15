@@ -47,6 +47,8 @@ public:
 	void setTexture(GLuint id) { mTexture = id; };
 	GLuint getTexture() { return mTexture; };
 
+	void setTextureIndex(int newTextureIndex) { textureIndex = newTextureIndex; };
+
 protected:
 
 	void prepareObjGL();
@@ -55,6 +57,7 @@ protected:
 	GLuint mVBO;
 	GLuint mEBO;
 	GLuint mTexture;
+	int textureIndex;
 
 	std::vector<GLfloat> mVertexData;
 	std::vector<GLuint> mIndexData;
