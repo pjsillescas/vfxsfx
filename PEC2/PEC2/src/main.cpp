@@ -173,10 +173,11 @@ void initGL()
 
 	for (unsigned int i = 0; i < 9; i++)
 	{
-		//MyCubes.push_back(createCube(cubePositions[i]));
+		MyCubes.push_back(createCube(cubePositions[i]));
 	}
 
 	burningCube = createCube(glm::vec3(0.f,0.f,-1.f));
+	burningCube->setScale(glm::vec3(3.f,1.f,1.f));
 	burningCube2 = createCube(glm::vec3(0.f, 4.f, -2.5f));
 
 	underWaterPlane.loadObjFromDisk("Assets/Pool.txt");
@@ -188,7 +189,6 @@ void initGL()
 	firePlane = new FireObj();
 	firePlane->loadObjFromDisk("Assets/FirePlane.txt");
 	firePlane->setShader(&FireShader);
-	//firePlane->loadTextureFromDisk("Assets/textures/floor.jpg");
 	firePlane->setPosition(glm::vec3(0.0f, 5.f, -1.0f));
 	firePlane->setRotationAxis(glm::vec3(1,0,-1));
 
@@ -412,6 +412,7 @@ void close()
 	{
 		MyCubes[i]->clearGPU();
 	}
+
 	underWaterPlane.clearGPU();
 	// Clear FBO Water
 	WaterFBO->cleanUp();

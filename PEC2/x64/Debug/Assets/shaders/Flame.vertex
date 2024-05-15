@@ -9,14 +9,10 @@ uniform mat4 view;
 uniform mat4 projection;
 
 out vec2 TexCoord;
-out vec3 texColor;
-
-const float tiling = 0.2;
 
 void main(){
 	vec4 modelPosition = model * vec4( LVertexPos.xyz, 1 );
 
 	gl_Position = projection * view * modelPosition;
 	TexCoord = texCoor;
-	texColor = ColorVertex;
 }
