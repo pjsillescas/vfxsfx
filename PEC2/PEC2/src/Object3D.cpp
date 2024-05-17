@@ -196,10 +196,12 @@ void Object3D::render()
 	diableVAO();
 	//Unbind program
 	//glUseProgram(NULL);
+	/*
 	if (mTexture != -1)
 	{
 		glBindTexture(GL_TEXTURE_2D, textureIndex);
 	}
+	*/
 }
 
 void Object3D::prepareVAO()
@@ -211,6 +213,7 @@ void Object3D::prepareVAO()
 	transformMatrix = glm::mat4(1.f);
 	transformMatrix = glm::scale(transformMatrix,mScale);
 	transformMatrix = glm::translate(transformMatrix, mPosition);
+	//std::cout << mScale.x << mScale.y << mScale.z << " " << mPosition.x << mPosition.y << mPosition.z << std::endl;
 	glUniformMatrix4fv(mUniformModelM, 1, GL_FALSE, glm::value_ptr(transformMatrix));
 
 }

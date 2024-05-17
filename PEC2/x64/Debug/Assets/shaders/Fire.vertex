@@ -27,8 +27,9 @@ void main()
 
 	clipSpace = projection * view * modelPosition;
 	gl_Position = clipSpace;
+	//gl_Position = vec4(LVertexPos.xyz,1);
 	// Convert 0-1 coordinates to -1 +1 coordinates range asdn tiling texture
-	texFragment = vec2(LVertexPos.x/2.0 + 0.5, LVertexPos.z/2.0 + 0.5) * tiling;
+	texFragment = vec2(LVertexPos.x/2.0 + 0.5, LVertexPos.y/2.0 + 0.5) * tiling;
 	colorFragment = ColorVertex;
 
 	//cameraVector = camPos - modelPosition.xyz;

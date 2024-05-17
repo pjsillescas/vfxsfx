@@ -290,30 +290,65 @@ static void renderScene(glm::vec4 PclipPlane)
 	burningCube->render();
 	burningCube2->render();
 
+	/*
+	FireShader.Use();
+	firePlane->setTexture2(FireFBO->getRefractionTexture());
+	firePlane->setTexture(-1);
 	firePlane->render();
-
+	*/
 	renderFlame();
+}
+
+static void renderAux(glm::vec4 PclipPlane)
+{
+	//Clear color buffer & Z buffer
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//Bind program
+	TextureMatrixColorShader.Use();
+	UniformViewM = glGetUniformLocation(TextureMatrixColorShader.getID(), "view");
+	UniformProjectionM = glGetUniformLocation(TextureMatrixColorShader.getID(), "projection");
+	UniformPlaneM = glGetUniformLocation(TextureMatrixColorShader.getID(), "plane");
+	// Clip Plane Set
+	glUniform4f(UniformPlaneM, PclipPlane.x, PclipPlane.y, PclipPlane.z, PclipPlane.w);
+	//Sets Projection Matrix
+	FirstCamera.setUniformProjectionMatrix(SCREEN_WIDTH, SCREEN_HEIGHT, UniformProjectionM);
+	//Sets View Matrix (Camera)
+	FirstCamera.setUniformViewMatrix(UniformViewM);
+
+	// Fire render logic
+	burningCube->render();
+	burningCube2->render();
 }
 
 static void renderFire()
 {
 	// Fire
-	FireShader.Use();
 	FireFBO->bindRefractionFrameBuffer();
-	clipPlane = glm::vec4(0, 0, 1, 0); // 0 Height because water object ar on plane Y = 0
+	//FireFBO->unbindCurrentFrameBuffer();
+	FireShader.Use();
+	firePlane->setTexture2(FireFBO->getRefractionTexture());
+	UniformViewM = glGetUniformLocation(FireShader.getID(), "view");
+	UniformProjectionM = glGetUniformLocation(FireShader.getID(), "projection");
+	clipPlane = glm::vec4(0, 1, 0, 0); // 0 Height because water object ar on plane Y = 0
+	FirstCamera.setUniformProjectionMatrix(SCREEN_WIDTH, SCREEN_HEIGHT, UniformProjectionM);
+	//Sets View Matrix (Camera)
+	FirstCamera.setUniformViewMatrix(UniformViewM);
 	renderScene(clipPlane);
+	renderFlame();
 
 	FireFBO->unbindCurrentFrameBuffer();
+	
+	FireShader.Use();
+	firePlane->render();
+
 }
 
 void render()
 {
-
 	// Enable Clip distance
 	glEnable(GL_CLIP_DISTANCE0);
 	
-	renderFire();
-
 	// Water
 	// Reflection texture render
 	WaterFBO->bindReflectionFrameBuffer();
@@ -340,6 +375,8 @@ void render()
 	renderScene(clipPlane);
 	//Render Water with Reflection and refraction Textures
 	renderWater();
+	
+	renderFire();
 }
 
 void close()
