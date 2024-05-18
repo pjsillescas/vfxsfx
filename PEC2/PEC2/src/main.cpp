@@ -10,11 +10,10 @@
 #include "Shader.h"
 #include "Camera3D.h"
 #include "Object3D.h"
-#include "WaterFrameBuffers.h"
 #include "WaterObj.h"
 #include "FireObj.h"
-#include "FireFrameBuffers.h"
 #include "PlayerController.h"
+#include "FrameBuffer.h"
 
 #include <string>
 #include <iostream>
@@ -63,8 +62,12 @@ FireObj* firePlane;
 Object3D* flamePlane;
 
 // FBO for Water
-WaterFrameBuffers *WaterFBO;
-FireFrameBuffers* FireFBO;
+FrameBuffer* waterReflectionFrameBuffer;
+FrameBuffer* waterRefractionFrameBuffer;
+
+// FBO for fire
+FrameBuffer* fireFrameBuffer;
+
 // Clip Plane
 glm::vec4 clipPlane;
 
@@ -208,8 +211,17 @@ void initGL()
 	flamePlane->setTextureIndex(9);
 
 	// Create Frame Buffer Objects (FBO)
-	WaterFBO = new WaterFrameBuffers();
-	FireFBO = new FireFrameBuffers();
+	//WaterFBO = new WaterFrameBuffers();
+	
+	waterReflectionFrameBuffer = new FrameBuffer(REFLECTION_WIDTH, REFLECTION_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
+	waterReflectionFrameBuffer->init();
+
+	waterRefractionFrameBuffer = new FrameBuffer(REFRACTION_WIDTH, REFRACTION_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
+	waterRefractionFrameBuffer->init();
+
+	fireFrameBuffer = new FrameBuffer(REFRACTION_WIDTH, REFRACTION_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
+	fireFrameBuffer->init();
+
 }
 
 void update()
@@ -244,8 +256,8 @@ static void renderWater()
 	UniformViewM = glGetUniformLocation(WaterShader.getID(), "view");
 	UniformProjectionM = glGetUniformLocation(WaterShader.getID(), "projection");
 	// Active Textures and Set them
-	MyQuad.setTexture(WaterFBO->getReflectionTexture());
-	MyQuad.setTexture2(WaterFBO->getRefractionTexture());
+	MyQuad.setTexture(waterReflectionFrameBuffer->getTexture());
+	MyQuad.setTexture2(waterRefractionFrameBuffer->getTexture());
 	//Sets Projection Matrix
 	FirstCamera.setUniformProjectionMatrix(SCREEN_WIDTH, SCREEN_HEIGHT, UniformProjectionM);
 	//Sets View Matrix (Camera)
@@ -324,10 +336,10 @@ static void renderAux(glm::vec4 PclipPlane)
 static void renderFire()
 {
 	// Fire
-	FireFBO->bindRefractionFrameBuffer();
-	//FireFBO->unbindCurrentFrameBuffer();
+	fireFrameBuffer->bind();
 	FireShader.Use();
-	firePlane->setTexture2(FireFBO->getRefractionTexture());
+	firePlane->setTexture2(fireFrameBuffer->getTexture());
+	
 	UniformViewM = glGetUniformLocation(FireShader.getID(), "view");
 	UniformProjectionM = glGetUniformLocation(FireShader.getID(), "projection");
 	clipPlane = glm::vec4(0, 1, 0, 0); // 0 Height because water object ar on plane Y = 0
@@ -337,11 +349,10 @@ static void renderFire()
 	renderScene(clipPlane);
 	renderFlame();
 
-	FireFBO->unbindCurrentFrameBuffer();
-	
+	fireFrameBuffer->unbind();
+
 	FireShader.Use();
 	firePlane->render();
-
 }
 
 void render()
@@ -351,7 +362,8 @@ void render()
 	
 	// Water
 	// Reflection texture render
-	WaterFBO->bindReflectionFrameBuffer();
+	//WaterFBO->bindReflectionFrameBuffer();
+	waterReflectionFrameBuffer->bind();
 	// Recalculate Camera position for Render Reflection
 	float distance = 2 * (FirstCamera.getCameraPos().y - MyQuad.getPosition().y);
 	FirstCamera.setCameraPos(FirstCamera.getCameraPos().x, FirstCamera.getCameraPos().y - distance, FirstCamera.getCameraPos().z);
@@ -365,11 +377,11 @@ void render()
 	FirstCamera.update();
 
 	// Refraction texture render
-	WaterFBO->bindRefractionFrameBuffer();
+	waterRefractionFrameBuffer->bind();
 	clipPlane = glm::vec4(0, -1, 0, 0); // 0 Height because water object ar on plane Y = 0
 	renderScene(clipPlane);
 	
-	WaterFBO->unbindCurrentFrameBuffer();
+	waterRefractionFrameBuffer->unbind();
 	
 	glDisable(GL_CLIP_DISTANCE0);
 	renderScene(clipPlane);
@@ -400,12 +412,13 @@ void close()
 	}
 
 	underWaterPlane.clearGPU();
+	
 	// Clear FBO Water
-	WaterFBO->cleanUp();
-	delete WaterFBO;
-
-	FireFBO->cleanUp();
-	delete FireFBO;
+	delete waterReflectionFrameBuffer;
+	delete waterRefractionFrameBuffer;
+	
+	// Clear FBO Fire
+	delete fireFrameBuffer;
 
 	FireShader.deleteProgram();
 	FlameShader.deleteProgram();
