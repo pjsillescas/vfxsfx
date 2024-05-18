@@ -10,8 +10,6 @@ PlayerController::PlayerController(Camera3D* camera)
 
 void PlayerController::init()
 {
-	camera->init();
-
 	// Init Movements
 	for (int i = 0; i < _DIR_LAST_; i++)
 	{

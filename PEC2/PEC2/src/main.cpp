@@ -15,36 +15,15 @@
 #include "PlayerController.h"
 #include "FrameBuffer.h"
 
-#include <string>
 #include <iostream>
-#include <fstream>
 
 #include "global_defines.h"
-
-//Starts up SDL, creates window, and initializes OpenGL
-bool init();
-
-//Initializes rendering program and clear color
-void initGL();
-
-//Per frame update
-void update();
-
-//Renders quad to the screen
-void render();
-
-//Frees media and shuts down SDL
-void close();
 
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
 
 //OpenGL context
 SDL_GLContext gContext;
-
-int UniformViewM;
-int UniformProjectionM;
-int UniformPlaneM;
 
 Shader WaterShader;
 Shader TextureMatrixColorShader;
@@ -68,10 +47,6 @@ FrameBuffer* waterRefractionFrameBuffer;
 // FBO for fire
 FrameBuffer* fireFrameBuffer;
 
-// Clip Plane
-glm::vec4 clipPlane;
-
-
 glm::vec3 cubePositions[] = {
 	glm::vec3(2.0f,  5.0f, 5.0f),
 	glm::vec3(-1.5f, -2.2f, -2.5f),
@@ -84,8 +59,87 @@ glm::vec3 cubePositions[] = {
 	glm::vec3(-1.3f,  1.0f, 1.5f)
 };
 
+static Object3D* createCube(glm::vec3 position)
+{
+	Object3D* object = new Object3D();
+	object->loadObjFromDisk("Assets/Cube.txt");
+	object->loadTextureFromDisk("Assets/textures/texture.png");
+	object->setShader(&TextureMatrixColorShader);
+	object->setPosition(position);
 
-bool init()
+	return object;
+}
+
+//Initializes rendering program and clear color
+static void initGL()
+{
+	WaterShader.init("Water4");
+	TextureMatrixColorShader.init("TextureMatrixColorClip");
+
+	//Initialize clear color
+	glClearColor(0.f, 0.f, 0.f, 1.f);
+
+	//Zbuffer enable
+	glEnable(GL_DEPTH_TEST);
+
+	// Back face culling
+	glCullFace(GL_FRONT);
+	glEnable(GL_CULL_FACE);
+
+	//Generate Objects
+	MyQuad.loadObjFromDisk("Assets/WaterPlane.txt");
+	MyQuad.setShader(&WaterShader);
+	MyQuad.loadTextureFromDisk("Assets/textures/waterDUDV.png");
+	MyQuad.setTexture3(MyQuad.getTexture()); // Load texture and change ID to texture 3;
+	MyQuad.loadTextureFromDisk("Assets/textures/normaltexture.jpg");
+	MyQuad.setTexture4(MyQuad.getTexture()); // Load texture and change ID to texture 4;
+
+	for (unsigned int i = 0; i < 9; i++)
+	{
+		MyCubes.push_back(createCube(cubePositions[i]));
+	}
+
+	burningCube = createCube(glm::vec3(0.f, 0.f, -1.f));
+	burningCube->setScale(glm::vec3(3.f, 1.f, 1.f));
+	burningCube2 = createCube(glm::vec3(0.f, 4.f, -2.5f));
+
+	underWaterPlane.loadObjFromDisk("Assets/Pool.txt");
+	underWaterPlane.setShader(&TextureMatrixColorShader);
+	underWaterPlane.loadTextureFromDisk("Assets/textures/floor.jpg");
+	underWaterPlane.setPosition(glm::vec3(0.0, -4.0, 0.0));
+
+	firePlane = new FireObj();
+	firePlane->loadObjFromDisk("Assets/FirePlane.txt");
+	FireShader.init("Fire");
+	firePlane->setShader(&FireShader);
+	firePlane->setPosition(glm::vec3(0.0f, 5.f, -1.0f));
+	firePlane->setScale(glm::vec3(1, 1, 1));
+
+	firePlane->loadTextureFromDisk("Assets/textures/waterDUDV.png");
+	firePlane->setDistortionTexture(firePlane->getTexture()); // Load texture and change ID to texture 3;
+
+	FlameShader.init("Flame");
+	flamePlane = new Object3D();
+	flamePlane->loadObjFromDisk("Assets/FlamePlane.txt");
+	flamePlane->setShader(&FlameShader);
+	flamePlane->setPosition(glm::vec3(0.0f, 2.f, -1.0f));
+	flamePlane->loadTextureFromDisk("Assets/textures/maskFlame.png");
+	flamePlane->setTexture(flamePlane->getTexture());
+	flamePlane->setTextureIndex(9);
+
+	// Create Frame Buffer Objects (FBO)
+	waterReflectionFrameBuffer = new FrameBuffer(REFLECTION_WIDTH, REFLECTION_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
+	waterReflectionFrameBuffer->init();
+
+	waterRefractionFrameBuffer = new FrameBuffer(REFRACTION_WIDTH, REFRACTION_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
+	waterRefractionFrameBuffer->init();
+
+	fireFrameBuffer = new FrameBuffer(REFRACTION_WIDTH, REFRACTION_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
+	fireFrameBuffer->init();
+}
+
+//Starts up SDL, creates window, and initializes OpenGL
+static bool init()
 {
 	//Initialization flag
 	bool success = true;
@@ -129,10 +183,11 @@ bool init()
 	//Use Vsync
 	if (SDL_GL_SetSwapInterval(1) < 0)
 	{
-		printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+		std::cout << "Warning: Unable to set VSync! SDL Error: " << SDL_GetError() << std::endl;
 	}
 
 	initGL();
+	FirstCamera.init(SCREEN_WIDTH, SCREEN_HEIGHT);
 	playerController = new PlayerController(&FirstCamera);
 
 	SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -140,85 +195,9 @@ bool init()
 	return success;
 }
 
-static Object3D* createCube(glm::vec3 position)
-{
-	Object3D* object = new Object3D();
-	object->loadObjFromDisk("Assets/Cube.txt");
-	object->loadTextureFromDisk("Assets/textures/texture.png");
-	object->setShader(&TextureMatrixColorShader);
-	object->setPosition(position);
 
-	return object;
-}
-
-void initGL()
-{
-	WaterShader.init("Water4");
-	TextureMatrixColorShader.init("TextureMatrixColorClip");
-	
-	//Initialize clear color
-	glClearColor(0.f, 0.f, 0.f, 1.f);
-
-	//Zbuffer enable
-	glEnable(GL_DEPTH_TEST);
-
-	// Back face culling
-	glCullFace(GL_FRONT);
-	glEnable(GL_CULL_FACE);
-
-	//Generate Objects
-	MyQuad.loadObjFromDisk("Assets/WaterPlane.txt");
-	MyQuad.setShader(&WaterShader);
-	MyQuad.loadTextureFromDisk("Assets/textures/waterDUDV.png");
-	MyQuad.setTexture3(MyQuad.getTexture()); // Load texture and change ID to texture 3;
-	MyQuad.loadTextureFromDisk("Assets/textures/normaltexture.jpg");
-	MyQuad.setTexture4(MyQuad.getTexture()); // Load texture and change ID to texture 4;
-
-	for (unsigned int i = 0; i < 9; i++)
-	{
-		MyCubes.push_back(createCube(cubePositions[i]));
-	}
-
-	burningCube = createCube(glm::vec3(0.f,0.f,-1.f));
-	burningCube->setScale(glm::vec3(3.f,1.f,1.f));
-	burningCube2 = createCube(glm::vec3(0.f, 4.f, -2.5f));
-
-	underWaterPlane.loadObjFromDisk("Assets/Pool.txt");
-	underWaterPlane.setShader(&TextureMatrixColorShader);
-	underWaterPlane.loadTextureFromDisk("Assets/textures/floor.jpg");
-	underWaterPlane.setPosition(glm::vec3(0.0, -4.0, 0.0));
-
-	firePlane = new FireObj();
-	firePlane->loadObjFromDisk("Assets/FirePlane.txt");
-	FireShader.init("Fire");
-	firePlane->setShader(&FireShader);
-	firePlane->setPosition(glm::vec3(0.0f, 5.f, -1.0f));
-	firePlane->setScale(glm::vec3(1,1,1));
-
-	firePlane->loadTextureFromDisk("Assets/textures/waterDUDV.png");
-	firePlane->setDistortionTexture(firePlane->getTexture()); // Load texture and change ID to texture 3;
-
-	FlameShader.init("Flame");
-	flamePlane = new Object3D();
-	flamePlane->loadObjFromDisk("Assets/FlamePlane.txt");
-	flamePlane->setShader(&FlameShader);
-	flamePlane->setPosition(glm::vec3(0.0f, 2.f, -1.0f));
-	flamePlane->loadTextureFromDisk("Assets/textures/maskFlame.png");
-	flamePlane->setTexture(flamePlane->getTexture());
-	flamePlane->setTextureIndex(9);
-
-	// Create Frame Buffer Objects (FBO)
-	waterReflectionFrameBuffer = new FrameBuffer(REFLECTION_WIDTH, REFLECTION_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
-	waterReflectionFrameBuffer->init();
-
-	waterRefractionFrameBuffer = new FrameBuffer(REFRACTION_WIDTH, REFRACTION_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
-	waterRefractionFrameBuffer->init();
-
-	fireFrameBuffer = new FrameBuffer(REFRACTION_WIDTH, REFRACTION_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
-	fireFrameBuffer->init();
-}
-
-void update()
+//Per frame update
+static void update()
 {
 	playerController->update();
 }
@@ -231,10 +210,12 @@ static void renderFlame()
 	glUniform1f(glGetUniformLocation(FlameShader.getID(), "time"), time1);
 	glUniform2f(glGetUniformLocation(FlameShader.getID(), "iResolution"), 5, 5);
 	time1 += 0.02f;
-	UniformViewM = glGetUniformLocation(FlameShader.getID(), "view");
-	UniformProjectionM = glGetUniformLocation(FlameShader.getID(), "projection");
-	FirstCamera.setUniformProjectionMatrix(SCREEN_WIDTH, SCREEN_HEIGHT, UniformProjectionM);
-	FirstCamera.setUniformViewMatrix(UniformViewM);
+	int UniformViewM = glGetUniformLocation(FlameShader.getID(), "view");
+	int UniformProjectionM = glGetUniformLocation(FlameShader.getID(), "projection");
+	glm::mat4 mProjectionMatrix = FirstCamera.getUniformProjectionMatrix();
+	glm::mat4 mViewMatrix = FirstCamera.getUniformViewMatrix();
+	glUniformMatrix4fv(UniformProjectionM, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
+	glUniformMatrix4fv(UniformViewM, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
 
 	flamePlane->render();
 }
@@ -247,15 +228,18 @@ static void renderWater()
 	
 	//Bind program
 	WaterShader.Use();
-	UniformViewM = glGetUniformLocation(WaterShader.getID(), "view");
-	UniformProjectionM = glGetUniformLocation(WaterShader.getID(), "projection");
+	int UniformViewM = glGetUniformLocation(WaterShader.getID(), "view");
+	int UniformProjectionM = glGetUniformLocation(WaterShader.getID(), "projection");
 	// Active Textures and Set them
 	MyQuad.setTexture(waterReflectionFrameBuffer->getTexture());
 	MyQuad.setTexture2(waterRefractionFrameBuffer->getTexture());
-	//Sets Projection Matrix
-	FirstCamera.setUniformProjectionMatrix(SCREEN_WIDTH, SCREEN_HEIGHT, UniformProjectionM);
-	//Sets View Matrix (Camera)
-	FirstCamera.setUniformViewMatrix(UniformViewM);
+	
+	glm::mat4 mProjectionMatrix = FirstCamera.getUniformProjectionMatrix();
+	glm::mat4 mViewMatrix = FirstCamera.getUniformViewMatrix();
+	glUniformMatrix4fv(UniformProjectionM, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
+	glUniformMatrix4fv(UniformViewM, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
+
+	
 	// Give Camera Vector to Shader
 	camPos = FirstCamera.getCameraPos();
 	glUniform3f(MyQuad.getUniformCamPos(), camPos.x, camPos.y, camPos.z);
@@ -264,6 +248,7 @@ static void renderWater()
 	lightColor = glm::vec3(1.0, 1.0, 1.0);
 	glUniform3f(MyQuad.getUniformLightPos(), lightPos.x, lightPos.y, lightPos.z);
 	glUniform3f(MyQuad.getUniformLightColor(), lightColor.x, lightColor.y, lightColor.z);
+	
 	// Draw objects
 	MyQuad.render();
 }
@@ -275,15 +260,15 @@ static void renderScene(glm::vec4 PclipPlane)
 
 	//Bind program
 	TextureMatrixColorShader.Use();
-	UniformViewM = glGetUniformLocation(TextureMatrixColorShader.getID(), "view");
-	UniformProjectionM = glGetUniformLocation(TextureMatrixColorShader.getID(), "projection");
-	UniformPlaneM = glGetUniformLocation(TextureMatrixColorShader.getID(), "plane");
+	int UniformViewM = glGetUniformLocation(TextureMatrixColorShader.getID(), "view");
+	int UniformProjectionM = glGetUniformLocation(TextureMatrixColorShader.getID(), "projection");
+	int UniformPlaneM = glGetUniformLocation(TextureMatrixColorShader.getID(), "plane");
 	// Clip Plane Set
 	glUniform4f(UniformPlaneM, PclipPlane.x, PclipPlane.y, PclipPlane.z, PclipPlane.w);
-	//Sets Projection Matrix
-	FirstCamera.setUniformProjectionMatrix(SCREEN_WIDTH, SCREEN_HEIGHT, UniformProjectionM);
-	//Sets View Matrix (Camera)
-	FirstCamera.setUniformViewMatrix(UniformViewM);
+	glm::mat4 mProjectionMatrix = FirstCamera.getUniformProjectionMatrix();
+	glm::mat4 mViewMatrix = FirstCamera.getUniformViewMatrix();
+	glUniformMatrix4fv(UniformProjectionM, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
+	glUniformMatrix4fv(UniformViewM, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
 
 	for (unsigned int i = 0; i < MyCubes.size(); i++)
 	{
@@ -306,12 +291,15 @@ static void renderFire()
 	FireShader.Use();
 	firePlane->setRefractionTexture(fireFrameBuffer->getTexture());
 	
-	UniformViewM = glGetUniformLocation(FireShader.getID(), "view");
-	UniformProjectionM = glGetUniformLocation(FireShader.getID(), "projection");
-	clipPlane = glm::vec4(0, 1, 0, 0); // 0 Height because water object ar on plane Y = 0
-	FirstCamera.setUniformProjectionMatrix(SCREEN_WIDTH, SCREEN_HEIGHT, UniformProjectionM);
-	//Sets View Matrix (Camera)
-	FirstCamera.setUniformViewMatrix(UniformViewM);
+	int UniformViewM = glGetUniformLocation(FireShader.getID(), "view");
+	int UniformProjectionM = glGetUniformLocation(FireShader.getID(), "projection");
+	
+	glm::mat4 mProjectionMatrix = FirstCamera.getUniformProjectionMatrix();
+	glm::mat4 mViewMatrix = FirstCamera.getUniformViewMatrix();
+	glUniformMatrix4fv(UniformProjectionM, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
+	glUniformMatrix4fv(UniformViewM, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
+
+	glm::vec4 clipPlane = glm::vec4(0, 1, 0, 0); // 0 Height because water object ar on plane Y = 0
 	renderScene(clipPlane);
 
 	fireFrameBuffer->unbind();
@@ -320,7 +308,8 @@ static void renderFire()
 	firePlane->render();
 }
 
-void render()
+//Renders quad to the screen
+static void render()
 {
 	// Enable Clip distance
 	glEnable(GL_CLIP_DISTANCE0);
@@ -333,7 +322,7 @@ void render()
 	FirstCamera.setCameraPos(FirstCamera.getCameraPos().x, FirstCamera.getCameraPos().y - distance, FirstCamera.getCameraPos().z);
 	FirstCamera.invertPitch();
 	FirstCamera.update();
-	clipPlane = glm::vec4(0, 1, 0, 0); // 0 Height because water object ar on plane Y = 0
+	glm::vec4 clipPlane = glm::vec4(0, 1, 0, 0); // 0 Height because water object ar on plane Y = 0
 	renderScene(clipPlane);
 	// Camera Recovery position
 	FirstCamera.setCameraPos(FirstCamera.getCameraPos().x, FirstCamera.getCameraPos().y + distance, FirstCamera.getCameraPos().z);
@@ -355,7 +344,8 @@ void render()
 	renderFire();
 }
 
-void close()
+//Frees media and shuts down SDL
+static void close()
 {
 	delete playerController;
 	delete firePlane;
@@ -400,11 +390,12 @@ int main(int argc, char* args[])
 	//Start up SDL and create window
 	if (!init())
 	{
-		printf("Failed to initialize!\n");
+		std::cout << "Failed to initialize!" << std::endl;
 		return 1;
 	}
 	
-	printf("* Use WASD and Mouse to walk in 3d World *");
+	std::cout << "* Use WASD and Mouse to walk in 3d World *" << std::endl;
+
 	//Main loop flag
 	bool quit = false;
 

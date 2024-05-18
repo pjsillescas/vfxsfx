@@ -8,7 +8,7 @@ public:
 	Camera3D();
 	~Camera3D();
 
-	void init();
+	void init(int screenSizeW, int screenSizeH);
 	void update();
 	void update(bool *moveBoolArray); // 4position up-down-left-right
 
@@ -16,8 +16,6 @@ public:
 	void setCameraPos(float X, float Y, float Z);
 	void setCameraFront(float X, float Y, float Z);
 	void setCameraUp(float X, float Y, float Z);
-	void setUniformProjectionMatrix(int screenSizeW, int screenSizeH, int uniformID);
-	void setUniformViewMatrix(int uniformID);
 	void setHeadTurn(int xOffset, int yOffset);
 	void setAddZoom(int value);
 	void setCameraFly(bool value) { mCameraFly = value; };
@@ -27,12 +25,10 @@ public:
 	glm::vec3 getCameraPos() const;
 	void invertPitch();
 
+	glm::mat4 getUniformProjectionMatrix();
+	glm::mat4 getUniformViewMatrix();
 
 private:
-	// Matrix
-	glm::mat4	mViewMatrix;
-	glm::mat4	mProjectionMatrix;
-
 	//Camera vectors and varbs
 	glm::vec3	mCameraPos;
 	glm::vec3	mCameraFront;
@@ -46,5 +42,9 @@ private:
 
 	//Head
 	float		mSensitivityTurn;
+
+	// screen
+	int screenSizeW;
+	int screenSizeH;
 };
 

@@ -32,7 +32,7 @@ Camera3D::~Camera3D()
 {
 }
 
-void Camera3D::init()
+void Camera3D::init(int screenSizeW, int screenSizeH)
 {
 	mCameraSpeed = 0.05f;
 
@@ -50,6 +50,9 @@ void Camera3D::init()
 
 	//Head
 	mSensitivityTurn = 0.05f;
+
+	this->screenSizeH = screenSizeH;
+	this->screenSizeW = screenSizeW;
 }
 
 void Camera3D::update()
@@ -104,18 +107,16 @@ void Camera3D::setCameraUp(float X, float Y, float Z)
 	mCameraUp = glm::vec3(X, Y, Z);
 }
 
-void Camera3D::setUniformProjectionMatrix(int screenSizeW, int screenSizeH,int uniformID)
+glm::mat4 Camera3D::getUniformProjectionMatrix()
 {
 	float screenWidth = static_cast<float>(screenSizeW);
 	float screenHeight = static_cast<float>(screenSizeH);
-	mProjectionMatrix = glm::perspective(glm::radians(mFov), screenWidth / screenHeight, 0.1f, 100.0f);
-	glUniformMatrix4fv(uniformID, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
+	return glm::perspective(glm::radians(mFov), screenWidth / screenHeight, 0.1f, 100.0f);
 }
 
-void Camera3D::setUniformViewMatrix(int uniformID)
+glm::mat4 Camera3D::getUniformViewMatrix()
 {
-	mViewMatrix = glm::lookAt(mCameraPos, mCameraPos + mCameraFront, mCameraUp);
-	glUniformMatrix4fv(uniformID, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
+	return glm::lookAt(mCameraPos, mCameraPos + mCameraFront, mCameraUp);
 }
 
 void Camera3D::setHeadTurn(int xOffset, int yOffset)

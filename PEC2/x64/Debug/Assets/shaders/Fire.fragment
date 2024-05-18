@@ -5,7 +5,7 @@ in vec3 colorFragment;
 in vec4 clipSpace;
 
 out vec4 out_color;
-out vec4 FragColor;
+//out vec4 FragColor;
 
 //uniform sampler2D texture1; // reflection Texture
 uniform sampler2D refractionTexture; // refraction Texture;
