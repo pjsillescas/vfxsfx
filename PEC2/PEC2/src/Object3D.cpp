@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "FileManager.h"
+#include "TextureUtils.h"
 
 
 Object3D::Object3D()
@@ -32,6 +33,8 @@ Object3D::~Object3D()
 {
 	mVertexData.clear();
 	mIndexData.clear();
+
+	clearGPU();
 }
 
 void Object3D::init()
@@ -92,27 +95,7 @@ void Object3D::loadObjFromDisk(std::string file)
 
 void Object3D::loadTextureFromDisk(std::string file)
 {
-	//Create Texture
-	SDL_Surface* tempSurface;
-	tempSurface = IMG_Load(file.c_str());
-	if (tempSurface == NULL)
-	{
-		std::cout << "Texture:" << file.c_str() << " not load!" << std::endl;
-		return;
-	}
-	glGenTextures(1, &mTexture);
-	glBindTexture(GL_TEXTURE_2D, mTexture);
-	GLint Mode = GL_RGB;
-	if (tempSurface->format->BytesPerPixel == 4) Mode = GL_RGBA;
-	glTexImage2D(GL_TEXTURE_2D, 0, Mode, tempSurface->w, tempSurface->h, 0, Mode, GL_UNSIGNED_BYTE, tempSurface->pixels);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	SDL_FreeSurface(tempSurface);
+	mTexture = TextureUtils::loadTextureFromDisk(file);
 }
 
 void Object3D::generateObj()
@@ -190,18 +173,9 @@ void Object3D::render()
 	//Set VAO
 	prepareVAO();
 	//Draw VAO
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDrawElements(GL_TRIANGLES, mIndexData.size() , GL_UNSIGNED_INT, NULL);
 	//Diable VAO
 	diableVAO();
-	//Unbind program
-	//glUseProgram(NULL);
-	/*
-	if (mTexture != -1)
-	{
-		glBindTexture(GL_TEXTURE_2D, textureIndex);
-	}
-	*/
 }
 
 void Object3D::prepareVAO()
@@ -213,7 +187,6 @@ void Object3D::prepareVAO()
 	transformMatrix = glm::mat4(1.f);
 	transformMatrix = glm::scale(transformMatrix,mScale);
 	transformMatrix = glm::translate(transformMatrix, mPosition);
-	//std::cout << mScale.x << mScale.y << mScale.z << " " << mPosition.x << mPosition.y << mPosition.z << std::endl;
 	glUniformMatrix4fv(mUniformModelM, 1, GL_FALSE, glm::value_ptr(transformMatrix));
 
 }

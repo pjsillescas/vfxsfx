@@ -141,6 +141,7 @@
     <ClCompile Include="src\Object3D.cpp" />
     <ClCompile Include="src\PlayerController.cpp" />
     <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\TextureUtils.cpp" />
     <ClCompile Include="src\Utils.cpp" />
     <ClCompile Include="src\WaterObj.cpp" />
   </ItemGroup>
@@ -153,6 +154,7 @@
     <ClInclude Include="src\Object3D.h" />
     <ClInclude Include="src\PlayerController.h" />
     <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\TextureUtils.h" />
     <ClInclude Include="src\Utils.h" />
     <ClInclude Include="src\WaterObj.h" />
   </ItemGroup>
