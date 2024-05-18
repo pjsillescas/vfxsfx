@@ -16,30 +16,17 @@ FireObj::~FireObj()
 void FireObj::render()
 {
 	//Sets texture
-	if (mTexture != -1)
+	if (mRefractionTexture != -1)
 	{
-		glActiveTexture(GL_TEXTURE4);
-		glBindTexture(GL_TEXTURE_2D, mTexture);
-		glUniform1i(mUniformTex, 4);
-	}
-	if (mTexture2 != -1)
-	{
-		//printf("print texture 5 %d\n",mTexture2);
 		glActiveTexture(GL_TEXTURE5);
-		glBindTexture(GL_TEXTURE_2D, mTexture2);
-		glUniform1i(mUniformTex2, 5);
+		glBindTexture(GL_TEXTURE_2D, mRefractionTexture);
+		glUniform1i(mUniformRefractionTex, 5);
 	}
-	if (mTexture3 != -1)
+	if (mDistortionTexture != -1)
 	{
 		glActiveTexture(GL_TEXTURE6);
-		glBindTexture(GL_TEXTURE_2D, mTexture3);
-		glUniform1i(mUniformTex3, 6);
-	}
-	if (mTexture4 != -1)
-	{
-		glActiveTexture(GL_TEXTURE7);
-		glBindTexture(GL_TEXTURE_2D, mTexture4);
-		glUniform1i(mUniformTex4, 7);
+		glBindTexture(GL_TEXTURE_2D, mDistortionTexture);
+		glUniform1i(mUniformDistortionTex, 6);
 	}
 
 	mCurrentOffsetWave += WAVE_SPEED; // It's better to control with FrameTime 
@@ -49,6 +36,7 @@ void FireObj::render()
 	}
 	//std::cout << "currentdistord " << mUniformOffsetWave << " => " << mCurrentOffsetWave << std::endl;
 	glUniform1f(mUniformOffsetWave, mCurrentOffsetWave);
+	glUniform4f(mUniformBackgroundTint, 0,0,0,1);
 	
 	//Set VAO
 	prepareVAO();
@@ -61,13 +49,8 @@ void FireObj::render()
 void FireObj::setShader(Shader* p_shader)
 {
 	mShaderforDraw = p_shader;
-	mUniformModelM = glGetUniformLocation(mShaderforDraw->getID(), "model");
-	mUniformTex = glGetUniformLocation(mShaderforDraw->getID(), "texture1");
-	mUniformTex2 = glGetUniformLocation(mShaderforDraw->getID(), "texture2");
-	mUniformTex3 = glGetUniformLocation(mShaderforDraw->getID(), "texture3");
-	mUniformTex4 = glGetUniformLocation(mShaderforDraw->getID(), "texture4");
-	mUniformOffsetWave = glGetUniformLocation(mShaderforDraw->getID(), "moveDistord");
-	//mUniformCamPos = glGetUniformLocation(mShaderforDraw->getID(), "camPos");
-	//mUniformLightColor = glGetUniformLocation(mShaderforDraw->getID(), "lightcolor");
-	//mUniformLightPos = glGetUniformLocation(mShaderforDraw->getID(), "lightPos");
+	mUniformRefractionTex = glGetUniformLocation(mShaderforDraw->getID(), "refractionTexture");
+	mUniformDistortionTex = glGetUniformLocation(mShaderforDraw->getID(), "distortionTexture");
+	mUniformOffsetWave = glGetUniformLocation(mShaderforDraw->getID(), "time");
+	mUniformBackgroundTint = glGetUniformLocation(mShaderforDraw->getID(), "backgroundTint");
 }

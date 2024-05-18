@@ -8,30 +8,31 @@ out vec4 out_color;
 out vec4 FragColor;
 
 //uniform sampler2D texture1; // reflection Texture
-uniform sampler2D texture2; // refraction Texture;
-uniform sampler2D texture3; // for Map distorsion
+uniform sampler2D refractionTexture; // refraction Texture;
+uniform sampler2D distortionTexture; // for Map distorsion
 //uniform sampler2D texture4; // for Normal map light
-uniform float moveDistord; // Time Offset for water move;
+uniform float time; // Time Offset for water move;
 
 const float waveForce = 0.004;
+uniform vec4 backgroundTint = vec4(0,0,0,1);
 
 void main()
 {
 	// Take R and G color form texture as vectors coordinate to distord
 	// Change code to a best distorsion calculation
-	vec2 distortedTexCoords = texture(texture3,vec2(texFragment.x + moveDistord, texFragment.y)).rg * 0.1;
-	distortedTexCoords = texFragment + vec2(distortedTexCoords.x, distortedTexCoords.y+moveDistord);
-	vec2 totalDistorsion = (texture(texture3,distortedTexCoords).rg * 2.0 - 1.0) * waveForce;
+	vec2 distortedTexCoords = texture(distortionTexture,vec2(texFragment.x + time, texFragment.y)).rg * 0.1;
+	distortedTexCoords = texFragment + vec2(distortedTexCoords.x, distortedTexCoords.y+time);
+	vec2 totalDistorsion = (texture(distortionTexture,distortedTexCoords).rg * 2.0 - 1.0) * waveForce;
 	
 	vec2 normalClip = (clipSpace.xy/clipSpace.w)/2.0 + 0.5;
 	vec2 refractCoors = clamp (normalClip + totalDistorsion, 0.001, 0.999);
-	vec4 refractColor = texture(texture2,refractCoors);
+	vec4 refractColor = texture(refractionTexture,refractCoors);
 	
 	// With A Little Bit of Bluesky
 	//out_color = mix(refractColor,vec4(0.9,0.9,0.9,1),0.7);
-	out_color = mix(refractColor,vec4(0,0,0,1),0.6);
+	out_color = mix(refractColor,backgroundTint,0.6);
 	//FragColor = out_color;
 	//out_color = vec4(1,1,1,1);
 	//FragColor = vec4(1,1,1,1);
-	//out_color = vec4(moveDistord,moveDistord,moveDistord,1);
+	//out_color = vec4(time,time,time,1);
 }

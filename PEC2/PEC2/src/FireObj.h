@@ -13,32 +13,19 @@ public:
 	void render();
 	void setShader(Shader* p_shader);
 
-	void setTexture2(GLuint id) { mTexture2 = id; };
-	GLuint getTexture2() const { return mTexture2; };
+	void setRefractionTexture(GLuint id) { mRefractionTexture = id; };
+	GLuint getRefractionTexture() const { return mRefractionTexture; };
 
-	void setTexture3(GLuint id) { mTexture3 = id; };
-	GLuint getTexture3() const { return mTexture3; };
-
-	void setTexture4(GLuint id) { mTexture4 = id; };
-	GLuint getTexture4() const { return mTexture4; };
-
-	int getUniformCamPos() const { return mUniformCamPos; };
-	int getUniformLightColor() const { return mUniformLightColor; };
-	int getUniformLightPos() const { return mUniformLightPos; };
-
+	void setDistortionTexture(GLuint id) { mDistortionTexture = id; };
+	GLuint getDistortionTexture() const { return mDistortionTexture; };
 
 private:
-	GLuint mTexture2;
-	GLuint mTexture3;
-	GLuint mTexture4;
+	GLuint mRefractionTexture;
+	GLuint mDistortionTexture;
 	float mCurrentOffsetWave;
-	int	  mUniformTex;
-	int	  mUniformTex2;
-	int	  mUniformTex3;
-	int	  mUniformTex4;
-	int   mUniformOffsetWave;
-	int   mUniformCamPos;
-	int	  mUniformLightColor;
-	int   mUniformLightPos;
+	int	mUniformRefractionTex;
+	int	mUniformDistortionTex;
+	int mUniformOffsetWave;
+	int mUniformBackgroundTint;
 };
 

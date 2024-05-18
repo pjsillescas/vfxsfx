@@ -194,12 +194,9 @@ void initGL()
 	firePlane->setShader(&FireShader);
 	firePlane->setPosition(glm::vec3(0.0f, 5.f, -1.0f));
 	firePlane->setScale(glm::vec3(1,1,1));
-	//firePlane->setRotationAxis(glm::vec3(1,0,-1));
 
 	firePlane->loadTextureFromDisk("Assets/textures/waterDUDV.png");
-	firePlane->setTexture3(firePlane->getTexture()); // Load texture and change ID to texture 3;
-	//firePlane->loadTextureFromDisk("Assets/textures/normaltexture.jpg");
-	//firePlane->setTexture4(firePlane->getTexture()); // Load texture and change ID to texture 4;
+	firePlane->setDistortionTexture(firePlane->getTexture()); // Load texture and change ID to texture 3;
 
 	FlameShader.init("Flame");
 	flamePlane = new Object3D();
@@ -211,8 +208,6 @@ void initGL()
 	flamePlane->setTextureIndex(9);
 
 	// Create Frame Buffer Objects (FBO)
-	//WaterFBO = new WaterFrameBuffers();
-	
 	waterReflectionFrameBuffer = new FrameBuffer(REFLECTION_WIDTH, REFLECTION_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
 	waterReflectionFrameBuffer->init();
 
@@ -221,7 +216,6 @@ void initGL()
 
 	fireFrameBuffer = new FrameBuffer(REFRACTION_WIDTH, REFRACTION_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
 	fireFrameBuffer->init();
-
 }
 
 void update()
@@ -302,35 +296,7 @@ static void renderScene(glm::vec4 PclipPlane)
 	burningCube->render();
 	burningCube2->render();
 
-	/*
-	FireShader.Use();
-	firePlane->setTexture2(FireFBO->getRefractionTexture());
-	firePlane->setTexture(-1);
-	firePlane->render();
-	*/
 	renderFlame();
-}
-
-static void renderAux(glm::vec4 PclipPlane)
-{
-	//Clear color buffer & Z buffer
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	//Bind program
-	TextureMatrixColorShader.Use();
-	UniformViewM = glGetUniformLocation(TextureMatrixColorShader.getID(), "view");
-	UniformProjectionM = glGetUniformLocation(TextureMatrixColorShader.getID(), "projection");
-	UniformPlaneM = glGetUniformLocation(TextureMatrixColorShader.getID(), "plane");
-	// Clip Plane Set
-	glUniform4f(UniformPlaneM, PclipPlane.x, PclipPlane.y, PclipPlane.z, PclipPlane.w);
-	//Sets Projection Matrix
-	FirstCamera.setUniformProjectionMatrix(SCREEN_WIDTH, SCREEN_HEIGHT, UniformProjectionM);
-	//Sets View Matrix (Camera)
-	FirstCamera.setUniformViewMatrix(UniformViewM);
-
-	// Fire render logic
-	burningCube->render();
-	burningCube2->render();
 }
 
 static void renderFire()
@@ -338,7 +304,7 @@ static void renderFire()
 	// Fire
 	fireFrameBuffer->bind();
 	FireShader.Use();
-	firePlane->setTexture2(fireFrameBuffer->getTexture());
+	firePlane->setRefractionTexture(fireFrameBuffer->getTexture());
 	
 	UniformViewM = glGetUniformLocation(FireShader.getID(), "view");
 	UniformProjectionM = glGetUniformLocation(FireShader.getID(), "projection");
@@ -347,7 +313,6 @@ static void renderFire()
 	//Sets View Matrix (Camera)
 	FirstCamera.setUniformViewMatrix(UniformViewM);
 	renderScene(clipPlane);
-	renderFlame();
 
 	fireFrameBuffer->unbind();
 
@@ -362,7 +327,6 @@ void render()
 	
 	// Water
 	// Reflection texture render
-	//WaterFBO->bindReflectionFrameBuffer();
 	waterReflectionFrameBuffer->bind();
 	// Recalculate Camera position for Render Reflection
 	float distance = 2 * (FirstCamera.getCameraPos().y - MyQuad.getPosition().y);
