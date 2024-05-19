@@ -135,7 +135,6 @@
     <ClCompile Include="..\..\glad\src\glad.c" />
     <ClCompile Include="src\Camera3D.cpp" />
     <ClCompile Include="src\FileManager.cpp" />
-    <ClCompile Include="src\FireObj.cpp" />
     <ClCompile Include="src\FlameObj.cpp" />
     <ClCompile Include="src\FrameBuffer.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -149,10 +148,8 @@
   <ItemGroup>
     <ClInclude Include="src\Camera3D.h" />
     <ClInclude Include="src\FileManager.h" />
-    <ClInclude Include="src\FireObj.h" />
     <ClInclude Include="src\FlameObj.h" />
     <ClInclude Include="src\FrameBuffer.h" />
-    <ClInclude Include="src\global_defines.h" />
     <ClInclude Include="src\Object3D.h" />
     <ClInclude Include="src\PlayerController.h" />
     <ClInclude Include="src\Shader.h" />

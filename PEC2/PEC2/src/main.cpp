@@ -11,7 +11,6 @@
 #include "Camera3D.h"
 #include "Object3D.h"
 #include "WaterObj.h"
-#include "FireObj.h"
 #include "PlayerController.h"
 #include "FrameBuffer.h"
 #include "TextureUtils.h"
@@ -19,7 +18,17 @@
 
 #include <iostream>
 
-#include "global_defines.h"
+//Screen dimension constants
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
+
+// Reflection and refraction dimension constants
+const int REFLECTION_WIDTH = 320;
+const int REFLECTION_HEIGHT = 180;
+
+const int REFRACTION_WIDTH = 1280;
+const int REFRACTION_HEIGHT = 720;
+
 
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
@@ -205,18 +214,24 @@ static void update()
 
 float time1 = 0;
 
+static void fillMatrixData(GLuint id)
+{
+	int UniformViewM = glGetUniformLocation(id, "view");
+	int UniformProjectionM = glGetUniformLocation(id, "projection");
+	glm::mat4 mProjectionMatrix = camera->getUniformProjectionMatrix();
+	glm::mat4 mViewMatrix = camera->getUniformViewMatrix();
+	glUniformMatrix4fv(UniformProjectionM, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
+	glUniformMatrix4fv(UniformViewM, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
+
+}
+
 static void renderFlame()
 {
 	flameShader.Use();
 	glUniform1f(glGetUniformLocation(flameShader.getID(), "time"), time1);
 	glUniform2f(glGetUniformLocation(flameShader.getID(), "iResolution"), 5, 5);
 	time1 += 0.02f;
-	int UniformViewM = glGetUniformLocation(flameShader.getID(), "view");
-	int UniformProjectionM = glGetUniformLocation(flameShader.getID(), "projection");
-	glm::mat4 mProjectionMatrix = camera->getUniformProjectionMatrix();
-	glm::mat4 mViewMatrix = camera->getUniformViewMatrix();
-	glUniformMatrix4fv(UniformProjectionM, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
-	glUniformMatrix4fv(UniformViewM, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
+	fillMatrixData(flameShader.getID());
 
 	flamePlane->render();
 }
@@ -225,16 +240,11 @@ static void renderWater()
 {
 	//Bind program
 	waterShader.Use();
-	int UniformViewM = glGetUniformLocation(waterShader.getID(), "view");
-	int UniformProjectionM = glGetUniformLocation(waterShader.getID(), "projection");
 	// Active Textures and Set them
 	waterPlane->setTexture(waterReflectionFrameBuffer->getTexture());
 	waterPlane->setTexture2(waterRefractionFrameBuffer->getTexture());
 	
-	glm::mat4 mProjectionMatrix = camera->getUniformProjectionMatrix();
-	glm::mat4 mViewMatrix = camera->getUniformViewMatrix();
-	glUniformMatrix4fv(UniformProjectionM, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
-	glUniformMatrix4fv(UniformViewM, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
+	fillMatrixData(waterShader.getID());
 
 	// Give Camera Vector to Shader
 	glm::vec3 camPos = camera->getCameraPos();
@@ -252,18 +262,13 @@ static void renderWater()
 static void renderBackground(glm::vec4 clipPlane)
 {
 	textureMatrixColorShaderBackground.Use();
-	int UniformViewM = glGetUniformLocation(textureMatrixColorShaderBackground.getID(), "view");
-	int UniformProjectionM = glGetUniformLocation(textureMatrixColorShaderBackground.getID(), "projection");
+	
+	fillMatrixData(textureMatrixColorShaderBackground.getID());
 	int UniformPlaneM = glGetUniformLocation(textureMatrixColorShaderBackground.getID(), "plane");
 	// Clip Plane Set
 	glUniform4f(UniformPlaneM, clipPlane.x, clipPlane.y, clipPlane.z, clipPlane.w);
-	glm::mat4 mProjectionMatrix = camera->getUniformProjectionMatrix();
-	glm::mat4 mViewMatrix = camera->getUniformViewMatrix();
-	glUniformMatrix4fv(UniformProjectionM, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
-	glUniformMatrix4fv(UniformViewM, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
 	
 	backgroundPlane.render();
-
 }
 
 static void renderScene(glm::vec4 PclipPlane)
@@ -275,16 +280,12 @@ static void renderScene(glm::vec4 PclipPlane)
 	
 	//Bind program
 	textureMatrixColorShader.Use();
-	int UniformViewM = glGetUniformLocation(textureMatrixColorShader.getID(), "view");
-	int UniformProjectionM = glGetUniformLocation(textureMatrixColorShader.getID(), "projection");
+	
+	fillMatrixData(textureMatrixColorShaderBackground.getID());
 	int UniformPlaneM = glGetUniformLocation(textureMatrixColorShader.getID(), "plane");
 	// Clip Plane Set
 	glUniform4f(UniformPlaneM, PclipPlane.x, PclipPlane.y, PclipPlane.z, PclipPlane.w);
-	glm::mat4 mProjectionMatrix = camera->getUniformProjectionMatrix();
-	glm::mat4 mViewMatrix = camera->getUniformViewMatrix();
-	glUniformMatrix4fv(UniformProjectionM, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
-	glUniformMatrix4fv(UniformViewM, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
-	
+
 	for (auto& cube : cubes)
 	{
 		cube->render();
@@ -332,13 +333,7 @@ static void render()
 	flameShader.Use();
 	flamePlane->setRefractionTexture(fireFrameBuffer->getTexture());
 
-	int UniformViewM = glGetUniformLocation(flameShader.getID(), "view");
-	int UniformProjectionM = glGetUniformLocation(flameShader.getID(), "projection");
-
-	glm::mat4 mProjectionMatrix = camera->getUniformProjectionMatrix();
-	glm::mat4 mViewMatrix = camera->getUniformViewMatrix();
-	glUniformMatrix4fv(UniformProjectionM, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
-	glUniformMatrix4fv(UniformViewM, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
+	fillMatrixData(flameShader.getID());
 
 	clipPlane = glm::vec4(0, 1, 0, 0); // 0 Height because water object ar on plane Y = 0
 	renderScene(clipPlane);
@@ -358,7 +353,6 @@ static void render()
 static void close()
 {
 	delete playerController;
-	//delete firePlane;
 	delete flamePlane;
 
 	delete burningCube;
@@ -412,9 +406,7 @@ int main(int argc, char* args[])
 	{
 		quit = playerController->handleInput();
 
-		//Update
 		update();
-		//Render
 		render();
 
 		//Update screen
