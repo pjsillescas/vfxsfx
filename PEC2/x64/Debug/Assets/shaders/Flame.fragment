@@ -11,13 +11,14 @@ uniform sampler2D maskTexture;
 uniform sampler2D refractionTexture; // refraction Texture;
 uniform sampler2D distortionTexture; // for Map distortion
 
+uniform vec4 backgroundTint = vec4(0,0,0,1);
+const float waveForce = 0.004;
+const vec4 fireColor = vec4(0.87f,0.46f,0,1.f); // orange
+
+
 // Output color
 out vec4 FragColor;
 out vec4 out_color;
-
-const float waveForce = 0.004;
-uniform vec4 backgroundTint = vec4(0,0,0,1);
-
 
 //
 // Description : Array and textureless GLSL 2D/3D/4D simplex 
@@ -150,13 +151,23 @@ vec4 getPixel(vec2 fragCoord)
     return vec4(perlin.xyz,1.f);
 }
 
+float getAbsorptionFactor()
+{
+    const float dampeningDistance = 1.2;
+    const float alpha = 2 * 2.3 /dampeningDistance; // log(10) = 2.3, absorption(dampeningDistance) = 0.01
+    
+    vec2 absCoords = texCoord.xy - vec2(0.5f, 0.5f);
+    return exp(- alpha * dot(absCoords, absCoords));
+}
+
 vec4 getRefractColor(bool useDistortion)
 {
-	// Take R and G color form texture as vectors coordinate to distord
+	float absorption = getAbsorptionFactor();
+    // Take R and G color form texture as vectors coordinate to distord
 	// Change code to a best distorsion calculation
 	vec2 distortedTexCoords = texture(distortionTexture,vec2(texFragment.x + time, texFragment.y)).rg * 0.1;
 	distortedTexCoords = texFragment + vec2(distortedTexCoords.x, distortedTexCoords.y + flowTime);
-	vec2 totalDistortion = (texture(distortionTexture,distortedTexCoords).rg * 2.0 - 1.0) * waveForce;
+	vec2 totalDistortion = (texture(distortionTexture,distortedTexCoords).rg * 2.0 - 1.0) * waveForce * absorption;
 	
 	vec2 normalClip = (clipSpace.xy/clipSpace.w)/2.0 + 0.5;
 	vec2 refractCoors = clamp ((useDistortion) ? normalClip + totalDistortion : normalClip, 0.001, 0.999);
@@ -167,8 +178,11 @@ vec4 getBackground(vec4 refractColor)
 {
     // With A Little Bit of Bluesky
 	//out_color = mix(refractColor,vec4(0.9,0.9,0.9,1),0.7);
-    return mix(refractColor,backgroundTint,0.4);
-	//out_color = vec4(1,1,1,1);
+    float absorptionFactor = 1 - clamp(getAbsorptionFactor(), 0.01,0.99);
+    vec4 tint = mix(backgroundTint, vec4(1,1,1,1), absorptionFactor);
+    //return (absorptionFactor < 0.9) ? mix(refractColor,tint,0.4) : refractColor;
+	return refractColor * tint;
+    //out_color = vec4(1,1,1,1);
 }
 
 void main()
@@ -185,7 +199,6 @@ void main()
     else
     {
         // Flame
-        const vec4 fireColor = vec4(0.87f,0.46f,0,1.f); // orange
         float mixValue = 0.8f;
         FragColor = mix(refractColor,getPixel(texCoord) * mask * fireColor, mixValue);
     }
