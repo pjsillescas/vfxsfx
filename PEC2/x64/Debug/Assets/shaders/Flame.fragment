@@ -150,22 +150,21 @@ vec4 getPixel(vec2 fragCoord)
     return vec4(perlin.xyz,1.f);
 }
 
-vec4 getRefractColor()
+vec4 getRefractColor(bool useDistortion)
 {
 	// Take R and G color form texture as vectors coordinate to distord
 	// Change code to a best distorsion calculation
 	vec2 distortedTexCoords = texture(distortionTexture,vec2(texFragment.x + time, texFragment.y)).rg * 0.1;
-	distortedTexCoords = texFragment + vec2(distortedTexCoords.x, distortedTexCoords.y+flowTime);
-	vec2 totalDistorsion = (texture(distortionTexture,distortedTexCoords).rg * 2.0 - 1.0) * waveForce;
+	distortedTexCoords = texFragment + vec2(distortedTexCoords.x, distortedTexCoords.y + flowTime);
+	vec2 totalDistortion = (texture(distortionTexture,distortedTexCoords).rg * 2.0 - 1.0) * waveForce;
 	
 	vec2 normalClip = (clipSpace.xy/clipSpace.w)/2.0 + 0.5;
-	vec2 refractCoors = clamp (normalClip + totalDistorsion, 0.001, 0.999);
-	return texture(refractionTexture,refractCoors);
+	vec2 refractCoors = clamp ((useDistortion) ? normalClip + totalDistortion : normalClip, 0.001, 0.999);
+	return texture(refractionTexture, refractCoors);
 }
 
 vec4 getBackground(vec4 refractColor)
 {
-	//vec4 refractColor = getRefractColor();
     // With A Little Bit of Bluesky
 	//out_color = mix(refractColor,vec4(0.9,0.9,0.9,1),0.7);
     return mix(refractColor,backgroundTint,0.4);
@@ -176,22 +175,18 @@ void main()
 {
     vec4 mask = texture(maskTexture, vec2(texCoord.x,1 - texCoord.y));
 
-    vec4 refractColor = getRefractColor();
-    if(dot(mask, vec4(1,1,1,0)) <= 0.01f)
+    bool isBackground = dot(mask, vec4(1,1,1,0)) <= 0.01f;
+    vec4 refractColor = getRefractColor(isBackground);
+    if(isBackground)
     {
         // Background
-        //FragColor = vec4(1,0,0,1);
         FragColor = getBackground(refractColor);
     }
     else
     {
         // Flame
-        vec4 fireColor = vec4(0.87f,0.46f,0,1.f); // orange
-
-        //float mixValue = 0.8f;
-        vec4 pixelValue = getPixel(texCoord);
-        float mixValue = length(pixelValue.xyz) <= 0.01f ? 0 : 0.8;
-
+        const vec4 fireColor = vec4(0.87f,0.46f,0,1.f); // orange
+        float mixValue = 0.8f;
         FragColor = mix(refractColor,getPixel(texCoord) * mask * fireColor, mixValue);
     }
 }
