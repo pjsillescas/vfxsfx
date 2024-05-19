@@ -28,6 +28,7 @@ SDL_GLContext gContext;
 
 Shader WaterShader;
 Shader TextureMatrixColorShader;
+Shader TextureMatrixColorShaderBackground;
 Shader FireShader;
 Shader FlameShader;
 Camera3D *camera;
@@ -40,6 +41,8 @@ std::vector<Object3D*> cubes;
 Object3D underWaterPlane;
 FireObj* firePlane;
 Object3D* flamePlane;
+
+Object3D backgroundPlane;
 
 // FBO for Water
 FrameBuffer* waterReflectionFrameBuffer;
@@ -84,6 +87,7 @@ static void initGL()
 {
 	WaterShader.init("Water4");
 	TextureMatrixColorShader.init("TextureMatrixColorClip");
+	TextureMatrixColorShaderBackground.init("TextureMatrixColorClip");
 
 	//Initialize clear color
 	glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -99,10 +103,6 @@ static void initGL()
 	waterPlane = new WaterObj();
 	waterPlane->loadObjFromDisk("Assets/WaterPlane.txt");
 	waterPlane->setShader(&WaterShader);
-	//waterPlane->loadTextureFromDisk("Assets/textures/waterDUDV.png");
-	//waterPlane->setTexture3(waterPlane->getTexture()); // Load texture and change ID to texture 3;
-	//waterPlane->loadTextureFromDisk("Assets/textures/normaltexture.jpg");
-	//waterPlane->setTexture4(waterPlane->getTexture()); // Load texture and change ID to texture 4;
 	waterPlane->setTexture3(TextureUtils::loadTextureFromDisk("Assets/textures/waterDUDV.png"));
 	waterPlane->setTexture4(TextureUtils::loadTextureFromDisk("Assets/textures/normaltexture.jpg"));
 
@@ -114,6 +114,11 @@ static void initGL()
 	burningCube = createCube(glm::vec3(0.f, 0.f, -1.f));
 	burningCube->setScale(glm::vec3(3.f, 1.f, 1.f));
 	burningCube2 = createCube(glm::vec3(0.f, 4.f, -2.5f));
+
+	backgroundPlane.loadObjFromDisk("Assets/BackgroundPlane.txt");
+	backgroundPlane.setTexture(TextureUtils::loadTextureFromDisk("Assets/textures/desert-unsplash.png"));
+	backgroundPlane.setShader(&TextureMatrixColorShaderBackground);
+	backgroundPlane.setPosition(glm::vec3(0,0,-10));
 
 	underWaterPlane.loadObjFromDisk("Assets/Pool.txt");
 	underWaterPlane.setShader(&TextureMatrixColorShader);
@@ -127,8 +132,6 @@ static void initGL()
 	firePlane->setPosition(glm::vec3(0.0f, 5.f, -1.0f));
 	firePlane->setScale(glm::vec3(1, 1, 1));
 
-	//firePlane->loadTextureFromDisk("Assets/textures/waterDUDV.png");
-	//firePlane->setDistortionTexture(firePlane->getTexture()); // Load texture and change ID to texture 3;
 	firePlane->setDistortionTexture(TextureUtils::loadTextureFromDisk("Assets/textures/waterDUDV.png")); // Load texture and change ID to texture 3;
 
 	FlameShader.init("Flame");
@@ -136,10 +139,7 @@ static void initGL()
 	flamePlane->loadObjFromDisk("Assets/FlamePlane.txt");
 	flamePlane->setShader(&FlameShader);
 	flamePlane->setPosition(glm::vec3(0.0f, 2.f, -1.0f));
-	//flamePlane->loadTextureFromDisk("Assets/textures/maskFlame.png");
-	//flamePlane->setTexture(flamePlane->getTexture());
 	flamePlane->setTexture(TextureUtils::loadTextureFromDisk("Assets/textures/maskFlame.png"));
-	flamePlane->setTextureIndex(9);
 
 	// Create Frame Buffer Objects (FBO)
 	waterReflectionFrameBuffer = createFrameBuffer(REFLECTION_WIDTH, REFLECTION_HEIGHT);
@@ -285,6 +285,19 @@ static void renderScene(glm::vec4 PclipPlane)
 	// Fire render logic
 	burningCube->render();
 	burningCube2->render();
+
+	TextureMatrixColorShaderBackground.Use();
+	UniformViewM = glGetUniformLocation(TextureMatrixColorShaderBackground.getID(), "view");
+	UniformProjectionM = glGetUniformLocation(TextureMatrixColorShaderBackground.getID(), "projection");
+	UniformPlaneM = glGetUniformLocation(TextureMatrixColorShaderBackground.getID(), "plane");
+	// Clip Plane Set
+	glUniform4f(UniformPlaneM, PclipPlane.x, PclipPlane.y, PclipPlane.z, PclipPlane.w);
+	mProjectionMatrix = camera->getUniformProjectionMatrix();
+	mViewMatrix = camera->getUniformViewMatrix();
+	glUniformMatrix4fv(UniformProjectionM, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
+	glUniformMatrix4fv(UniformViewM, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
+
+	backgroundPlane.render();
 
 	renderFlame();
 }
