@@ -112,7 +112,7 @@ static void initGL()
 	}
 
 	burningCube = createCube(glm::vec3(0.f, 0.f, -1.f));
-	burningCube->setScale(glm::vec3(3.f, 1.f, 1.f));
+	burningCube->setScale(glm::vec3(7.f, 1.f, 1.f));
 	burningCube2 = createCube(glm::vec3(0.f, 4.f, -2.5f));
 
 	backgroundPlane.loadObjFromDisk("Assets/BackgroundPlane.txt");
@@ -138,7 +138,7 @@ static void initGL()
 	flamePlane = new Object3D();
 	flamePlane->loadObjFromDisk("Assets/FlamePlane.txt");
 	flamePlane->setShader(&FlameShader);
-	flamePlane->setPosition(glm::vec3(0.0f, 2.f, -1.0f));
+	flamePlane->setPosition(glm::vec3(0.0f, 4.f, -1.0f));
 	flamePlane->setTexture(TextureUtils::loadTextureFromDisk("Assets/textures/maskFlame.png"));
 
 	// Create Frame Buffer Objects (FBO)
