@@ -258,11 +258,30 @@ static void renderWater()
 	waterPlane->render();
 }
 
+static void renderBackground(glm::vec4 clipPlane)
+{
+	TextureMatrixColorShaderBackground.Use();
+	int UniformViewM = glGetUniformLocation(TextureMatrixColorShaderBackground.getID(), "view");
+	int UniformProjectionM = glGetUniformLocation(TextureMatrixColorShaderBackground.getID(), "projection");
+	int UniformPlaneM = glGetUniformLocation(TextureMatrixColorShaderBackground.getID(), "plane");
+	// Clip Plane Set
+	glUniform4f(UniformPlaneM, clipPlane.x, clipPlane.y, clipPlane.z, clipPlane.w);
+	glm::mat4 mProjectionMatrix = camera->getUniformProjectionMatrix();
+	glm::mat4 mViewMatrix = camera->getUniformViewMatrix();
+	glUniformMatrix4fv(UniformProjectionM, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
+	glUniformMatrix4fv(UniformViewM, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
+	
+	backgroundPlane.render();
+
+}
+
 static void renderScene(glm::vec4 PclipPlane)
 {
 	//Clear color buffer & Z buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	renderBackground(PclipPlane);
+	
 	//Bind program
 	TextureMatrixColorShader.Use();
 	int UniformViewM = glGetUniformLocation(TextureMatrixColorShader.getID(), "view");
@@ -285,19 +304,6 @@ static void renderScene(glm::vec4 PclipPlane)
 	// Fire render logic
 	burningCube->render();
 	burningCube2->render();
-
-	TextureMatrixColorShaderBackground.Use();
-	UniformViewM = glGetUniformLocation(TextureMatrixColorShaderBackground.getID(), "view");
-	UniformProjectionM = glGetUniformLocation(TextureMatrixColorShaderBackground.getID(), "projection");
-	UniformPlaneM = glGetUniformLocation(TextureMatrixColorShaderBackground.getID(), "plane");
-	// Clip Plane Set
-	glUniform4f(UniformPlaneM, PclipPlane.x, PclipPlane.y, PclipPlane.z, PclipPlane.w);
-	mProjectionMatrix = camera->getUniformProjectionMatrix();
-	mViewMatrix = camera->getUniformViewMatrix();
-	glUniformMatrix4fv(UniformProjectionM, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
-	glUniformMatrix4fv(UniformViewM, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
-
-	backgroundPlane.render();
 
 	renderFlame();
 }

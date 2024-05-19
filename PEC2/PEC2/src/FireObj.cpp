@@ -18,15 +18,15 @@ void FireObj::render()
 	//Sets texture
 	if (mRefractionTexture != -1)
 	{
-		glActiveTexture(GL_TEXTURE5);
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, mRefractionTexture);
-		glUniform1i(mUniformRefractionTex, 5);
+		glUniform1i(mUniformRefractionTex, 0);
 	}
 	if (mDistortionTexture != -1)
 	{
-		glActiveTexture(GL_TEXTURE6);
+		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, mDistortionTexture);
-		glUniform1i(mUniformDistortionTex, 6);
+		glUniform1i(mUniformDistortionTex, 1);
 	}
 
 	mCurrentOffsetWave += WAVE_SPEED; // It's better to control with FrameTime 
