@@ -8,11 +8,20 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-out vec2 TexCoord;
+out vec2 texCoord;
+out	vec2 texFragment;
+out	vec4 clipSpace;
 
-void main(){
+const float tiling = 0.2;
+
+void main()
+{
 	vec4 modelPosition = model * vec4( LVertexPos.xyz, 1 );
 
-	gl_Position = projection * view * modelPosition;
-	TexCoord = texCoor;
+	clipSpace = projection * view * modelPosition;
+	gl_Position = clipSpace;
+	texCoord = texCoor;
+	
+	// Convert 0-1 coordinates to -1 +1 coordinates range asdn tiling texture
+	texFragment = vec2(LVertexPos.x/2.0 + 0.5, LVertexPos.y/2.0 + 0.5) * tiling;
 }

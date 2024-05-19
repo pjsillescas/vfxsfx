@@ -15,6 +15,7 @@
 #include "PlayerController.h"
 #include "FrameBuffer.h"
 #include "TextureUtils.h"
+#include "FlameObj.h"
 
 #include <iostream>
 
@@ -29,7 +30,7 @@ SDL_GLContext gContext;
 Shader WaterShader;
 Shader TextureMatrixColorShader;
 Shader TextureMatrixColorShaderBackground;
-Shader FireShader;
+//Shader FireShader;
 Shader FlameShader;
 Camera3D *camera;
 PlayerController* playerController;
@@ -39,8 +40,8 @@ Object3D* burningCube2;
 WaterObj* waterPlane;
 std::vector<Object3D*> cubes;
 Object3D underWaterPlane;
-FireObj* firePlane;
-Object3D* flamePlane;
+//FireObj* firePlane;
+FlameObj* flamePlane;
 
 Object3D backgroundPlane;
 
@@ -124,7 +125,8 @@ static void initGL()
 	underWaterPlane.setShader(&TextureMatrixColorShader);
 	underWaterPlane.loadTextureFromDisk("Assets/textures/floor.jpg");
 	underWaterPlane.setPosition(glm::vec3(0.0, -4.0, 0.0));
-
+	
+	/*
 	firePlane = new FireObj();
 	firePlane->loadObjFromDisk("Assets/FirePlane.txt");
 	FireShader.init("Fire");
@@ -133,13 +135,15 @@ static void initGL()
 	firePlane->setScale(glm::vec3(1, 1, 1));
 
 	firePlane->setDistortionTexture(TextureUtils::loadTextureFromDisk("Assets/textures/waterDUDV.png")); // Load texture and change ID to texture 3;
+	*/
 
 	FlameShader.init("Flame");
-	flamePlane = new Object3D();
+	flamePlane = new FlameObj();
 	flamePlane->loadObjFromDisk("Assets/FlamePlane.txt");
 	flamePlane->setShader(&FlameShader);
 	flamePlane->setPosition(glm::vec3(0.0f, 4.f, -1.0f));
-	flamePlane->setTexture(TextureUtils::loadTextureFromDisk("Assets/textures/maskFlame.png"));
+	flamePlane->setMaskTexture(TextureUtils::loadTextureFromDisk("Assets/textures/maskFlame.png"));
+	flamePlane->setDistortionTexture(TextureUtils::loadTextureFromDisk("Assets/textures/waterDUDV.png")); // Load texture and change ID to texture 3;
 
 	// Create Frame Buffer Objects (FBO)
 	waterReflectionFrameBuffer = createFrameBuffer(REFLECTION_WIDTH, REFLECTION_HEIGHT);
@@ -307,14 +311,15 @@ static void renderScene(glm::vec4 PclipPlane)
 
 	renderFlame();
 }
-
+/*
 static void renderFire()
 {
 	// Fire
 	fireFrameBuffer->bind();
 	FireShader.Use();
-	firePlane->setRefractionTexture(fireFrameBuffer->getTexture());
-	
+	//firePlane->setRefractionTexture(fireFrameBuffer->getTexture());
+	flamePlane->setRefractionTexture(fireFrameBuffer->getTexture());
+
 	int UniformViewM = glGetUniformLocation(FireShader.getID(), "view");
 	int UniformProjectionM = glGetUniformLocation(FireShader.getID(), "projection");
 	
@@ -331,7 +336,7 @@ static void renderFire()
 	FireShader.Use();
 	firePlane->render();
 }
-
+*/
 //Renders quad to the screen
 static void render()
 {
@@ -359,20 +364,42 @@ static void render()
 	renderScene(clipPlane);
 	
 	waterRefractionFrameBuffer->unbind();
+
+	// Fire
+	fireFrameBuffer->bind();
+	FlameShader.Use();
+	//firePlane->setRefractionTexture(fireFrameBuffer->getTexture());
+	flamePlane->setRefractionTexture(fireFrameBuffer->getTexture());
+
+	int UniformViewM = glGetUniformLocation(FlameShader.getID(), "view");
+	int UniformProjectionM = glGetUniformLocation(FlameShader.getID(), "projection");
+
+	glm::mat4 mProjectionMatrix = camera->getUniformProjectionMatrix();
+	glm::mat4 mViewMatrix = camera->getUniformViewMatrix();
+	glUniformMatrix4fv(UniformProjectionM, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
+	glUniformMatrix4fv(UniformViewM, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
+
+	clipPlane = glm::vec4(0, 1, 0, 0); // 0 Height because water object ar on plane Y = 0
+	renderScene(clipPlane);
+
+	fireFrameBuffer->unbind();
+
+	FlameShader.Use();
+	flamePlane->render();
 	
 	glDisable(GL_CLIP_DISTANCE0);
 	renderScene(clipPlane);
 	//Render Water with Reflection and refraction Textures
 	renderWater();
 	
-	renderFire();
+	//renderFire();
 }
 
 //Frees media and shuts down SDL
 static void close()
 {
 	delete playerController;
-	delete firePlane;
+	//delete firePlane;
 	delete flamePlane;
 
 	delete burningCube;
@@ -394,7 +421,7 @@ static void close()
 	// Clear FBO Fire
 	delete fireFrameBuffer;
 
-	FireShader.deleteProgram();
+	//FireShader.deleteProgram();
 	FlameShader.deleteProgram();
 	
 	delete camera;

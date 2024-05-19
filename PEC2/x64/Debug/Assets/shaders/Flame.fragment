@@ -1,14 +1,23 @@
 #version 330 core
 
-in vec2 TexCoord;
+in vec2 texCoord; // original texture coordinates
+in vec2 texFragment; // coordinates for the refraction texture
+in vec4 clipSpace;
 
 uniform float time;
+uniform float flowTime;
 uniform vec2 iResolution;
-uniform sampler2D mask;
-uniform sampler2D background;
+uniform sampler2D maskTexture;
+uniform sampler2D refractionTexture; // refraction Texture;
+uniform sampler2D distortionTexture; // for Map distortion
 
 // Output color
 out vec4 FragColor;
+out vec4 out_color;
+
+const float waveForce = 0.004;
+uniform vec4 backgroundTint = vec4(0,0,0,1);
+
 
 //
 // Description : Array and textureless GLSL 2D/3D/4D simplex 
@@ -141,16 +150,48 @@ vec4 getPixel(vec2 fragCoord)
     return vec4(perlin.xyz,1.f);
 }
 
-vec4 applyMask(vec4 content, vec4 mask)
+vec4 getRefractColor()
 {
-	return vec4(content.x, content.y, content.z,
-		clamp(content.w, 0, mask.x)); 
+	// Take R and G color form texture as vectors coordinate to distord
+	// Change code to a best distorsion calculation
+	vec2 distortedTexCoords = texture(distortionTexture,vec2(texFragment.x + time, texFragment.y)).rg * 0.1;
+	distortedTexCoords = texFragment + vec2(distortedTexCoords.x, distortedTexCoords.y+flowTime);
+	vec2 totalDistorsion = (texture(distortionTexture,distortedTexCoords).rg * 2.0 - 1.0) * waveForce;
+	
+	vec2 normalClip = (clipSpace.xy/clipSpace.w)/2.0 + 0.5;
+	vec2 refractCoors = clamp (normalClip + totalDistorsion, 0.001, 0.999);
+	return texture(refractionTexture,refractCoors);
+}
+
+vec4 getBackground(vec4 refractColor)
+{
+	//vec4 refractColor = getRefractColor();
+    // With A Little Bit of Bluesky
+	//out_color = mix(refractColor,vec4(0.9,0.9,0.9,1),0.7);
+    return mix(refractColor,backgroundTint,0.4);
+	//out_color = vec4(1,1,1,1);
 }
 
 void main()
 {
-    vec4 m_mask = texture(mask, vec2(TexCoord.x,1 - TexCoord.y));
+    vec4 mask = texture(maskTexture, vec2(texCoord.x,1 - texCoord.y));
 
-    vec4 fireColor = vec4(0.87f,0.46f,0,1.f); // orange
-    FragColor = getPixel(TexCoord) * m_mask * fireColor;
+    vec4 refractColor = getRefractColor();
+    if(dot(mask, vec4(1,1,1,0)) <= 0.01f)
+    {
+        // Background
+        //FragColor = vec4(1,0,0,1);
+        FragColor = getBackground(refractColor);
+    }
+    else
+    {
+        // Flame
+        vec4 fireColor = vec4(0.87f,0.46f,0,1.f); // orange
+
+        //float mixValue = 0.8f;
+        vec4 pixelValue = getPixel(texCoord);
+        float mixValue = length(pixelValue.xyz) <= 0.01f ? 0 : 0.8;
+
+        FragColor = mix(refractColor,getPixel(texCoord) * mask * fireColor, mixValue);
+    }
 }

@@ -136,6 +136,7 @@
     <ClCompile Include="src\Camera3D.cpp" />
     <ClCompile Include="src\FileManager.cpp" />
     <ClCompile Include="src\FireObj.cpp" />
+    <ClCompile Include="src\FlameObj.cpp" />
     <ClCompile Include="src\FrameBuffer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Object3D.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="src\Camera3D.h" />
     <ClInclude Include="src\FileManager.h" />
     <ClInclude Include="src\FireObj.h" />
+    <ClInclude Include="src\FlameObj.h" />
     <ClInclude Include="src\FrameBuffer.h" />
     <ClInclude Include="src\global_defines.h" />
     <ClInclude Include="src\Object3D.h" />
