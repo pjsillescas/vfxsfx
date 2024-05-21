@@ -1,0 +1,30 @@
+#version 330 core
+
+in vec2 texCoord;
+
+uniform bool initialize;
+uniform sampler2D texture1;
+uniform float kernel[9];
+uniform vec2 tex_offset[9]; // precomputed offsets
+
+out vec4 FragColor;
+
+vec4 convolute()
+{
+	vec3 result = vec3(0.0, 0.0, 0.0);
+    for (int i = 0; i < 9; i++)
+	{
+        vec3 texColor = texture(texture1, texCoord + tex_offset[i]).rgb;
+        result += texColor * kernel[i];
+    }
+
+	float mod = dot(result, result) / 3.f;
+	//return (mod > 0.5f) ? vec4(1,1,1, 1.0) : vec4(0,0,0,1);
+	return vec4(result.xyz,1);
+}
+
+void main() {
+
+    FragColor = (initialize) ? texture(texture1, texCoord) : convolute();
+	//FragColor = texture(texture1, texCoord);
+}

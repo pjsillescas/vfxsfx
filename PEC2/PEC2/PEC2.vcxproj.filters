@@ -112,5 +112,11 @@
     <None Include="..\x64\Debug\Assets\shaders\Flame.vertex">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\x64\Debug\Assets\shaders\Convolute.fragment">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\x64\Debug\Assets\shaders\Convolute.vertex">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

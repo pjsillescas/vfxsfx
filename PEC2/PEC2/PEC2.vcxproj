@@ -158,6 +158,8 @@
     <ClInclude Include="src\WaterObj.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\x64\Debug\Assets\shaders\Convolute.fragment" />
+    <None Include="..\x64\Debug\Assets\shaders\Convolute.vertex" />
     <None Include="..\x64\Debug\Assets\shaders\Fire.fragment" />
     <None Include="..\x64\Debug\Assets\shaders\Fire.vertex" />
     <None Include="..\x64\Debug\Assets\shaders\Flame.fragment" />

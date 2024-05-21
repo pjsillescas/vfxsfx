@@ -40,7 +40,9 @@ Shader waterShader;
 Shader textureMatrixColorShader;
 Shader textureMatrixColorShaderBackground;
 Shader flameShader;
-Camera3D *camera;
+Shader convolutionShader;
+
+Camera3D* camera;
 PlayerController* playerController;
 Object3D* burningCube;
 Object3D* burningCube2;
@@ -55,6 +57,13 @@ Object3D backgroundPlane;
 // FBO for Water
 FrameBuffer* waterReflectionFrameBuffer;
 FrameBuffer* waterRefractionFrameBuffer;
+
+FrameBuffer* maskFrameBuffer1;
+FrameBuffer* maskFrameBuffer2;
+FrameBuffer* sourceMaskFrameBuffer;
+FrameBuffer* destinationMaskFrameBuffer;
+
+Object3D auxMaskPlane;
 
 // FBO for fire
 FrameBuffer* fireFrameBuffer;
@@ -88,6 +97,60 @@ static FrameBuffer* createFrameBuffer(int bufferWidth, int bufferHeight)
 	buffer->init();
 
 	return buffer;
+}
+
+static void updateMask(GLuint texture, bool initialize)
+{
+	std::cout << "update" << std::endl;
+	destinationMaskFrameBuffer->bind();
+
+	convolutionShader.Use();
+
+	GLuint convolutionShaderId = convolutionShader.getID();
+
+	float kernel[9] = {
+		1.0 / 8, 1.0 / 8, 1.0 / 8,
+		1.0 / 8, 0.0    , 1.0 / 8,
+		1.0 / 8, 1.0 / 8, 1.0 / 8
+	};
+
+	glUniform1fv(glGetUniformLocation(convolutionShaderId, "kernel"), 9, kernel);
+
+	float tex_offset[9][2] = {
+		{-1.0f / SCREEN_WIDTH, -1.0f / SCREEN_HEIGHT}, { 0, -1.0f / SCREEN_HEIGHT}, { 1.0f / SCREEN_WIDTH, -1.0f / SCREEN_HEIGHT},
+		{-1.0f / SCREEN_WIDTH,  0}, { 0,  0}, { 1.0f, 0},
+		{-1.0f / SCREEN_WIDTH,  1.0f / SCREEN_HEIGHT}, { 0,  1.0f / SCREEN_HEIGHT}, { 1.0f / SCREEN_WIDTH, 1.0f / SCREEN_HEIGHT}
+	};
+	glUniform2fv(glGetUniformLocation(convolutionShaderId, "tex_offset"), 9, &tex_offset[0][0]);
+
+	//std::cout << "using texture " << texture << "(" << initialize << ")" << std::endl;
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glUniform1i(glGetUniformLocation(convolutionShaderId, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(convolutionShaderId, "initialize"), initialize);
+
+
+	//Initialize clear color
+	glClearColor(0.f, 0.f, 0.f, 1.f);
+
+	auxMaskPlane.render();
+
+	destinationMaskFrameBuffer->unbind();
+}
+
+static void initializeMask()
+{
+	std::cout << "init" << std::endl;
+
+	std::string fileName = "Assets/textures/maskFlame.png";
+	//std::string fileName = "Assets/textures/maskFlameHole.png";
+	//std::string fileName = "Assets/textures/maskFlameII.png";
+	GLuint maskTexture = TextureUtils::loadTextureFromDisk(fileName);
+
+	updateMask(maskTexture, true);
+
+	glDeleteTextures(1, &maskTexture);
 }
 
 //Initializes rendering program and clear color
@@ -126,25 +189,48 @@ static void initGL()
 	backgroundPlane.loadObjFromDisk("Assets/BackgroundPlane.txt");
 	backgroundPlane.setTexture(TextureUtils::loadTextureFromDisk("Assets/textures/desert-unsplash.png"));
 	backgroundPlane.setShader(&textureMatrixColorShaderBackground);
-	backgroundPlane.setPosition(glm::vec3(0,0,-10));
+	backgroundPlane.setPosition(glm::vec3(0, 0, -10));
 
 	underWaterPlane.loadObjFromDisk("Assets/Pool.txt");
 	underWaterPlane.setShader(&textureMatrixColorShader);
 	underWaterPlane.loadTextureFromDisk("Assets/textures/floor.jpg");
 	underWaterPlane.setPosition(glm::vec3(0.0, -4.0, 0.0));
-	
+
 	flameShader.init("Flame");
 	flamePlane = new FlameObj();
 	flamePlane->loadObjFromDisk("Assets/FlamePlane.txt");
 	flamePlane->setShader(&flameShader);
 	flamePlane->setPosition(glm::vec3(0.0f, 4.f, -1.0f));
-	flamePlane->setMaskTexture(TextureUtils::loadTextureFromDisk("Assets/textures/maskFlame.png"));
+	//flamePlane->setMaskTexture(TextureUtils::loadTextureFromDisk("Assets/textures/maskFlame.png"));
+	//flamePlane->setMaskTexture(TextureUtils::loadTextureFromDisk("Assets/textures/maskFlameHole.png"));
+	//flamePlane->setMaskTexture(TextureUtils::loadTextureFromDisk("Assets/textures/maskFlameII.png"));
 	flamePlane->setDistortionTexture(TextureUtils::loadTextureFromDisk("Assets/textures/waterDUDV.png")); // Load texture and change ID to texture 3;
 
 	// Create Frame Buffer Objects (FBO)
 	waterReflectionFrameBuffer = createFrameBuffer(REFLECTION_WIDTH, REFLECTION_HEIGHT);
 	waterRefractionFrameBuffer = createFrameBuffer(REFRACTION_WIDTH, REFRACTION_HEIGHT);
 	fireFrameBuffer = createFrameBuffer(REFRACTION_WIDTH, REFRACTION_HEIGHT);
+
+	convolutionShader.init("Convolute");
+	maskFrameBuffer1 = createFrameBuffer(SCREEN_WIDTH, SCREEN_HEIGHT);
+	maskFrameBuffer2 = createFrameBuffer(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	sourceMaskFrameBuffer = maskFrameBuffer1;
+	destinationMaskFrameBuffer = maskFrameBuffer2;
+
+	auxMaskPlane.loadObjFromDisk("Assets/MaskPlane.txt");
+	auxMaskPlane.setShader(&convolutionShader);
+
+	initializeMask();
+}
+
+
+static void swapMaskBuffers()
+{
+	std::cout << "swap" << std::endl;
+	FrameBuffer* aux = sourceMaskFrameBuffer;
+	sourceMaskFrameBuffer = destinationMaskFrameBuffer;
+	destinationMaskFrameBuffer = aux;
 }
 
 //Starts up SDL, creates window, and initializes OpenGL
@@ -172,7 +258,7 @@ static bool init()
 		printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
 		return false;
 	}
-	
+
 	//Create context
 	gContext = SDL_GL_CreateContext(gWindow);
 	if (gContext == NULL)
@@ -180,7 +266,7 @@ static bool init()
 		printf("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError());
 		return false;
 	}
-	
+
 	// glad: load all OpenGL function pointers
 	// ---------------------------------------
 	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
@@ -210,6 +296,9 @@ static bool init()
 static void update()
 {
 	playerController->update();
+
+	swapMaskBuffers();
+	updateMask(sourceMaskFrameBuffer->getTexture(), false);
 }
 
 float time1 = 0;
@@ -230,6 +319,7 @@ static void renderFlame()
 	flameShader.Use();
 	glUniform1f(glGetUniformLocation(flameShader.getID(), "time"), time1);
 	glUniform2f(glGetUniformLocation(flameShader.getID(), "iResolution"), 5, 5);
+	flamePlane->setMaskTexture(destinationMaskFrameBuffer->getTexture());
 	time1 += 0.02f;
 	fillMatrixData(flameShader.getID());
 
@@ -243,7 +333,7 @@ static void renderWater()
 	// Active Textures and Set them
 	waterPlane->setTexture(waterReflectionFrameBuffer->getTexture());
 	waterPlane->setTexture2(waterRefractionFrameBuffer->getTexture());
-	
+
 	fillMatrixData(waterShader.getID());
 
 	// Give Camera Vector to Shader
@@ -254,7 +344,7 @@ static void renderWater()
 	glm::vec3 lightColor = glm::vec3(1.0, 1.0, 1.0);
 	glUniform3f(waterPlane->getUniformLightPos(), lightPos.x, lightPos.y, lightPos.z);
 	glUniform3f(waterPlane->getUniformLightColor(), lightColor.x, lightColor.y, lightColor.z);
-	
+
 	// Draw objects
 	waterPlane->render();
 }
@@ -262,12 +352,12 @@ static void renderWater()
 static void renderBackground(glm::vec4 clipPlane)
 {
 	textureMatrixColorShaderBackground.Use();
-	
+
 	fillMatrixData(textureMatrixColorShaderBackground.getID());
 	int UniformPlaneM = glGetUniformLocation(textureMatrixColorShaderBackground.getID(), "plane");
 	// Clip Plane Set
 	glUniform4f(UniformPlaneM, clipPlane.x, clipPlane.y, clipPlane.z, clipPlane.w);
-	
+
 	backgroundPlane.render();
 }
 
@@ -277,10 +367,10 @@ static void renderScene(glm::vec4 PclipPlane)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	renderBackground(PclipPlane);
-	
+
 	//Bind program
 	textureMatrixColorShader.Use();
-	
+
 	fillMatrixData(textureMatrixColorShaderBackground.getID());
 	int UniformPlaneM = glGetUniformLocation(textureMatrixColorShader.getID(), "plane");
 	// Clip Plane Set
@@ -290,7 +380,7 @@ static void renderScene(glm::vec4 PclipPlane)
 	{
 		cube->render();
 	}
-	
+
 	underWaterPlane.render();
 
 	// Fire render logic
@@ -305,7 +395,7 @@ static void render()
 {
 	// Enable Clip distance
 	glEnable(GL_CLIP_DISTANCE0);
-	
+
 	// Water
 	// Reflection texture render
 	waterReflectionFrameBuffer->bind();
@@ -325,7 +415,7 @@ static void render()
 	waterRefractionFrameBuffer->bind();
 	clipPlane = glm::vec4(0, -1, 0, 0); // 0 Height because water object ar on plane Y = 0
 	renderScene(clipPlane);
-	
+
 	waterRefractionFrameBuffer->unbind();
 
 	// Fire
@@ -342,7 +432,7 @@ static void render()
 
 	flameShader.Use();
 	flamePlane->render();
-	
+
 	glDisable(GL_CLIP_DISTANCE0);
 	renderScene(clipPlane);
 	//Render Water with Reflection and refraction Textures
@@ -366,17 +456,21 @@ static void close()
 	delete waterPlane;
 
 	underWaterPlane.clearGPU();
-	
+
 	// Clear FBO Water
 	delete waterReflectionFrameBuffer;
 	delete waterRefractionFrameBuffer;
-	
+
 	// Clear FBO Fire
 	delete fireFrameBuffer;
 
+	delete maskFrameBuffer1;
+	delete maskFrameBuffer2;
+
 	//FireShader.deleteProgram();
 	flameShader.deleteProgram();
-	
+	convolutionShader.deleteProgram();
+
 	delete camera;
 
 	//Destroy window	
@@ -395,7 +489,7 @@ int main(int argc, char* args[])
 		std::cout << "Failed to initialize!" << std::endl;
 		return 1;
 	}
-	
+
 	std::cout << "* Use WASD and Mouse to walk in 3d World *" << std::endl;
 
 	//Main loop flag
