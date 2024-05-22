@@ -3,6 +3,7 @@
 in vec2 texCoord;
 
 uniform bool initialize;
+uniform bool heat;
 uniform sampler2D texture1;
 uniform float kernel[9];
 uniform vec2 tex_offset[9]; // precomputed offsets
@@ -46,8 +47,18 @@ vec4 convolute()
 }
 
 
-void main() {
-
-    FragColor = (initialize) ? texture(texture1, texCoord) : convolute();
-	//FragColor = texture(texture1, texCoord);
+void main()
+{
+	if (heat)
+	{
+		if (0.1 <= texCoord.y && texCoord.y <= 0.3)
+		{
+			FragColor = vec4(1,1,1,1);
+		}
+	}
+	else
+	{
+		FragColor = (initialize) ? texture(texture1, texCoord) : convolute();
+		//FragColor = texture(texture1, texCoord);
+	}
 }

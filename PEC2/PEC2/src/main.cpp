@@ -109,8 +109,22 @@ static void updateMask(GLuint texture, bool initialize)
 	glm::vec3 oldPosition = camera->getCameraPos();
 	camera->setCameraPos(0, 0, 0);
 	camera->update();
-
+	
 	GLuint convolutionShaderId = convolutionShader.getID();
+	
+	//Initialize clear color
+	glClearColor(0.f, 0.f, 0.f, 1.f);
+
+	if (!initialize)
+	{
+		glUniform1i(glGetUniformLocation(convolutionShaderId, "heat"), true);
+		glUniform1i(glGetUniformLocation(convolutionShaderId, "initialize"), false);
+		glUniform1f(glGetUniformLocation(convolutionShaderId, "stepHeight"), 1.0f / SCREEN_HEIGHT);
+		glUniform1f(glGetUniformLocation(convolutionShaderId, "stepWidth"), 1.0f / SCREEN_WIDTH);
+		
+		auxMaskPlane->render();
+	}
+
 	float factor = 8.f;
 	float kernel[9] = {
 		1.0f / factor, 0.0f    , 1.0f / factor,
@@ -132,13 +146,11 @@ static void updateMask(GLuint texture, bool initialize)
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glUniform1i(glGetUniformLocation(convolutionShaderId, "texture1"), 1);
+	glUniform1i(glGetUniformLocation(convolutionShaderId, "heat"), false);
 	glUniform1i(glGetUniformLocation(convolutionShaderId, "initialize"), initialize);
 	glUniform1f(glGetUniformLocation(convolutionShaderId, "stepHeight"), 1.0f / SCREEN_HEIGHT);
 	glUniform1f(glGetUniformLocation(convolutionShaderId, "stepWidth"), 1.0f / SCREEN_WIDTH);
 
-
-	//Initialize clear color
-	glClearColor(0.f, 0.f, 0.f, 1.f);
 
 	auxMaskPlane->render();
 
