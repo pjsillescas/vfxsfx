@@ -6,22 +6,45 @@ uniform bool initialize;
 uniform sampler2D texture1;
 uniform float kernel[9];
 uniform vec2 tex_offset[9]; // precomputed offsets
+uniform float stepHeight;
+uniform float stepWidth;
 
 out vec4 FragColor;
 
+bool isValidCoords(vec2 coords)
+{
+	return 0 < coords.x && coords.x < 1 && 0 < coords.y && coords.y < 1;
+}
+
+bool isValidCoords2(vec2 v)
+{
+	return v.y > 2.f*stepHeight && stepWidth < v.x && v.x < (1 - stepWidth);
+}
+
 vec4 convolute()
 {
-	vec3 result = vec3(0.0, 0.0, 0.0);
-    for (int i = 0; i < 9; i++)
+	vec3 result;
+	if(isValidCoords2(texCoord))
 	{
-        vec3 texColor = texture(texture1, texCoord + tex_offset[i]).rgb;
-        result += texColor * kernel[i];
-    }
+		result = vec3(0.0, 0.0, 0.0);
+		for (int i = 0; i < 9; i++)
+		{
+			vec2 coords = texCoord + tex_offset[i];
+			vec3 texColor = (isValidCoords(coords)) ? texture(texture1, texCoord + tex_offset[i]).rgb : vec3(1,1,1);
+			result += texColor * kernel[i];
+		}
 
-	float mod = dot(result, result) / 3.f;
-	//return (mod > 0.5f) ? vec4(1,1,1, 1.0) : vec4(0,0,0,1);
+		//float mod = dot(result, result) / 3.f;
+		//return (mod > 0.5f) ? vec4(1,1,1, 1.0) : vec4(0,0,0,1);
+	}
+	else
+	{
+		result = vec3(1,1,1);
+	}
+
 	return vec4(result.xyz,1);
 }
+
 
 void main() {
 

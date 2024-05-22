@@ -189,7 +189,7 @@ void main()
 {
     vec4 mask = texture(maskTexture, vec2(texCoord.x,1 - texCoord.y));
 
-    bool isBackground = dot(mask, vec4(1,1,1,0)) <= 0.01f;
+    bool isBackground = dot(mask, vec4(1,1,1,0)) <= 0.95f;
     vec4 refractColor = getRefractColor(isBackground);
     if(isBackground)
     {

@@ -52,7 +52,7 @@ std::vector<Object3D*> cubes;
 Object3D underWaterPlane;
 FlameObj* flamePlane;
 
-Object3D backgroundPlane;
+Object3D* backgroundPlane;
 
 // FBO for Water
 FrameBuffer* waterReflectionFrameBuffer;
@@ -63,7 +63,7 @@ FrameBuffer* maskFrameBuffer2;
 FrameBuffer* sourceMaskFrameBuffer;
 FrameBuffer* destinationMaskFrameBuffer;
 
-Object3D auxMaskPlane;
+Object3D* auxMaskPlane;
 
 // FBO for fire
 FrameBuffer* fireFrameBuffer;
@@ -101,50 +101,59 @@ static FrameBuffer* createFrameBuffer(int bufferWidth, int bufferHeight)
 
 static void updateMask(GLuint texture, bool initialize)
 {
-	std::cout << "update" << std::endl;
+	//std::cout << "update" << std::endl;
 	destinationMaskFrameBuffer->bind();
 
 	convolutionShader.Use();
 
-	GLuint convolutionShaderId = convolutionShader.getID();
+	glm::vec3 oldPosition = camera->getCameraPos();
+	camera->setCameraPos(0, 0, 0);
+	camera->update();
 
+	GLuint convolutionShaderId = convolutionShader.getID();
+	float factor = 8.f;
 	float kernel[9] = {
-		1.0 / 8, 1.0 / 8, 1.0 / 8,
-		1.0 / 8, 0.0    , 1.0 / 8,
-		1.0 / 8, 1.0 / 8, 1.0 / 8
+		1.0f / factor, 0.0f    , 1.0f / factor,
+		1.0f / factor, 1.0f / factor, 1.0f / factor,
+		1.0f / factor, 1.0f / factor, 1.0f / factor,
 	};
 
 	glUniform1fv(glGetUniformLocation(convolutionShaderId, "kernel"), 9, kernel);
 
 	float tex_offset[9][2] = {
+		{-1.0f / SCREEN_WIDTH,  0}, { 0,  0}, { 1.0f / SCREEN_WIDTH, 0},
 		{-1.0f / SCREEN_WIDTH, -1.0f / SCREEN_HEIGHT}, { 0, -1.0f / SCREEN_HEIGHT}, { 1.0f / SCREEN_WIDTH, -1.0f / SCREEN_HEIGHT},
-		{-1.0f / SCREEN_WIDTH,  0}, { 0,  0}, { 1.0f, 0},
-		{-1.0f / SCREEN_WIDTH,  1.0f / SCREEN_HEIGHT}, { 0,  1.0f / SCREEN_HEIGHT}, { 1.0f / SCREEN_WIDTH, 1.0f / SCREEN_HEIGHT}
+		{-1.0f / SCREEN_WIDTH,  -2.0f / SCREEN_HEIGHT}, { 0, -2.0f / SCREEN_HEIGHT}, { 1.0f / SCREEN_WIDTH, -2.0f / SCREEN_HEIGHT}
 	};
 	glUniform2fv(glGetUniformLocation(convolutionShaderId, "tex_offset"), 9, &tex_offset[0][0]);
 
 	//std::cout << "using texture " << texture << "(" << initialize << ")" << std::endl;
 
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glUniform1i(glGetUniformLocation(convolutionShaderId, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(convolutionShaderId, "texture1"), 1);
 	glUniform1i(glGetUniformLocation(convolutionShaderId, "initialize"), initialize);
+	glUniform1f(glGetUniformLocation(convolutionShaderId, "stepHeight"), 1.0f / SCREEN_HEIGHT);
+	glUniform1f(glGetUniformLocation(convolutionShaderId, "stepWidth"), 1.0f / SCREEN_WIDTH);
 
 
 	//Initialize clear color
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 
-	auxMaskPlane.render();
+	auxMaskPlane->render();
 
 	destinationMaskFrameBuffer->unbind();
+
+	camera->setCameraPos(oldPosition.x, oldPosition.y, oldPosition.z);
+	camera->update();
 }
 
 static void initializeMask()
 {
-	std::cout << "init" << std::endl;
+	//std::cout << "init" << std::endl;
 
-	std::string fileName = "Assets/textures/maskFlame.png";
-	//std::string fileName = "Assets/textures/maskFlameHole.png";
+	//std::string fileName = "Assets/textures/maskFlame.png";
+	std::string fileName = "Assets/textures/maskFlameHole.png";
 	//std::string fileName = "Assets/textures/maskFlameII.png";
 	GLuint maskTexture = TextureUtils::loadTextureFromDisk(fileName);
 
@@ -186,10 +195,11 @@ static void initGL()
 	burningCube->setScale(glm::vec3(7.f, 1.f, 1.f));
 	burningCube2 = createCube(glm::vec3(0.f, 4.f, -2.5f));
 
-	backgroundPlane.loadObjFromDisk("Assets/BackgroundPlane.txt");
-	backgroundPlane.setTexture(TextureUtils::loadTextureFromDisk("Assets/textures/desert-unsplash.png"));
-	backgroundPlane.setShader(&textureMatrixColorShaderBackground);
-	backgroundPlane.setPosition(glm::vec3(0, 0, -10));
+	backgroundPlane = new Object3D();
+	backgroundPlane->loadObjFromDisk("Assets/BackgroundPlane.txt");
+	backgroundPlane->setTexture(TextureUtils::loadTextureFromDisk("Assets/textures/desert-unsplash.png"));
+	backgroundPlane->setShader(&textureMatrixColorShaderBackground);
+	backgroundPlane->setPosition(glm::vec3(0, 0, -10));
 
 	underWaterPlane.loadObjFromDisk("Assets/Pool.txt");
 	underWaterPlane.setShader(&textureMatrixColorShader);
@@ -218,8 +228,9 @@ static void initGL()
 	sourceMaskFrameBuffer = maskFrameBuffer1;
 	destinationMaskFrameBuffer = maskFrameBuffer2;
 
-	auxMaskPlane.loadObjFromDisk("Assets/MaskPlane.txt");
-	auxMaskPlane.setShader(&convolutionShader);
+	auxMaskPlane = new Object3D();
+	auxMaskPlane->loadObjFromDisk("Assets/MaskPlane.txt");
+	auxMaskPlane->setShader(&convolutionShader);
 
 	initializeMask();
 }
@@ -227,7 +238,7 @@ static void initGL()
 
 static void swapMaskBuffers()
 {
-	std::cout << "swap" << std::endl;
+	//std::cout << "swap" << std::endl;
 	FrameBuffer* aux = sourceMaskFrameBuffer;
 	sourceMaskFrameBuffer = destinationMaskFrameBuffer;
 	destinationMaskFrameBuffer = aux;
@@ -281,10 +292,11 @@ static bool init()
 		std::cout << "Warning: Unable to set VSync! SDL Error: " << SDL_GetError() << std::endl;
 	}
 
-	initGL();
 	camera = new Camera3D();
 	camera->init(SCREEN_WIDTH, SCREEN_HEIGHT);
 	playerController = new PlayerController(camera);
+	
+	initGL();
 
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -358,7 +370,7 @@ static void renderBackground(glm::vec4 clipPlane)
 	// Clip Plane Set
 	glUniform4f(UniformPlaneM, clipPlane.x, clipPlane.y, clipPlane.z, clipPlane.w);
 
-	backgroundPlane.render();
+	backgroundPlane->render();
 }
 
 static void renderScene(glm::vec4 PclipPlane)
@@ -472,6 +484,9 @@ static void close()
 	convolutionShader.deleteProgram();
 
 	delete camera;
+
+	delete auxMaskPlane;
+	delete backgroundPlane;
 
 	//Destroy window	
 	SDL_DestroyWindow(gWindow);
