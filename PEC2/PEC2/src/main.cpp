@@ -138,7 +138,7 @@ static void initGL()
 	flamePlane->loadObjFromDisk("Assets/FlamePlane.txt");
 	flamePlane->setShader(&flameShader);
 	flamePlane->setPosition(glm::vec3(0.0f, 4.f, -1.0f));
-	flamePlane->setMaskTexture(TextureUtils::loadTextureFromDisk("Assets/textures/maskFlame.png"));
+	flamePlane->setMaskTexture(TextureUtils::loadTextureFromDisk("Assets/textures/maskFlameTex.png"));
 	flamePlane->setDistortionTexture(TextureUtils::loadTextureFromDisk("Assets/textures/waterDUDV.png")); // Load texture and change ID to texture 3;
 
 	// Create Frame Buffer Objects (FBO)
