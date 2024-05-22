@@ -124,7 +124,9 @@ int main(int argc, char* args[])
 
 			new PlasmaEffect(screenSurface, screenHeight, screenWidth, 10, "Plasma"),
 			new PlasmaEffectChallenge3(screenSurface, screenHeight, screenWidth, 10, "Plasma Reto 3"),
+			*/
 			new FireEffect(screenSurface, screenHeight, screenWidth, 10, "Fire"),
+			/*
 			new DistortionEffect(screenSurface, screenHeight, screenWidth, 10, "Distortion", uocFileName),
 			new BumpmapEffect(screenSurface, screenHeight, screenWidth, 10, "Bumpmap", wallFileName, bumpFileName),
 			new FractalEffect(screenSurface, screenHeight, screenWidth, 10, "Fractal"),
@@ -138,7 +140,7 @@ int main(int argc, char* args[])
 			new TerraEffect(screenSurface, screenHeight, screenWidth, 10, "Terra"),
 			(new SyncEffect(screenSurface, screenHeight, screenWidth, 143, "Synch", uocFileName))->setIsLateInit(true),
 			*/
-			(new Pec1AudioEffect(screenSurface, screenHeight, screenWidth, 215, "PEC1 Audio", uocFileName, SHOW_SECTION))->setIsLateInit(true),
+			//(new Pec1AudioEffect(screenSurface, screenHeight, screenWidth, 215, "PEC1 Audio", uocFileName, SHOW_SECTION))->setIsLateInit(true),
 			//new FlockingEffect(screenSurface, screenHeight, screenWidth, 215, "Flocking")
 			//new SpyralEffect(screenSurface,screenHeight,screenWidth,200, "Galaxy")
 			//new BarsEffect(screenSurface,screenHeight,screenWidth,200, "Bars"),
