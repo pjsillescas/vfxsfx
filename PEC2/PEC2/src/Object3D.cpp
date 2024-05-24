@@ -69,7 +69,7 @@ void Object3D::loadObjFromDisk(std::string file)
 					continue;
 				}
 				
-				std::vector<std::string> data = splitString(line, ',');
+				std::vector<std::string> data = Utils::splitString(line, ',');
 				if (readVBO)
 				{
 					for (unsigned int i = 0; i < data.size(); i++)
