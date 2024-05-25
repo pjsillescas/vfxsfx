@@ -23,6 +23,8 @@ struct WaterConfig
 	std::string geometryFile;
 	std::string dudvTextureFile;
 	std::string normalTextureFile;
+
+	float waterSpeed;
 };
 
 class WaterObject

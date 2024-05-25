@@ -3,6 +3,7 @@
 WaterObj::WaterObj()
 {
 	mCurrentOffsetWave = 0.0f;
+	waveSpeed = WAVE_SPEED;
 }
 
 
@@ -37,7 +38,7 @@ void WaterObj::render()
 		glBindTexture(GL_TEXTURE_2D, mTexture4);
 		glUniform1i(mUniformTex4, 3);
 	}
-	mCurrentOffsetWave += WAVE_SPEED; // It's better to control with FrameTime 
+	mCurrentOffsetWave += waveSpeed; // It's better to control with FrameTime 
 	if (mCurrentOffsetWave > 1.0f)
 	{
 		mCurrentOffsetWave -= 1.0;

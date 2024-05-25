@@ -27,6 +27,7 @@ WaterObject::WaterObject(WaterConfig& waterConfig, SceneRenderer* scene, FlameOb
 	waterPlane->setShader(waterConfig.waterShader);
 	waterPlane->setTexture3(TextureUtils::loadTextureFromDisk(waterConfig.dudvTextureFile));
 	waterPlane->setTexture4(TextureUtils::loadTextureFromDisk(waterConfig.normalTextureFile));
+	waterPlane->setWaveSpeed(waterConfig.waterSpeed);
 
 	waterReflectionFrameBuffer = createFrameBuffer(waterConfig.reflectionWidth, waterConfig.reflectionHeight,
 		waterConfig.screenWidth, waterConfig.screenHeight);

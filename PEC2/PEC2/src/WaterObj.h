@@ -6,10 +6,14 @@ class WaterObj :
 	public Object3D
 {
 private:
+	float waveSpeed;
 	const float WAVE_SPEED = 0.001f;
 public:
 	WaterObj();
 	~WaterObj();
+
+	void setWaveSpeed(float waveSpeed) { this->waveSpeed = waveSpeed; }
+	float getWaveSpeed() const { return waveSpeed; }
 
 	void render();
 	void setShader(Shader* p_shader);

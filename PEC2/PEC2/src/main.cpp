@@ -117,19 +117,6 @@ static void initGL()
 		// Burning cube
 		glm::vec3(0.f, 0.f, -1.f),
 		glm::vec3(7.f, 1.f, 1.f),
-		/*{
-			// Flame
-			camera,
-			&flameShader,
-			REFRACTION_WIDTH,
-			REFRACTION_HEIGHT,
-			SCREEN_WIDTH,
-			SCREEN_HEIGHT,
-			"Assets/FlamePlane.txt",
-			glm::vec3(0.0f, 4.f, -1.0f),
-			"Assets/textures/maskFlameTex.png",
-			"Assets/textures/waterDUDV.png",
-		},*/
 	};
 	scene = new SceneRenderer(sceneConfig);
 
@@ -149,13 +136,16 @@ static void initGL()
 	};
 	flameObject = new FlameObject(flameConfig, scene);
 	
-	WaterConfig waterConfig{ camera, &waterShader,
-	REFLECTION_WIDTH, REFLECTION_HEIGHT,
-	REFRACTION_WIDTH, REFRACTION_HEIGHT,
-	SCREEN_WIDTH, SCREEN_HEIGHT,
-	"Assets/WaterPlane.txt",
-	"Assets/textures/waterDUDV.png",
-	"Assets/textures/normaltexture.jpg"
+	const float WATER_SPEED = 0.001f;
+	WaterConfig waterConfig{
+		camera, &waterShader,
+		REFLECTION_WIDTH, REFLECTION_HEIGHT,
+		REFRACTION_WIDTH, REFRACTION_HEIGHT,
+		SCREEN_WIDTH, SCREEN_HEIGHT,
+		"Assets/WaterPlane.txt",
+		"Assets/textures/waterDUDV.png",
+		"Assets/textures/normaltexture.jpg",
+		WATER_SPEED,
 	};
 
 	waterObject = new WaterObject(waterConfig, scene, flameObject);
