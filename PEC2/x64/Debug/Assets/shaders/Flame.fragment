@@ -18,7 +18,6 @@ const vec4 fireColor = vec4(0.87f,0.46f,0,1.f); // orange
 
 // Output color
 out vec4 FragColor;
-out vec4 out_color;
 
 //
 // Description : Array and textureless GLSL 2D/3D/4D simplex 
@@ -177,12 +176,9 @@ vec4 getRefractColor(bool useDistortion)
 vec4 getBackground(vec4 refractColor)
 {
     // With A Little Bit of Bluesky
-	//out_color = mix(refractColor,vec4(0.9,0.9,0.9,1),0.7);
     float absorptionFactor = 1 - clamp(getAbsorptionFactor(), 0.01,0.99);
     vec4 tint = mix(backgroundTint, vec4(1,1,1,1), absorptionFactor);
-    //return (absorptionFactor < 0.9) ? mix(refractColor,tint,0.4) : refractColor;
 	return refractColor * tint;
-    //out_color = vec4(1,1,1,1);
 }
 
 void main()
