@@ -36,9 +36,6 @@
     <ClCompile Include="src\Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\WaterObj.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\glad\src\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -49,9 +46,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\TextureUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\FlameObj.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SceneRenderer.cpp">
@@ -83,9 +77,6 @@
     <ClInclude Include="src\Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\WaterObj.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\PlayerController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -93,9 +84,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\TextureUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\FlameObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SceneRenderer.h">

@@ -1,7 +1,6 @@
 #include "FlameObject.h"
 
 #include "FrameBuffer.h"
-#include "FlameObj.h"
 #include "TextureUtils.h"
 #include "Utils.h"
 #include "Camera3D.h"
@@ -10,17 +9,16 @@
 
 FlameObject::FlameObject(FlameObjectConfig& flameConfig, SceneRenderer* scene)
 {
+	mCurrentOffsetWave = 0.0f;
+	smokeSpeed = SMOKE_SPEED;
 	this->camera = flameConfig.camera;
 	this->flameShader = flameConfig.flameShader;
 	this->scene = scene;
-	flamePlane = new FlameObj();
-	std::cout << "mask " << flameConfig.maskTextureFile << std::endl;
-	std::cout << "dudv " << flameConfig.dudvTextureFile << std::endl;
-	flamePlane->loadObjFromDisk(flameConfig.geometryFile);
-	flamePlane->setShader(flameShader);
-	flamePlane->setPosition(flameConfig.position);
-	flamePlane->setMaskTexture(TextureUtils::loadTextureFromDisk(flameConfig.maskTextureFile));
-	flamePlane->setDistortionTexture(TextureUtils::loadTextureFromDisk(flameConfig.dudvTextureFile)); // Load texture and change ID to texture 3;
+	this->loadObjFromDisk(flameConfig.geometryFile);
+	this->setShader(flameShader);
+	this->setPosition(flameConfig.position);
+	this->setMaskTexture(TextureUtils::loadTextureFromDisk(flameConfig.maskTextureFile));
+	this->setDistortionTexture(TextureUtils::loadTextureFromDisk(flameConfig.dudvTextureFile)); // Load texture and change ID to texture 3;
 
 	// Create Frame Buffer Objects (FBO)
 	flameFrameBuffer = createFrameBuffer(flameConfig.refractionWidth, flameConfig.refractionHeight, flameConfig.screenWidth, flameConfig.screenHeight);
@@ -30,7 +28,6 @@ FlameObject::FlameObject(FlameObjectConfig& flameConfig, SceneRenderer* scene)
 
 FlameObject::~FlameObject()
 {
-	delete flamePlane;
 	delete flameFrameBuffer;
 }
 
@@ -54,14 +51,14 @@ void FlameObject::render()
 	glm::mat4 viewMatrix = camera->getUniformViewMatrix();
 	Utils::fillMatrixData(flameShader->getID(), projectionMatrix, viewMatrix);
 
-	flamePlane->render();
+	this->renderObject();
 }
 
 void FlameObject::renderFrameBuffer()
 {
 	flameFrameBuffer->bind();
 	flameShader->Use();
-	flamePlane->setRefractionTexture(flameFrameBuffer->getTexture());
+	this->setRefractionTexture(flameFrameBuffer->getTexture());
 
 	glm::mat4 projectionMatrix = camera->getUniformProjectionMatrix();
 	glm::mat4 viewMatrix = camera->getUniformViewMatrix();
@@ -71,10 +68,6 @@ void FlameObject::renderFrameBuffer()
 	scene->render(clipPlane);
 
 	flameFrameBuffer->unbind();
-
-	//flameShader->Use();
-	//flamePlane->render();
-	//this->render();
 }
 
 void FlameObject::bindFrameBuffer()
@@ -84,4 +77,56 @@ void FlameObject::bindFrameBuffer()
 void FlameObject::unbindFrameBuffer()
 {
 	flameFrameBuffer->unbind();
+}
+
+
+void FlameObject::renderObject()
+{
+	//Sets texture
+	if (mRefractionTexture != -1)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, mRefractionTexture);
+		glUniform1i(mUniformRefractionTex, 0);
+	}
+
+	if (mDistortionTexture != -1)
+	{
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, mDistortionTexture);
+		glUniform1i(mUniformDistortionTex, 1);
+	}
+
+	if (mMaskTexture != -1)
+	{
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, mMaskTexture);
+		glUniform1i(mUniformMaskTex, 2);
+	}
+
+	mCurrentOffsetWave += smokeSpeed; // It's better to control with FrameTime 
+	if (mCurrentOffsetWave > 1.0f)
+	{
+		mCurrentOffsetWave -= 1.0;
+	}
+	//std::cout << "currentdistord " << mUniformOffsetWave << " => " << mCurrentOffsetWave << std::endl;
+	glUniform1f(mUniformOffsetWave, mCurrentOffsetWave);
+	glUniform4f(mUniformBackgroundTint, 0, 0, 0, 1);
+
+	//Set VAO
+	prepareVAO();
+	//Draw VAO
+	glDrawElements(GL_TRIANGLES, mIndexData.size(), GL_UNSIGNED_INT, NULL);
+	//Diable VAO
+	diableVAO();
+}
+
+void FlameObject::setShader(Shader* p_shader)
+{
+	mShaderforDraw = p_shader;
+	mUniformRefractionTex = glGetUniformLocation(mShaderforDraw->getID(), "refractionTexture");
+	mUniformDistortionTex = glGetUniformLocation(mShaderforDraw->getID(), "distortionTexture");
+	mUniformMaskTex = glGetUniformLocation(mShaderforDraw->getID(), "maskTexture");
+	mUniformOffsetWave = glGetUniformLocation(mShaderforDraw->getID(), "flowTime");
+	mUniformBackgroundTint = glGetUniformLocation(mShaderforDraw->getID(), "backgroundTint");
 }
