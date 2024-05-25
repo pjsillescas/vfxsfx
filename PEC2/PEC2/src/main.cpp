@@ -132,19 +132,6 @@ static void initGL()
 		},*/
 	};
 	scene = new SceneRenderer(sceneConfig);
-	std::cout << "scene " << std::endl;
-
-	WaterConfig waterConfig{ camera, &waterShader,
-	REFLECTION_WIDTH, REFLECTION_HEIGHT,
-	REFRACTION_WIDTH, REFRACTION_HEIGHT,
-	SCREEN_WIDTH, SCREEN_HEIGHT,
-	"Assets/WaterPlane.txt",
-	"Assets/textures/waterDUDV.png",
-	"Assets/textures/normaltexture.jpg"
-	};
-
-	waterObject = new WaterObject(waterConfig, scene);
-	std::cout << "water" << std::endl;
 
 	FlameObjectConfig flameConfig
 	{
@@ -161,7 +148,17 @@ static void initGL()
 		"Assets/textures/waterDUDV.png",
 	};
 	flameObject = new FlameObject(flameConfig, scene);
-	std::cout << "flame" << std::endl;
+	
+	WaterConfig waterConfig{ camera, &waterShader,
+	REFLECTION_WIDTH, REFLECTION_HEIGHT,
+	REFRACTION_WIDTH, REFRACTION_HEIGHT,
+	SCREEN_WIDTH, SCREEN_HEIGHT,
+	"Assets/WaterPlane.txt",
+	"Assets/textures/waterDUDV.png",
+	"Assets/textures/normaltexture.jpg"
+	};
+
+	waterObject = new WaterObject(waterConfig, scene, flameObject);
 }
 
 //Starts up SDL, creates window, and initializes OpenGL
@@ -255,8 +252,6 @@ static void render()
 
 	//Render Water with Reflection and refraction Textures
 	waterObject->render();
-	/*
-	*/
 }
 
 //Frees media and shuts down SDL
