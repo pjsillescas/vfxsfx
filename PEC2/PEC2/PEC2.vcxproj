@@ -133,9 +133,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\glad\src\glad.c" />
+    <ClCompile Include="src\BackgroundObject.cpp" />
     <ClCompile Include="src\Camera3D.cpp" />
     <ClCompile Include="src\FileManager.cpp" />
     <ClCompile Include="src\FlameObj.cpp" />
+    <ClCompile Include="src\FlameObject.cpp" />
     <ClCompile Include="src\FrameBuffer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Object3D.cpp" />
@@ -148,9 +150,11 @@
     <ClCompile Include="src\WaterObject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\BackgroundObject.h" />
     <ClInclude Include="src\Camera3D.h" />
     <ClInclude Include="src\FileManager.h" />
     <ClInclude Include="src\FlameObj.h" />
+    <ClInclude Include="src\FlameObject.h" />
     <ClInclude Include="src\FrameBuffer.h" />
     <ClInclude Include="src\Object3D.h" />
     <ClInclude Include="src\PlayerController.h" />

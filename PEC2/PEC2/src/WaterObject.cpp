@@ -5,6 +5,7 @@
 #include "TextureUtils.h"
 #include "Utils.h"
 #include "Camera3D.h"
+#include "SceneRenderer.h"
 
 FrameBuffer* WaterObject::createFrameBuffer(int bufferWidth, int bufferHeight, int screenWidth, int screenHeight)
 {
@@ -14,10 +15,11 @@ FrameBuffer* WaterObject::createFrameBuffer(int bufferWidth, int bufferHeight, i
 	return buffer;
 }
 
-WaterObject::WaterObject(WaterConfig& waterConfig)
+WaterObject::WaterObject(WaterConfig& waterConfig, SceneRenderer* scene)
 {
 	this->camera = waterConfig.camera;
 	this->waterShader = waterConfig.waterShader;
+	this->scene = scene;
 	waterPlane = new WaterObj();
 	waterPlane->loadObjFromDisk(waterConfig.geometryFile);
 	waterPlane->setShader(waterConfig.waterShader);
@@ -72,7 +74,7 @@ void WaterObject::renderFrameBuffers()
 	camera->invertPitch();
 	camera->update();
 	glm::vec4 clipPlane = glm::vec4(0, 1, 0, 0); // 0 Height because water object ar on plane Y = 0
-	renderScene(clipPlane);
+	scene->render(clipPlane);
 	// Camera Recovery position
 	camera->setCameraPos(camera->getCameraPos().x, camera->getCameraPos().y + distance, camera->getCameraPos().z);
 	camera->invertPitch();
@@ -81,7 +83,7 @@ void WaterObject::renderFrameBuffers()
 	// Refraction texture render
 	waterRefractionFrameBuffer->bind();
 	clipPlane = glm::vec4(0, -1, 0, 0); // 0 Height because water object ar on plane Y = 0
-	renderScene(clipPlane);
+	scene->render(clipPlane);
 
 	waterRefractionFrameBuffer->unbind();
 }

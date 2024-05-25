@@ -5,6 +5,7 @@
 class Camera3D;
 class WaterObj;
 class FrameBuffer;
+class SceneRenderer;
 
 struct WaterConfig
 {
@@ -29,13 +30,14 @@ private:
 	Camera3D* camera;
 	Shader* waterShader;
 	WaterObj* waterPlane;
+	SceneRenderer* scene;
 
 	// FBO for Water
 	FrameBuffer* waterReflectionFrameBuffer;
 	FrameBuffer* waterRefractionFrameBuffer;
 
 public:
-	WaterObject(WaterConfig& waterConfig);
+	WaterObject(WaterConfig& waterConfig, SceneRenderer* scene);
 	~WaterObject();
 
 	void render();
