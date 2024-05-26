@@ -60,6 +60,9 @@
     <ClCompile Include="src\FlameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\LavaObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera3D.h">
@@ -98,6 +101,9 @@
     <ClInclude Include="src\FlameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\LavaObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\x64\Debug\Assets\shaders\TextureMatrixColorClip.fragment">
@@ -122,6 +128,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\x64\Debug\Assets\shaders\Flame.vertex">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\x64\Debug\Assets\shaders\Lava.fragment">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\x64\Debug\Assets\shaders\Lava.vertex">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

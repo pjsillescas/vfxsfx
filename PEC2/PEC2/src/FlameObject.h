@@ -30,7 +30,6 @@ private:
 
 	Camera3D* camera;
 	Shader* flameShader;
-	//FlameObj* flamePlane;
 	SceneRenderer* scene;
 
 	// FBO for fire
@@ -56,7 +55,7 @@ public:
 	void bindFrameBuffer();
 	void unbindFrameBuffer();
 
-	void setSmokeSpeed(float smokeSpeed) { smokeSpeed = smokeSpeed; }
+	void setSmokeSpeed(float smokeSpeed) { this->smokeSpeed = smokeSpeed; }
 
 	void setRefractionTexture(GLuint id) { mRefractionTexture = id; };
 	GLuint getRefractionTexture() const { return mRefractionTexture; };

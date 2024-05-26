@@ -138,6 +138,7 @@
     <ClCompile Include="src\FileManager.cpp" />
     <ClCompile Include="src\FlameObject.cpp" />
     <ClCompile Include="src\FrameBuffer.cpp" />
+    <ClCompile Include="src\LavaObject.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Object3D.cpp" />
     <ClCompile Include="src\PlayerController.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="src\FileManager.h" />
     <ClInclude Include="src\FlameObject.h" />
     <ClInclude Include="src\FrameBuffer.h" />
+    <ClInclude Include="src\LavaObject.h" />
     <ClInclude Include="src\Object3D.h" />
     <ClInclude Include="src\PlayerController.h" />
     <ClInclude Include="src\SceneRenderer.h" />
@@ -166,6 +168,8 @@
     <None Include="..\x64\Debug\Assets\shaders\Fire.vertex" />
     <None Include="..\x64\Debug\Assets\shaders\Flame.fragment" />
     <None Include="..\x64\Debug\Assets\shaders\Flame.vertex" />
+    <None Include="..\x64\Debug\Assets\shaders\Lava.fragment" />
+    <None Include="..\x64\Debug\Assets\shaders\Lava.vertex" />
     <None Include="..\x64\Debug\Assets\shaders\TextureMatrixColorClip.fragment" />
     <None Include="..\x64\Debug\Assets\shaders\TextureMatrixColorClip.vertex" />
     <None Include="..\x64\Debug\Assets\shaders\Water4.fragment" />

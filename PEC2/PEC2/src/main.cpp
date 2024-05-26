@@ -12,6 +12,7 @@
 #include "PlayerController.h"
 #include "WaterObject.h"
 #include "FlameObject.h"
+#include "LavaObject.h"
 #include "SceneRenderer.h"
 #include <iostream>
 
@@ -39,6 +40,7 @@ Shader waterShader;
 Shader textureMatrixColorShader;
 Shader textureMatrixColorShaderBackground;
 Shader flameShader;
+Shader lavaShader;
 
 Camera3D *camera;
 PlayerController* playerController;
@@ -46,6 +48,7 @@ PlayerController* playerController;
 WaterObject* waterObject;
 SceneRenderer* scene;
 FlameObject* flameObject;
+LavaObject* lavaObject;
 
 //Initializes rendering program and clear color
 static void initGL()
@@ -58,6 +61,7 @@ static void initGL()
 	textureMatrixColorShader.init("TextureMatrixColorClip");
 	textureMatrixColorShaderBackground.init("TextureMatrixColorClip");
 	flameShader.init("Flame");
+	lavaShader.init("Lava");
 
 	//Initialize clear color
 	glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -149,6 +153,20 @@ static void initGL()
 	};
 
 	waterObject = new WaterObject(waterConfig, scene, flameObject);
+
+	const float LAVA_SPEED = 0.0001f;
+	LavaConfig lavaConfig{
+		camera, &lavaShader,
+		REFLECTION_WIDTH, REFLECTION_HEIGHT,
+		REFRACTION_WIDTH, REFRACTION_HEIGHT,
+		SCREEN_WIDTH, SCREEN_HEIGHT,
+		"Assets/WaterPlane.txt",
+		"Assets/textures/waterDUDV.png",
+		"Assets/textures/normaltexture.jpg",
+		LAVA_SPEED,
+	};
+	lavaObject = new LavaObject(lavaConfig, scene);
+	lavaObject->setPosition(glm::vec3(0,-2,0));
 }
 
 //Starts up SDL, creates window, and initializes OpenGL
@@ -242,6 +260,8 @@ static void render()
 
 	//Render Water with Reflection and refraction Textures
 	waterObject->render();
+
+	lavaObject->render();
 }
 
 //Frees media and shuts down SDL
@@ -251,6 +271,7 @@ static void close()
 	delete scene;
 	delete waterObject;
 	delete flameObject;
+	delete lavaObject;
 	delete camera;
 
 	//Destroy window	
