@@ -39,16 +39,13 @@ private:
 
 	// FBO for Lava
 	FrameBuffer* lavaReflectionFrameBuffer;
-	FrameBuffer* lavaRefractionFrameBuffer;
 
-	GLuint mTexture2;
-	GLuint mTexture3;
-	GLuint mTexture4;
+	GLuint mDudvTexture;
+	GLuint mNormalTexture;
 	float mCurrentOffsetWave;
-	int	  mUniformTex;
-	int	  mUniformTex2;
-	int	  mUniformTex3;
-	int	  mUniformTex4;
+	int	  mUniformReflectionTex;
+	int	  mUniformDudvTex;
+	int	  mUniformNormalTex;
 	int   mUniformOffsetWave;
 	int   mUniformCamPos;
 	int	  mUniformLightColor;
@@ -56,33 +53,28 @@ private:
 
 	int time;
 
-
 public:
-	LavaObject(LavaConfig& lavaConfig, SceneRenderer* scene);
+	LavaObject(LavaConfig& lavaConfig, SceneRenderer* scene, FlameObject* flame);
 	~LavaObject();
 
 	void render();
 	void renderFrameBuffers();
-
 
 	void setLavaSpeed(float lavaSpeed) { this->lavaSpeed = lavaSpeed; }
 	float getLavaSpeed() const { return lavaSpeed; }
 
 	void setShader(Shader* p_shader);
 
-	void setTexture2(GLuint id) { mTexture2 = id; };
-	GLuint getTexture2() const { return mTexture2; };
+private:
+	void setDudvTexture(GLuint id) { mDudvTexture = id; };
+	GLuint getDudvTexture() const { return mDudvTexture; };
 
-	void setTexture3(GLuint id) { mTexture3 = id; };
-	GLuint getTexture3() const { return mTexture3; };
-
-	void setTexture4(GLuint id) { mTexture4 = id; };
-	GLuint getTexture4() const { return mTexture4; };
+	void setNormalTexture(GLuint id) { mNormalTexture = id; };
+	GLuint getNormalTexture() const { return mNormalTexture; };
 
 	int getUniformCamPos() const { return mUniformCamPos; };
 	int getUniformLightColor() const { return mUniformLightColor; };
 	int getUniformLightPos() const { return mUniformLightPos; };
-private:
 
 	FrameBuffer* createFrameBuffer(int bufferWidth, int bufferHeight, int screenWidth, int screenHeight);
 	void renderObject();

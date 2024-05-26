@@ -10,16 +10,15 @@
 
 FrameBuffer* LavaObject::createFrameBuffer(int bufferWidth, int bufferHeight, int screenWidth, int screenHeight)
 {
-	time = 0.f;
-	
 	FrameBuffer* buffer = new FrameBuffer(bufferWidth, bufferHeight, screenWidth, screenHeight);
 	buffer->init();
 
 	return buffer;
 }
 
-LavaObject::LavaObject(LavaConfig& lavaConfig, SceneRenderer* scene)
+LavaObject::LavaObject(LavaConfig& lavaConfig, SceneRenderer* scene, FlameObject* flame)
 {
+	time = 0.f;
 	mCurrentOffsetWave = 0.0f;
 	lavaSpeed = LAVA_SPEED;
 
@@ -30,32 +29,27 @@ LavaObject::LavaObject(LavaConfig& lavaConfig, SceneRenderer* scene)
 
 	this->loadObjFromDisk(lavaConfig.geometryFile);
 	this->setShader(lavaConfig.lavaShader);
-	this->setTexture3(TextureUtils::loadTextureFromDisk(lavaConfig.dudvTextureFile));
-	this->setTexture4(TextureUtils::loadTextureFromDisk(lavaConfig.normalTextureFile));
+	this->setDudvTexture(TextureUtils::loadTextureFromDisk(lavaConfig.dudvTextureFile));
+	this->setNormalTexture(TextureUtils::loadTextureFromDisk(lavaConfig.normalTextureFile));
 	this->setLavaSpeed(lavaConfig.lavaSpeed);
 
 	lavaReflectionFrameBuffer = createFrameBuffer(lavaConfig.reflectionWidth, lavaConfig.reflectionHeight,
-		lavaConfig.screenWidth, lavaConfig.screenHeight);
-	lavaRefractionFrameBuffer = createFrameBuffer(lavaConfig.refractionWidth, lavaConfig.refractionHeight,
 		lavaConfig.screenWidth, lavaConfig.screenHeight);
 }
 
 LavaObject::~LavaObject()
 {
-	//delete waterPlane;
 	delete lavaReflectionFrameBuffer;
-	delete lavaRefractionFrameBuffer;
 }
 
 void LavaObject::setShader(Shader* p_shader)
 {
 	mShaderforDraw = p_shader;
 	mUniformModelM = glGetUniformLocation(mShaderforDraw->getID(), "model");
-	mUniformTex = glGetUniformLocation(mShaderforDraw->getID(), "texture1");
-	mUniformTex2 = glGetUniformLocation(mShaderforDraw->getID(), "texture2");
-	mUniformTex3 = glGetUniformLocation(mShaderforDraw->getID(), "texture3");
-	mUniformTex4 = glGetUniformLocation(mShaderforDraw->getID(), "texture4");
-	mUniformOffsetWave = glGetUniformLocation(mShaderforDraw->getID(), "moveDistord");
+	mUniformReflectionTex = glGetUniformLocation(mShaderforDraw->getID(), "reflectionTexture");
+	mUniformDudvTex = glGetUniformLocation(mShaderforDraw->getID(), "dudvTexture");
+	mUniformNormalTex = glGetUniformLocation(mShaderforDraw->getID(), "normalTexture");
+	mUniformOffsetWave = glGetUniformLocation(mShaderforDraw->getID(), "flowTime");
 	mUniformCamPos = glGetUniformLocation(mShaderforDraw->getID(), "camPos");
 	mUniformLightColor = glGetUniformLocation(mShaderforDraw->getID(), "lightcolor");
 	mUniformLightPos = glGetUniformLocation(mShaderforDraw->getID(), "lightPos");
@@ -68,7 +62,6 @@ void LavaObject::render()
 	lavaShader->Use();
 	// Active Textures and Set them
 	this->setTexture(lavaReflectionFrameBuffer->getTexture());
-	this->setTexture2(lavaRefractionFrameBuffer->getTexture());
 
 	glUniform1f(glGetUniformLocation(lavaShader->getID(), "time"), time);
 	glUniform2f(glGetUniformLocation(lavaShader->getID(), "iResolution"), 7, 7);
@@ -100,25 +93,19 @@ void LavaObject::renderObject()
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, mTexture);
-		glUniform1i(mUniformTex, 0);
+		glUniform1i(mUniformReflectionTex, 0);
 	}
-	if (mTexture2 != -1)
-	{
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, mTexture2);
-		glUniform1i(mUniformTex2, 1);
-	}
-	if (mTexture3 != -1)
+	if (mDudvTexture != -1)
 	{
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, mTexture3);
-		glUniform1i(mUniformTex3, 2);
+		glBindTexture(GL_TEXTURE_2D, mDudvTexture);
+		glUniform1i(mUniformDudvTex, 2);
 	}
-	if (mTexture4 != -1)
+	if (mNormalTexture != -1)
 	{
 		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, mTexture4);
-		glUniform1i(mUniformTex4, 3);
+		glBindTexture(GL_TEXTURE_2D, mNormalTexture);
+		glUniform1i(mUniformNormalTex, 3);
 	}
 	mCurrentOffsetWave += lavaSpeed; // It's better to control with FrameTime 
 	if (mCurrentOffsetWave > 1.0f)
@@ -153,13 +140,5 @@ void LavaObject::renderFrameBuffers()
 	camera->invertPitch();
 	camera->update();
 
-	// Refraction texture render
-	lavaRefractionFrameBuffer->bind();
-
-	flame->render();
-
-	clipPlane = glm::vec4(0, -1, 0, 0); // 0 Height because water object ar on plane Y = 0
-	scene->render(clipPlane);
-
-	lavaRefractionFrameBuffer->unbind();
+	lavaReflectionFrameBuffer->unbind();
 }

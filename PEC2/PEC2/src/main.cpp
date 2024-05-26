@@ -45,7 +45,7 @@ Shader lavaShader;
 Camera3D *camera;
 PlayerController* playerController;
 
-WaterObject* waterObject;
+//WaterObject* waterObject;
 SceneRenderer* scene;
 FlameObject* flameObject;
 LavaObject* lavaObject;
@@ -139,7 +139,7 @@ static void initGL()
 		"Assets/textures/waterDUDV.png",
 	};
 	flameObject = new FlameObject(flameConfig, scene);
-	
+	/*
 	const float WATER_SPEED = 0.001f;
 	WaterConfig waterConfig{
 		camera, &waterShader,
@@ -153,7 +153,7 @@ static void initGL()
 	};
 
 	waterObject = new WaterObject(waterConfig, scene, flameObject);
-
+	*/
 	const float LAVA_SPEED = 0.0001f;
 	LavaConfig lavaConfig{
 		camera, &lavaShader,
@@ -165,8 +165,8 @@ static void initGL()
 		"Assets/textures/normaltexture.jpg",
 		LAVA_SPEED,
 	};
-	lavaObject = new LavaObject(lavaConfig, scene);
-	lavaObject->setPosition(glm::vec3(0,-2,0));
+	lavaObject = new LavaObject(lavaConfig, scene, flameObject);
+	//lavaObject->setPosition(glm::vec3(0,-2,0));
 }
 
 //Starts up SDL, creates window, and initializes OpenGL
@@ -234,11 +234,13 @@ static void update()
 //Renders quad to the screen
 static void render()
 {
+	camera->update();
+
 	// Enable Clip distance
 	glEnable(GL_CLIP_DISTANCE0);
 	
 	// Water
-	waterObject->renderFrameBuffers();
+	//waterObject->renderFrameBuffers();
 	flameObject->renderFrameBuffer();
 
 	glDisable(GL_CLIP_DISTANCE0);
@@ -250,7 +252,7 @@ static void render()
 	
 	flameObject->renderFrameBuffer();
 	flameObject->bindFrameBuffer();
-	waterObject->render();
+	//waterObject->render();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	flameObject->unbindFrameBuffer();
@@ -259,8 +261,8 @@ static void render()
 	flameObject->render();
 
 	//Render Water with Reflection and refraction Textures
-	waterObject->render();
-
+	//waterObject->render();
+	lavaObject->renderFrameBuffers();
 	lavaObject->render();
 }
 
@@ -269,7 +271,7 @@ static void close()
 {
 	delete playerController;
 	delete scene;
-	delete waterObject;
+	//delete waterObject;
 	delete flameObject;
 	delete lavaObject;
 	delete camera;
