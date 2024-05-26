@@ -135,12 +135,15 @@
     <ClCompile Include="..\..\glad\src\glad.c" />
     <ClCompile Include="src\BackgroundObject.cpp" />
     <ClCompile Include="src\Camera3D.cpp" />
+    <ClCompile Include="src\Clock.cpp" />
+    <ClCompile Include="src\EffectTemplate.cpp" />
     <ClCompile Include="src\FileManager.cpp" />
     <ClCompile Include="src\FlameObject.cpp" />
     <ClCompile Include="src\FrameBuffer.cpp" />
     <ClCompile Include="src\LavaObject.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Object3D.cpp" />
+    <ClCompile Include="src\Pec2Effect.cpp" />
     <ClCompile Include="src\PlayerController.cpp" />
     <ClCompile Include="src\SceneRenderer.cpp" />
     <ClCompile Include="src\Shader.cpp" />
@@ -151,11 +154,14 @@
   <ItemGroup>
     <ClInclude Include="src\BackgroundObject.h" />
     <ClInclude Include="src\Camera3D.h" />
+    <ClInclude Include="src\Clock.h" />
+    <ClInclude Include="src\EffectTemplate.h" />
     <ClInclude Include="src\FileManager.h" />
     <ClInclude Include="src\FlameObject.h" />
     <ClInclude Include="src\FrameBuffer.h" />
     <ClInclude Include="src\LavaObject.h" />
     <ClInclude Include="src\Object3D.h" />
+    <ClInclude Include="src\Pec2Effect.h" />
     <ClInclude Include="src\PlayerController.h" />
     <ClInclude Include="src\SceneRenderer.h" />
     <ClInclude Include="src\Shader.h" />
