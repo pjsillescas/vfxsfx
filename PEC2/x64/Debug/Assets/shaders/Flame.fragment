@@ -195,7 +195,8 @@ void main()
     else
     {
         // Flame
+        float intensity = 3.0f;
         float mixValue = 0.8f;
-        FragColor = mix(refractColor,getPixel(texCoord) * mask * fireColor, mixValue);
+        FragColor = mix(refractColor,getPixel(texCoord) * mask * fireColor, mixValue) * intensity;
     }
 }
