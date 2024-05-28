@@ -9,10 +9,6 @@
 
 //The window we'll be rendering to
 SDL_Window* window = NULL;
-//The surface contained by the window
-SDL_Surface* screenSurface = NULL;
-
-SDL_Surface* auxSurface = NULL;
 
 bool initSDL(int screenWidth, int screenHeight);
 
@@ -37,9 +33,8 @@ int main(int argc, char* args[])
 	}
 	else
 	{
-		auxSurface = SDL_CreateRGBSurfaceWithFormat(0, screenWidth, screenHeight, 32, SDL_PIXELFORMAT_RGBA32);
 		std::vector<EffectTemplate*> effects{
-			(new Pec2Effect(screenSurface, screenHeight, screenWidth, 215, "PEC2 Fire", window)),
+			(new Pec2Effect(NULL, screenHeight, screenWidth, 215, "PEC2 Fire", window)),
 		};
 
 		//Main loop flag
@@ -120,15 +115,11 @@ bool initSDL(int screenWidth, int screenHeight)
 		std::cout << "Window could not be created! SDL_Error: %s\n" << SDL_GetError();
 		return false;
 	}
-	//Get window surface
-	screenSurface = SDL_GetWindowSurface(window);
 	return true;
 }
 
 void close()
 {
-	SDL_FreeSurface(auxSurface);
-
 	//Destroy window
 	SDL_DestroyWindow(window);
 	//Quit SDL subsystems

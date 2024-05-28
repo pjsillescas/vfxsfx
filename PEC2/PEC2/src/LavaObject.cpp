@@ -62,7 +62,7 @@ void LavaObject::render()
 	lavaShader->Use();
 	// Active Textures and Set them
 	this->setTexture(lavaReflectionFrameBuffer->getTexture());
-
+	
 	glUniform1f(glGetUniformLocation(lavaShader->getID(), "time"), time);
 	glUniform2f(glGetUniformLocation(lavaShader->getID(), "iResolution"), 7, 7);
 	time += 0.02f;

@@ -15,6 +15,8 @@
 #include "FlameObject.h"
 #include "LavaObject.h"
 #include "SceneRenderer.h"
+#include "Shader.h"
+
 #include <iostream>
 //#include "Clock.h"
 
@@ -22,16 +24,27 @@ Pec2Effect::Pec2Effect(SDL_Surface* surface, int screenHeight, int screenWidth, 
 	: EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
 	this->window = window;
+
+	waterShader = new Shader();
+	textureMatrixColorShader = new Shader();
+	textureMatrixColorShaderBackground = new Shader();
+	flameShader = new Shader();
+	lavaShader = new Shader();
 }
 
 Pec2Effect::~Pec2Effect()
 {
 	delete playerController;
 	delete scene;
-	//delete waterObject;
 	delete flameObject;
 	delete lavaObject;
 	delete camera;
+	
+	delete waterShader;
+	delete textureMatrixColorShader;
+	delete textureMatrixColorShaderBackground;
+	delete flameShader;
+	delete lavaShader;
 }
 
 void Pec2Effect::init()
@@ -65,11 +78,11 @@ void Pec2Effect::init()
 	camera->init(this->screenWidth, this->screenHeight);
 	playerController = new PlayerController(camera);
 
-	waterShader.init("Water4");
-	textureMatrixColorShader.init("TextureMatrixColorClip");
-	textureMatrixColorShaderBackground.init("TextureMatrixColorClip");
-	flameShader.init("Flame");
-	lavaShader.init("Lava");
+	waterShader->init("Water4");
+	textureMatrixColorShader->init("TextureMatrixColorClip");
+	textureMatrixColorShaderBackground->init("TextureMatrixColorClip");
+	flameShader->init("Flame");
+	lavaShader->init("Lava");
 
 	//Initialize clear color
 	glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -82,7 +95,6 @@ void Pec2Effect::init()
 	glEnable(GL_CULL_FACE);
 
 	//Generate Objects
-
 	glm::vec3 cubePositionsArray[] = {
 		glm::vec3(2.0f,  5.0f, -3.0f),
 		glm::vec3(-1.5f, -2.2f, -2.5f),
@@ -96,7 +108,7 @@ void Pec2Effect::init()
 		glm::vec3(0.f, 4.f, -2.5f),
 	};
 
-	std::vector<glm::vec3> cubePositions;// (cubePositionsArray, cubePositionsArray + sizeof(glm::vec3));
+	std::vector<glm::vec3> cubePositions;
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -105,10 +117,10 @@ void Pec2Effect::init()
 
 	SceneRendererConfig sceneConfig{
 		camera,
-		&textureMatrixColorShader,
+		textureMatrixColorShader,
 		{
 			// background
-			&textureMatrixColorShaderBackground,
+			textureMatrixColorShaderBackground,
 			camera,
 			"Assets/BackgroundPlane.txt",
 			"Assets/textures/desert-unsplash.png",
@@ -136,7 +148,7 @@ void Pec2Effect::init()
 	{
 		// Flame
 		camera,
-		&flameShader,
+		flameShader,
 		REFRACTION_WIDTH,
 		REFRACTION_HEIGHT,
 		this->screenWidth,
@@ -147,25 +159,11 @@ void Pec2Effect::init()
 		"Assets/textures/waterDUDV.png",
 	};
 	flameObject = new FlameObject(flameConfig, scene);
-	/*
-	const float WATER_SPEED = 0.001f;
-	WaterConfig waterConfig{
-		camera, &waterShader,
-		REFLECTION_WIDTH, REFLECTION_HEIGHT,
-		REFRACTION_WIDTH, REFRACTION_HEIGHT,
-		this->screenWidth,
-		this->screenHeight,
-		"Assets/WaterPlane.txt",
-		"Assets/textures/waterDUDV.png",
-		"Assets/textures/normaltexture.jpg",
-		WATER_SPEED,
-	};
-
-	waterObject = new WaterObject(waterConfig, scene, flameObject);
-	*/
+	
 	const float LAVA_SPEED = 0.0001f;
 	LavaConfig lavaConfig{
-		camera, &lavaShader,
+		camera,
+		lavaShader,
 		REFLECTION_WIDTH, REFLECTION_HEIGHT,
 		REFRACTION_WIDTH, REFRACTION_HEIGHT,
 		this->screenWidth,
@@ -176,7 +174,6 @@ void Pec2Effect::init()
 		LAVA_SPEED,
 	};
 	lavaObject = new LavaObject(lavaConfig, scene, flameObject);
-	//lavaObject->setPosition(glm::vec3(0,-2,0));
 }
 
 bool Pec2Effect::update(float deltaTime)
@@ -194,8 +191,7 @@ void Pec2Effect::render()
 	// Enable Clip distance
 	glEnable(GL_CLIP_DISTANCE0);
 
-	// Water
-	//waterObject->renderFrameBuffers();
+	// Flame
 	flameObject->renderFrameBuffer();
 
 	glDisable(GL_CLIP_DISTANCE0);
@@ -203,11 +199,9 @@ void Pec2Effect::render()
 	glm::vec4 clipPlane(0, 1, 0, 0);
 	scene->render(clipPlane);
 	flameObject->render();
-	// Fire
 
 	flameObject->renderFrameBuffer();
 	flameObject->bindFrameBuffer();
-	//waterObject->render();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	flameObject->unbindFrameBuffer();
@@ -216,7 +210,6 @@ void Pec2Effect::render()
 	flameObject->render();
 
 	//Render Water with Reflection and refraction Textures
-	//waterObject->render();
 	lavaObject->renderFrameBuffers();
 	lavaObject->render();
 }

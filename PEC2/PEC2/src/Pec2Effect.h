@@ -3,13 +3,13 @@
 #include <SDL.h>
 #include <string>
 #include "EffectTemplate.h"
-#include "Shader.h"
 
 class Camera3D;
 class PlayerController;
 class SceneRenderer;
 class FlameObject;
 class LavaObject;
+class Shader;
 
 class Pec2Effect : public EffectTemplate
 {
@@ -21,11 +21,11 @@ protected:
 	const int REFRACTION_WIDTH = 1280;
 	const int REFRACTION_HEIGHT = 720;
 
-	Shader waterShader;
-	Shader textureMatrixColorShader;
-	Shader textureMatrixColorShaderBackground;
-	Shader flameShader;
-	Shader lavaShader;
+	Shader* waterShader;
+	Shader* textureMatrixColorShader;
+	Shader* textureMatrixColorShaderBackground;
+	Shader* flameShader;
+	Shader* lavaShader;
 
 	Camera3D* camera;
 	PlayerController* playerController;
