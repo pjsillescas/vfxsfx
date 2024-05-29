@@ -11,7 +11,7 @@ uniform sampler2D maskTexture;
 uniform sampler2D refractionTexture; // refraction Texture;
 uniform sampler2D distortionTexture; // for Map distortion
 
-uniform vec4 backgroundTint = vec4(0,0,0,1);
+uniform vec4 smokeTint = vec4(0,0,0,1);
 const float waveForce = 0.004;
 const vec4 fireColor = vec4(0.87f,0.46f,0,1.f); // orange
 
@@ -130,7 +130,7 @@ float color(vec2 xy)
     return 0.7 * snoise(vec3(xy, 0.3*time));
 }
 
-vec4 getPixel(vec2 fragCoord)
+vec4 getPerlin(vec2 fragCoord)
 {
     vec2 p = (fragCoord.xy/iResolution.y) * 2.0 - 1.0;
 
@@ -177,7 +177,7 @@ vec4 getBackground(vec4 refractColor)
 {
     // With A Little Bit of Bluesky
     float absorptionFactor = 1 - clamp(getAbsorptionFactor(), 0.01,0.99);
-    vec4 tint = mix(backgroundTint, vec4(1,1,1,1), absorptionFactor);
+    vec4 tint = mix(smokeTint, vec4(1,1,1,1), absorptionFactor);
 	return refractColor * tint;
 }
 
@@ -197,6 +197,6 @@ void main()
         // Flame
         float intensity = 3.0f;
         float mixValue = 0.8f;
-        FragColor = mix(refractColor,getPixel(texCoord) * mask * fireColor, mixValue) * intensity;
+        FragColor = mix(refractColor,getPerlin(texCoord) * mask * fireColor, mixValue) * intensity;
     }
 }

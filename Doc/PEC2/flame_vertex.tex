@@ -1,0 +1,31 @@
+\begin{lstlisting}[style=glsl]
+#version 330 core
+
+layout (location = 0) in vec3 LVertexPos;
+layout (location = 1) in vec2 texCoor;
+layout (location = 2) in vec3 ColorVertex;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+out vec2 texCoord;
+out	vec2 texFragment;
+out	vec4 clipSpace;
+
+const float tiling = 0.2;
+
+void main()
+{
+	vec4 modelPosition = model * vec4( LVertexPos.xyz, 1 );
+
+	clipSpace = projection * view * modelPosition;
+	gl_Position = clipSpace;
+	texCoord = texCoor;
+	
+	// Convert 0-1 coordinates to -1 +1 coordinates range asdn
+	// tiling texture
+	texFragment = vec2(LVertexPos.x/2.0 + 0.5, LVertexPos.y/2.0 + 0.5)
+		* tiling;
+}
+\end{lstlisting}

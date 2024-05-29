@@ -1,0 +1,80 @@
+\begin{lstlisting}[style=glsl]
+#version 330 core
+
+in vec2 texFragment;
+in vec4 clipSpace;
+in vec3 cameraVector;
+in vec3 lightVector;
+
+out vec4 FragColor;
+
+uniform sampler2D reflectionTexture; // reflection Texture
+uniform sampler2D dudvTexture; // for Map distorsion
+uniform sampler2D normalTexture; // for Normal map light
+uniform vec3 lightcolor;
+
+uniform float time;
+uniform vec2 iResolution;
+
+uniform float flowTime; // Time Offset for water move;
+
+const float waveForce = 0.04;
+const float shineDamper = 20;
+const float reflectivity = 1;
+const vec4 lavaColor = vec4(0.90f,0,0,1.f); // orange
+const float intensity = 3.f;
+
+vec4 getLavaTexture(vec2 fragCoord)
+{
+	vec2 col;
+	float t = time*.1;
+	vec2 uv = (fragCoord - iResolution.xy)/iResolution.y + vec2(t,t*2.0);
+	float factor = 1.5;
+	vec2 v1;
+	for(int i=0;i<12;i++)
+	{
+		uv *= -factor*factor;
+		v1 = uv.yx/factor;
+		uv += sin(v1+col+t*10.0)/factor;
+		col += vec2(sin(uv.x-uv.y+v1.x-col.y),sin(uv.y-uv.x+v1.y-col.x));
+	}
+	
+	return vec4(vec3(col.x+4.0,col.x-col.y/2.0,col.x/5.0)/2.0,1.0);
+}
+
+void main()
+{
+	vec2 normalClip = (clipSpace.xy/clipSpace.w)/2.0 + 0.5;
+	vec2 reflectCoors = vec2(normalClip.x, -normalClip.y);
+
+	// Take R and G color form texture as vectors coordinate to distord
+	// Change code to a best distorsion calculation
+	vec2 distortedTexCoords = texture(dudvTexture,
+		vec2(texFragment.x + flowTime, texFragment.y)).rg * 0.1;
+	distortedTexCoords = texFragment + 
+		vec2(distortedTexCoords.x,distortedTexCoords.y + flowTime);
+	vec2 totalDistorsion = 
+		(texture(dudvTexture,distortedTexCoords).rg * 2.0 - 1.0) * 
+		waveForce;
+	
+	reflectCoors += totalDistorsion;
+	reflectCoors.x = clamp (reflectCoors.x, 0.001, 0.999);
+	reflectCoors.y = clamp (reflectCoors.y, -0.999, -0.001);
+	
+	vec4 normalMapColor = texture(normalTexture, distortedTexCoords);
+	vec3 normal = normalize(vec3 (normalMapColor.r *2.0 - 1.0, 
+		normalMapColor.b, normalMapColor.g * 2.0 - 1.0));
+	
+	// For Normal Map Light
+	vec3 reflectedLight = reflect(normalize(lightVector), normal);
+	float specular = max(dot(reflectedLight,normalize(cameraVector)),0.0);
+	specular = pow (specular,shineDamper);
+	vec3 specularHighLights = lightcolor * specular * reflectivity;
+
+	// With A Little Bit of Bluesky
+
+	FragColor = mix(texture(reflectionTexture,reflectCoors),
+		lavaColor,0.4) - vec4 (specularHighLights, 0.0);
+	FragColor *= mix(FragColor, getLavaTexture(reflectCoors), 0.7);
+}
+\end{lstlisting}

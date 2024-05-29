@@ -5,8 +5,12 @@
 \usepackage{amssymb}%
 \usepackage{graphicx}
 \usepackage{array}
+\usepackage{verbatim}
 %\usepackage{hyperref}
-\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
+\usepackage{listings}
+
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{hyperref}
 
 \usepackage[a4paper, total={6in, 8in},margin=3cm]{geometry}
 %\usepackage[a4paper, total={6in, 10in}]{geometry}
@@ -18,6 +22,19 @@
 
 \title{PEC2: Fuego en el Shader}
 \author{Pedro Jesús Sánchez Illescas}
+
+\lstdefinestyle{glsl}
+{
+	language=c,
+	%numbers=left,
+	%stepnumber=1,
+	%numbersep=10pt,
+	tabsize=2,
+	showspaces=false,
+	showstringspaces=false,
+	basicstyle=\footnotesize\ttfamily
+}
+
 
 \maketitle
 
@@ -42,86 +59,114 @@
 	La clase \textit{WaterObject} final ha sido un buen sustrato para los objetos creados para esta PEC: una llama y un río de lava, que se explicarán en los próximos apartados.
 
 \subsection{Llama}
-	Este objeto con parte C++ \textit{FlameObject} y shader \textit{Flame} modela un fuego con dos partes bien definidas: la llama y una cortina de humo. Ambas partes se controlan desde el mismo shader vía una textura de máscara con forma de llama cuya superficie blanca delimita la llama y la negra será el fondo o cortina de humo, controladas por dos partes distintas del shader, aunque ambas tienen un nivel de transparencia.
+	Este objeto con parte C++ \textit{FlameObject} y shader \textit{Flame} modela un fuego con dos partes bien definidas: la llama y una cortina de humo. Ambas partes se controlan desde el mismo shader vía una textura de máscara con forma de llama cuya superficie blanca delimita la llama y la negra será el fondo o cortina de humo, controladas por dos partes distintas del shader, aunque ambas tienen algo de transparencia implementada mediante una textura de refracción.
 
 \subsubsection{Sección de llama}
-
+	La llama es simplemente una superficie de un color amarillento salpicada con tonos negruzcos vía ruido de Perlin dinámico, cuya generación se ha obtenido de \cite{perlin-wlgl} y se ha abstraído en la función \textit{getPerlin} dentro del shader \textit{Flame.fragment}.
+	
 \subsubsection{Sección de humo}
+	La sección de humo es un poco más compleja que la llama, puesto que además de realizar una pequeña distorsión del fondo, tiene un difuminado desde el centro de la pantalla de forma exponencial tipo $y=e^{-\alpha d^2}$,  siendo $d$ la distancia del punto al centro de la pantalla, en coordenadas de textura (función \textit{getAbsorptionFactor}). En este caso, el valor de $\alpha$ es tal que nos da una atenuación de $0.01$ a $d^2=1.2$, aproximadamente $1.01$ unidades de textura del centro de la pantalla.
 
-\subsection{Lava}
-	Este objeto está formado por la clase C++ \textit{LavaObject} y el shader \textit{Lava}. Este objeto es más simple que el anterior, 
-	
-	
-	
-	Todo el proyecto se ha realizado usando como base el código proporcionado para la práctica. Para empezar a usar todos los efectos en un mismo ejecutable, la primera fase del proyecto ha sido refactorizar la estructura de todos los efectos, viendo que todos los efectos tiene una estructura de inicialización, actualización y renderización. De esta manera, existe la clase abstracta \textit{EffectTemplate}, con los métodos \textit{init()}, \textit{update(deltaTime)} y \textit{render()}, que serán implementados en cada efecto. Estos efectos serán ejecutados por un algoritmo principal que empezará lanzando las inicializaciones, y los pares actualización $--$ renderización en cada frame, llevando también el cálculo del tiempo usando la clase \textit{Clock}, basada en los ticks de SDL. Esta clase proporciona los valores de tiempo entre frames (\textit{deltaTime}) y el tiempo total de ejecución para poder ser usados en los distintos efectos de una manera limpia.
-	
-	La entrega consta de un efecto principal que contiene el tema musical ``Road to Nowhere'' (\url{https://www.youtube.com/watch?v=7k5H-sDAxwc}), pieza sin copyright de Roman Dudchyk, junto con una serie de efectos que estarán sincronizados con cada una de las secciones del tema. Debido a la duración de la música, algo más de $3$ minutos, y para no repetir demasiado los efectos y quede una demo demasiado aburrida Entre estos efectos hay algunos que son exactamente los que vienen dados de ejemplo o tienen modificaciones muy ligeras como para que puedan ser consideradas como efectos personalizados (quitando el proceso de refactorización anteriormente citado).
-	
-	Seguidamente se muestra una lista con los efectos añadidos a la entrega. Los efectos sin modificaciones importantes vienen marcados como ``default''.
-	
-	\begin{itemize}
-		\item \textit{BlackScreenEffect}: efecto simple que pinta la pantalla de negro usado como efecto dramático en los compases de cambio de sección.
-		\item \textit{BarsEffect}
-		\item \textit{FlockingEffect}
-		\item \textit{PlasmaPec1Effect}: efecto ``default'' con una función personalizada de generación de patrones.
-		\item \textit{FractalPec1Effect}: efecto ``default'' sin modificaciones del efecto de Mandelbrot.
-		\item \textit{DistortionPec1Effect}: efecto `` default'' de distorsión con una imagen personalizada.
-		\item \textit{SpyralEffect}
-		\item \textit{WhirlpoolEffect}
-		\item \textit{Pec1FlashEffect}
-		\item \textit{TexturizationEffect}
-		\item \textit{Pec1AudioEffect}
-	\end{itemize}
+\subsubsection{Shader: Flame}
 
-\subsection{BarsEffect}
-	Este efecto se empezó a desarrollar como una simulación de los barrotes de un campo de fuerza a partir de aplicar un filtro de detección de ejes al resultado del efecto de fuego, pero el resultado acabó pareciéndose más al efecto de una fotograma en pausa de las antiguas cintas VHS. El filtro total viene dada en la expresión (\ref{eq-matrix}).
+	Tanto para la llama como para la lava, el shader de vértices es realmente simple, se limita a aplicar las matrices para hallar la posición en el espacio donde se encuentra el quad de dibujado y las coordenadas UV de la textura que le corresponde a ese vértice.
+
+\input{flame_vertex}
+
+	El grueso del procesado se encuentra en el shader de fragmento, donde la mayor parte del código se utiliza para el cálculo del ruido de Perlin usado en la llama extraído de github \cite{perlin-wlgl}. Como esa parte del código es externa al proyecto, no está incluida en la transcripción del shader más abajo. Primeramente se calcula el valor del fondo que corresponde al píxel, puesto que tanto la llama como el humo tiene transparencia, y dependiendo si el píxel es de llama o fondo se le aplica a este fondo su procesado.
+	
+	En el caso de que el píxel sea de llama, simplemente se hace un mix con el color del fuego aplicando el ruido de Perlin para simular el movimiento de la llama con una intensidad de $3.0$ para realzar la luz que emite el fuego. Y por último, si el píxel es del fondo, como se comentó antes, se le aplica una distorsión y una decoloración para simular el humo.
+
+\input{flame_fragment}
+
+\subsubsection{Intento fallido: Máscara dinámica}
+	
+		Para dar un poco más de realismo a la llama, intenté crear una máscara dinámica replicando el efecto de fuego visto en la práctica anterior, usando la matriz de convolución (\ref{conv-matrix}), aplicándola en cada frame a un framebuffer donde estaría ahora la máscara, añadiendo una línea de píxeles en la zona baja de la textura, tal y como se hacía en el apartado anterior. Esto se consigue teniendo varios estados en el shader, definidos por las variables \textit{initialize} y \textit{heat}, para indicar si se inicializa la textura (por defecto la textura de máscara original), se aplica la etapa de calor (activación de una línea de píxeles en la zona inferior de la textura), o la convolución del framebuffer con el filtro de fuego (\ref{conv-matrix}). Pero el único resultado conseguido ha sido una animación de expansión de la llama hasta llenar la pantalla, con lo que este intento ha sido descartado, pero creo que vale la pena señalarlo en esta memoria. Más abajo se añade el código del fragment shader final de este paso.
 	
 \begin{equation}
 	\begin{pmatrix}
-		1 & 1 & 1 \\
-		1 & -7 & 1 \\
-		1 & 1 & 1 \\
+		0 & 0 & 0 & 0 & 0 \\
+		0 & 0 & 0 & 0 & 0 \\
+		0 & 0 & 0 & 0 & 0 \\
+		0 & 1 & 1 & 1 & 0 \\
+		0 & 1 & 1 & 1 & 0 \\
 	\end{pmatrix}
-	\label{eq-matrix}
+	\label{conv-matrix}
 \end{equation}
-	
-	Al resultado de la convolución se le ha añadido un pequeño umbral variante en el tiempo mediante la ecuación $u=150 + 150\sin{(s t)}$, siendo $s=\frac{1}{BPM}$ y $t$ el tiempo de simulación para que los pulsos vayan al ritmo de la canción.
-	
-\subsection{FlockingEffect}
-	Este algoritmo simula un movimiento coordinado e independiente entre partículas que están a una distancia cercana, basado en la clusterización de partículas según su posición e intentando mantener uniforme la velocidad media del cluster y las separaciones entre los elementos del mismo.
-	Este algoritmo viene explicado en la url \url{https://medium.com/@pramodayajayalath/flocking-algorithm-simulating-collective-behavior-in-nature-inspired-systems-dc6d7fb884cc}.
-	
-\subsection{SpyralEffect}
-	Este efecto representa el movimiento de los planetas formando galaxias. Es muy vistoso y fácil de implementar. Consiste en disponer de un número de partículas dispuestos sobre un plano, y se van desplazando en trayectorias circulares desde el centro de la pantalla siempre a la misma velocidad lineal. El tener todas las partículas la misma velocidad lineal hace que los puntos más cercanos al centro de la pantalla volteen el centro más rápidamente, creando los brazos de las galaxias y otras estructuras interesantes. 
 
-\subsection{WhirlpoolEffect}
-	Este efecto tiene una implementación más interesante, y consta de los siguientes pasos:
-	\begin{enumerate}
-		\item Construir un degradado radial a partir del degradado lineal dado en una textura.
-		\item Añadir un tiling pasado por parámetro para generar varios discos en la pantalla.
-		\item Implementar un offset de generación (píxel por donde se empieza a renderizar el degradado de forma cíclica).
-		\item Aumentar el offset en función del tiempo de simulación a una velocidad $\frac{screenWidth}{2BPM}$ para que en cada golpe llegue un círculo al centro.
-	\end{enumerate}
+\begin{lstlisting}[style=glsl]
+#version 330 core
 
-\subsection{Pec1FlashEffect}
-	Este efecto de flash es una parte de la refactorización del efecto de sincronización entregado en los recursos de la práctica, pero en lugar de cambiar el alpha de un color hasta ser totalmente visible, el color se va haciendo invisible hasta dejar ver una imagen, que va cambiando de forma cíclica entre un grupo de imágenes dentro de la carpeta \textit{assets/flash}. Al igual que con los efectos anteriores, la velocidad de cambio es proporcional a la duración de un pulso de la canción para sincronizar los cambios de imágenes con la música.
+in vec2 texCoord;
 
-\subsection{TexturizationEffect}
-	Este efecto trata de texturizar un casquete esférico centrado en el origen, donde se encuentra la cámara, en lugar del interior del toro de la demo inicial. Para calcular los puntos de la esfera se utiliza la técnica de ``distancia2'', es decir, que en lugar de usar la ecuación tradicional $\sqrt{x^2 + y^2} = R$, se usa la expresión $x^2 + y^2 = R^2$, ahorrando las raíces cuadradas en todos los cálculos de todos los frames, con el consiguiente ahorro en rendimiento.
+uniform bool initialize;
+uniform bool heat;
+uniform sampler2D texture1;
+uniform float kernel[9];
+uniform vec2 tex_offset[9]; // precomputed offsets
+uniform float stepHeight;
+uniform float stepWidth;
 
-\subsection{Pec1AudioEffect}
-	Este efecto es la base que, además de ejecutar la canción, se encarga de administrar e ir ejecutando los efectos visuales de la demo, haciendo las veces de una modificación de la función main para administrar la ejecución de los efectos anteriores.
+out vec4 FragColor;
 
-\subsection{Transiciones}
-	Las transiciones han sido diseñadas como efectos de segundo orden, que reciben dos efectos, fuente y destino, ya inicializados y se ocupan de ir actualizando ambos efectos y renderizando los píxeles que correspondan de cada uno de los efectos según un método abstracto \textit{useSourceBuffer(i, j)}, que devuelve true si hay que renderizar el píxel $(i, j)$ del efecto fuente en pantalla. En caso contrario, se usa el píxel del efecto destino. Se usa la terminología fuente -- destino porque la renderización final se hace en la superficie del efecto destino. Esta funcionalidad base se implementa en la clase \textit{TransitionEffect}, y actualmente hay tres implementaciones de transiciones:
-	\begin{itemize}
-		\item \textit{CircleTransitionEffect}: un círculo se va abriendo o cerrando desde / hacia el centro de la pantalla, dependiendo de la dirección del efecto, añadiendo cada vez más píxeles del destino.
-		\item \textit{RowTransitionEffect}: en cada iteración se van añadiendo más filas del efecto destino a la imagen, ya sea de arriba a abajo o viceversa, según el sentido de la transición.
-		\item \textit{ColumnTransitionEffect}: similar al anterior, pero en columnas de izquierda a derecha o viceversa.
-	\end{itemize}
+bool isValidCoords(vec2 coords)
+{
+	return 0 < coords.x && coords.x < 1 && 0 < coords.y && coords.y < 1;
+}
+
+bool isValidCoords2(vec2 v)
+{
+	return v.y > 2.f*stepHeight &&
+		stepWidth < v.x && v.x < (1 - stepWidth);
+}
+
+vec4 convolute()
+{
+	vec3 result;
+	if(isValidCoords2(texCoord))
+	{
+		result = vec3(0.0, 0.0, 0.0);
+		for (int i = 0; i < 9; i++)
+		{
+			vec2 coords = texCoord + tex_offset[i];
+			vec3 texColor = (isValidCoords(coords)) ?
+				texture(texture1, texCoord + tex_offset[i]).rgb : vec3(1,1,1);
+			result += texColor * kernel[i];
+		}
+	}
+	else
+	{
+		result = vec3(1,1,1);
+	}
+
+	return vec4(result.xyz,1);
+}
+
+
+void main()
+{
+	if (heat)
+	{
+		if (0.1 <= texCoord.y && texCoord.y <= 0.3)
+		{
+			FragColor = vec4(1,1,1,1);
+		}
+	}
+	else
+	{
+		FragColor = (initialize) ? texture(texture1, texCoord) :
+			convolute();
+	}
+}
+\end{lstlisting}
 	
-	En el menú main se usan directamente estos efectos para transicionar entre los efectos dados en un vector, pero para usarlos dentro del efecto de audio se ha optado por usar una clase extra \textit{EffectWithTransition} que tiene su efecto inicial (fuente) y final (destino). Esta clase elige una transición de forma aleatoria al iniciarse, y va revisando en cada frame si la transición ha terminado. En cuanto esto ocurre, solamente el efecto destino se ejecuta. De esta manera se puede usar transiciones de una manera razonablemente eficiente sin que resulte en un código muy denso, como ocurre con la función main, que primeramente ejecuta la transición con el efecto anterior y al terminar sigue ejecutando el efecto siguiente solo.
+\subsection{Lava}
+	Este objeto está formado por la clase C++ \textit{LavaObject} y el shader \textit{Lava}. Este objeto es más simple que el anterior, aun compartiendo la misma estructura y cambiando la textura de refracción por una textura de reflexión.
 	
+\input{lava_fragment}
+	
+	
+
 \section{Compilando el proyecto}
 	Como se indicó al principio de este documento, el proyecto solo tiene como dependencias la librería básica SDL más las extensiones image, mixer y ttf. En el archivo main.cpp hay cuatro flags de depuración para poder mostrar por pantalla los fps actuales, el título del efecto actual (en el main, con lo que solamente saldrá el efecto \textit{PEC1AudioEffect}), el tiempo restante de simulación y la sección del tema musical que está activo actualmente. Por defecto está todo a $false$ para no tener distracciones en la pantalla, pero se pueden activar poniendo sus flags a true. Un ejemplo de estos flags en funcionamiento puede verse en el video \url{https://youtu.be/CDG5kHigrSQ} donde se ejecuta una serie con los efectos proporcionados para la PEC, tanto a resolución $640$x$480$ como a $1440$x$1080$.
 	
@@ -136,4 +181,8 @@
 	%\label{reaper-cover}
 %\end{figure}
 	
+\begin{thebibliography}{9}
+\bibitem{perlin-wlgl} https://stegu.github.io/webgl-noise/webdemo/
+\bibitem{shader-lava} https://www.shadertoy.com/view/WdKcRt
+\end{thebibliography}
 \end{document}

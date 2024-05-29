@@ -1,0 +1,87 @@
+\begin{lstlisting}[style=glsl]
+#version 330 core
+
+in vec2 texCoord; // original texture coordinates
+in vec2 texFragment; // coordinates for the refraction texture
+in vec4 clipSpace;
+
+uniform float time;
+uniform float flowTime;
+uniform vec2 iResolution;
+uniform sampler2D maskTexture;
+uniform sampler2D refractionTexture;
+uniform sampler2D distortionTexture;
+
+uniform vec4 smokeTint = vec4(0,0,0,1);
+const float waveForce = 0.004;
+const vec4 fireColor = vec4(0.87f,0.46f,0,1.f); // orange
+
+
+// Output color
+out vec4 FragColor;
+
+vec4 getPerlin(vec2 fragCoord)
+{
+	...
+}
+
+float getAbsorptionFactor()
+{
+	const float dampeningDistance = 1.2;
+	const float alpha = 2 * 2.3 /dampeningDistance;
+	// log(10) = 2.3, absorption(dampeningDistance) = 0.01
+	
+	vec2 absCoords = texCoord.xy - vec2(0.5f, 0.5f);
+	return exp(- alpha * dot(absCoords, absCoords));
+}
+
+vec4 getRefractColor(bool useDistortion)
+{
+	float absorption = getAbsorptionFactor();
+	// Take R and G color form texture as vectors coordinate to distord
+	// Change code to a best distorsion calculation
+	vec2 distortedTexCoords = 
+		texture(distortionTexture,
+			vec2(texFragment.x + time, texFragment.y)).rg * 0.1;
+	distortedTexCoords = texFragment + 
+		vec2(distortedTexCoords.x, distortedTexCoords.y + flowTime);
+	vec2 totalDistortion = 
+		(texture(distortionTexture,distortedTexCoords).rg * 2.0 - 1.0) *
+		waveForce * absorption;
+
+	vec2 normalClip = (clipSpace.xy/clipSpace.w)/2.0 + 0.5;
+	vec2 refractCoors = 
+		clamp ((useDistortion) ? normalClip + totalDistortion : normalClip,
+			0.001, 0.999);
+	return texture(refractionTexture, refractCoors);
+}
+
+vec4 getBackground(vec4 refractColor)
+{
+	// With A Little Bit of Bluesky
+	float absorptionFactor = 1 - clamp(getAbsorptionFactor(), 0.01,0.99);
+	vec4 tint = mix(smokeTint, vec4(1,1,1,1), absorptionFactor);
+	return refractColor * tint;
+}
+
+void main()
+{
+	vec4 mask = texture(maskTexture, vec2(texCoord.x,1 - texCoord.y));
+
+	bool isBackground = dot(mask, vec4(1,1,1,0)) <= 0.01f;
+	vec4 refractColor = getRefractColor(isBackground);
+	if(isBackground)
+	{
+		// Background
+		FragColor = getBackground(refractColor);
+	}
+	else
+	{
+		// Flame
+		float intensity = 3.0f;
+		float mixValue = 0.8f;
+		FragColor = mix(refractColor,getPerlin(texCoord) *
+			mask * fireColor, mixValue) * intensity;
+	}
+}
+\end{lstlisting}
