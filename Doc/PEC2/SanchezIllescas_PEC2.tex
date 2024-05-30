@@ -161,19 +161,18 @@ void main()
 \end{lstlisting}
 	
 \subsection{Lava}
-	Este objeto está formado por la clase C++ \textit{LavaObject} y el shader \textit{Lava}. Este objeto es más simple que el anterior, aun compartiendo la misma estructura y cambiando la textura de refracción por una textura de reflexión.
+
+	Este objeto está formado por la clase C++ \textit{LavaObject} y el shader \textit{Lava}. Este objeto es más simple que el anterior, aun compartiendo la misma estructura y cambiando la textura de refracción por una textura de reflexión. Como ya se dijo antes, el vertex shader es exactamente igual al de la llama, con lo que no vamos a incidir más en ello. Pero el fragment shader tiene como base el shader del agua, usando textura de distorsión y un mapa de normales, sumándole a todo ello una simulación de corriente de convección como en la demo \cite{shader-lava}.
+	
+	Por vistosidad y sacrificando realismo, este material es muy reflectivo a diferencia de la lava real, pero a título personal me gusta mucho el reflejo del fuego, y permite usar un frame buffer en el programa, cuyo uso es muy parecido al del agua.
 	
 \input{lava_fragment}
 	
 	
-
-\section{Compilando el proyecto}
-	Como se indicó al principio de este documento, el proyecto solo tiene como dependencias la librería básica SDL más las extensiones image, mixer y ttf. En el archivo main.cpp hay cuatro flags de depuración para poder mostrar por pantalla los fps actuales, el título del efecto actual (en el main, con lo que solamente saldrá el efecto \textit{PEC1AudioEffect}), el tiempo restante de simulación y la sección del tema musical que está activo actualmente. Por defecto está todo a $false$ para no tener distracciones en la pantalla, pero se pueden activar poniendo sus flags a true. Un ejemplo de estos flags en funcionamiento puede verse en el video \url{https://youtu.be/CDG5kHigrSQ} donde se ejecuta una serie con los efectos proporcionados para la PEC, tanto a resolución $640$x$480$ como a $1440$x$1080$.
-	
 \section{Conclusiones}
-	En esta PEC se ha entregado una demo con varios efectos basados en los dados en los materiales para la PEC. Aunque se ha intentado mantener una temática sobre el cielo (imágenes de nubes y planetas, movimiento espiral de galaxia), no ha sido posible mantenerlo en todos los efectos. Es imposible aplicar esa temática en el efecto de flocking y no sería muy vistoso una imagen con tantos tonos oscuros en el de texturización, por poner un par de ejemplos. La experiencia en general aprendiendo sobre los efectos y diseñando los propios ha sido bastante buena, aun con el handicap de las técnicas de programación tan ``oscuras'' utilizadas en los códigos iniciales.
+	En esta PEC se ha desarrollado una pequeña demo de una llama y un río de lava, ambos ejemplos muy simples y poco realistas, pero que reflejan un manejo básico de las funciones OpenGL en C++ y GLSL en los shaders. OpenGL es un poco oscura a la hora de iniciarse, pero se vuelve muy potente cuando poco a poco se van permeando sus distintas abstracciones y filosofía interna, como la renderización en buffers, pudiendo usar exactamente el mismo código para dibujar en pantalla o en una textura que puede usarse posteriormente en la pantalla logrando efectos muy llamativos sin demasiada carga lógica.
 	
-	Así, para suplir mis carencias artísticas, he optado por implementar un pseudo motor de ejecución de efectos en el que se inicializa un vector con la lista de efectos a ejecutar hasta un tiempo determinado o una condición predefinida, pasando de un efecto a otro mediante una transición aleatoria. Estas transiciones son facilmente ampliables, puesto que se trata de una función que define qué píxeles de la imagen pertenecen a cada uno de los efectos implicados en la misma.
+	También se ha aprovechado un poco el framework creado para la PEC anterior, reutilizando la estructura de renderización para organizar los elementos del programa. Esta reorganización se ha hecho de forma básica porque el framework de la PEC anterior estaba diseñado para usarse con superficies, mientras que esta PEC se basa en ventanas OpenGL, pero se ha podido adaptar a este requisito sin mucho esfuerzo.
 	
 %\begin{figure}[ht!]
 	%\includegraphics[width=15cm]{./reaper-cover.png}
