@@ -1,4 +1,6 @@
 .vs
-x64/*
+#x64/*
+x64/Debug/*
+!x64/Debug/pec1-assets/
 PEC1-final/x64/*
 Stars/x64/*
