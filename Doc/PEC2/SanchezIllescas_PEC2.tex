@@ -166,6 +166,10 @@ void main()
 	
 %\input{lava_fragment}
 	
+\section{Compilando la aplicación}
+	
+	El ejecutable, una vez compilados todos los fuentes situados en la carpeta \textit{/src}, en el directorio del ejecutable hay que copiar la carpeta \textit{/assets} donde se encuentran los shaders (\textit{/assets/shaders}) y texturas (\textit{/assets/textures}) necesarias para el correcto funcionamiento del programa, además de los archivos \textit{sdl2.dll} y \textit{sdl2\_image.dll}.
+	
 	
 \section{Conclusiones}
 	En esta PEC se ha desarrollado una pequeña demo de una llama y un río de lava, ambos ejemplos muy simples y poco realistas, pero que reflejan un manejo básico de las funciones OpenGL en C++ y GLSL en los shaders. OpenGL es un poco oscura a la hora de iniciarse, pero se vuelve muy potente cuando poco a poco se van permeando sus distintas abstracciones y filosofía interna, como la renderización en buffers, pudiendo usar exactamente el mismo código para dibujar en pantalla o en una textura que puede usarse posteriormente en la pantalla logrando efectos muy llamativos sin demasiada carga lógica.
