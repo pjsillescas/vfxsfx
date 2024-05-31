@@ -17,6 +17,8 @@
 
 \renewcommand{\figurename}{Figura}
 
+\renewcommand{\contentsname}{Índice}
+
 \begin{document}
 \sloppy
 
@@ -71,13 +73,13 @@
 
 	Tanto para la llama como para la lava, el shader de vértices es realmente simple, se limita a aplicar las matrices para hallar la posición en el espacio donde se encuentra el quad de dibujado y las coordenadas UV de la textura que le corresponde a ese vértice.
 
-\input{flame_vertex}
+%\input{flame_vertex}
 
 	El grueso del procesado se encuentra en el shader de fragmento, donde la mayor parte del código se utiliza para el cálculo del ruido de Perlin usado en la llama extraído de github \cite{perlin-wlgl}. Como esa parte del código es externa al proyecto, no está incluida en la transcripción del shader más abajo. Primeramente se calcula el valor del fondo que corresponde al píxel, puesto que tanto la llama como el humo tiene transparencia, y dependiendo si el píxel es de llama o fondo se le aplica a este fondo su procesado.
 	
 	En el caso de que el píxel sea de llama, simplemente se hace un mix con el color del fuego aplicando el ruido de Perlin para simular el movimiento de la llama con una intensidad de $3.0$ para realzar la luz que emite el fuego. Y por último, si el píxel es del fondo, como se comentó antes, se le aplica una distorsión y una decoloración para simular el humo.
 
-\input{flame_fragment}
+%\input{flame_fragment}
 
 \subsubsection{Intento fallido: Máscara dinámica}
 	
@@ -102,10 +104,11 @@ in vec2 texCoord;
 uniform bool initialize;
 uniform bool heat;
 uniform sampler2D texture1;
-uniform float kernel[9];
-uniform vec2 tex_offset[9]; // precomputed offsets
-uniform float stepHeight;
-uniform float stepWidth;
+uniform float kernel[9]; // valores de la matriz de filtro
+uniform vec2 tex_offset[9]; // coordenadas UV relativas a texCoord del filtro
+// limites de pixeles 
+uniform float stepHeight; // limite superior e inferior
+uniform float stepWidth; // limite izquierda y derecha
 
 out vec4 FragColor;
 
@@ -114,29 +117,24 @@ bool isValidCoords(vec2 coords)
 	return 0 < coords.x && coords.x < 1 && 0 < coords.y && coords.y < 1;
 }
 
-bool isValidCoords2(vec2 v)
+bool isValidForConvolution(vec2 v)
 {
-	return v.y > 2.f*stepHeight &&
+	return stepHeight < v.y && v.y < (1 - stepHeight) &&
 		stepWidth < v.x && v.x < (1 - stepWidth);
 }
 
 vec4 convolute()
 {
-	vec3 result;
-	if(isValidCoords2(texCoord))
+	vec3 result = vec3(0.0, 0.0, 0.0);
+	if(isValidForConvolution(texCoord))
 	{
-		result = vec3(0.0, 0.0, 0.0);
 		for (int i = 0; i < 9; i++)
 		{
 			vec2 coords = texCoord + tex_offset[i];
 			vec3 texColor = (isValidCoords(coords)) ?
-				texture(texture1, texCoord + tex_offset[i]).rgb : vec3(1,1,1);
+				texture(texture1, texCoord + tex_offset[i]).rgb : vec3(1.0,1.0,1.0);
 			result += texColor * kernel[i];
 		}
-	}
-	else
-	{
-		result = vec3(1,1,1);
 	}
 
 	return vec4(result.xyz,1);
@@ -164,9 +162,9 @@ void main()
 
 	Este objeto está formado por la clase C++ \textit{LavaObject} y el shader \textit{Lava}. Este objeto es más simple que el anterior, aun compartiendo la misma estructura y cambiando la textura de refracción por una textura de reflexión. Como ya se dijo antes, el vertex shader es exactamente igual al de la llama, con lo que no vamos a incidir más en ello. Pero el fragment shader tiene como base el shader del agua, usando textura de distorsión y un mapa de normales, sumándole a todo ello una simulación de corriente de convección como en la demo \cite{shader-lava}.
 	
-	Por vistosidad y sacrificando realismo, este material es muy reflectivo a diferencia de la lava real, pero a título personal me gusta mucho el reflejo del fuego, y permite usar un frame buffer en el programa, cuyo uso es muy parecido al del agua.
+	Por vistosidad y sacrificando realismo, este material es muy reflectivo a diferencia de la lava real, pero me gusta mucho el material tan reflectivo que recuerda a juegos clásicos de PSX.
 	
-\input{lava_fragment}
+%\input{lava_fragment}
 	
 	
 \section{Conclusiones}
