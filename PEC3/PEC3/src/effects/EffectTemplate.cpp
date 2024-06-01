@@ -1,7 +1,6 @@
 #include "EffectTemplate.h"
 
 #include <iostream>
-#include <SDL_image.h>
 #include "../utils/Clock.h"
 
 EffectTemplate::EffectTemplate(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title)
@@ -54,10 +53,5 @@ void EffectTemplate::setIsEnded(bool isEnded)
 
 SDL_Surface* EffectTemplate::loadImage(const char* fileName)
 {
-	SDL_Surface* temp = IMG_Load(fileName);
-	if (temp == NULL) {
-		std::cout << "Image can be loaded! " << IMG_GetError();
-		exit(1);
-	}
-	return SDL_ConvertSurfaceFormat(temp, SDL_PIXELFORMAT_ARGB8888, 0);
+	return NULL;
 }

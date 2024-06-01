@@ -1,6 +1,6 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include <SDL_image.h>
+//#include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <iostream>
 #include <vector>
@@ -257,7 +257,7 @@ bool initSDL(int screenWidth, int screenHeight) {
 
 	//getFont(12);
 
-	IMG_Init(IMG_INIT_PNG);
+	//IMG_Init(IMG_INIT_PNG);
 
 	//Create window
 	window = SDL_CreateWindow("PEC 3 - Cave of the Damned (Damn Cave)", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN);
