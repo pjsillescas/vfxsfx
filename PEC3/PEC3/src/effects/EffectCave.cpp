@@ -13,9 +13,7 @@ Mix_Music* gameOverMusic;
 Mix_Music* exitMusic;
 Mix_Chunk* waterfallSound;
 Mix_Chunk* snoreSound;
-
-int snoreChannel = 0;
-int waterfallChannel = 0;
+Mix_Chunk* monsterStepSound;
 
 EffectCave::EffectCave(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, short board[10][10]): EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
@@ -73,10 +71,12 @@ EffectCave::EffectCave(SDL_Surface* surface, int screenHeight, int screenWidth, 
 
 	waterfallSound = Mix_LoadWAV("assets/audio/exit-waterfall.wav");
 	snoreSound = Mix_LoadWAV("assets/audio/monster-snore.wav");
+	monsterStepSound = Mix_LoadWAV("assets/audio/step-monster.wav");
 }
 
 EffectCave::~EffectCave()
 {
+	Mix_FreeChunk(monsterStepSound);
 	Mix_FreeChunk(stepSound);
 	Mix_FreeChunk(crashSound);
 	Mix_FreeChunk(eatingSound);
@@ -101,7 +101,7 @@ void EffectCave::init()
 	waterfallChannel = Mix_PlayChannel(2,waterfallSound, 0);
 
 	Mix_Volume(snoreChannel, MIX_MAX_VOLUME);
-	Mix_Volume(waterfallChannel, MIX_MAX_VOLUME);
+	Mix_Volume(waterfallChannel, MIX_MAX_VOLUME * 0.7f);
 
 	updateEnvironment();
 }
@@ -396,6 +396,7 @@ void EffectCave::moveMonster()
 
 	if (nextMonsterSquare != NULL)
 	{
+		onMonsterStep();
 		monsterSquare = nextMonsterSquare;
 
 		int channel = Mix_PlayChannel(-1, stepSound, 0);
@@ -411,7 +412,6 @@ void EffectCave::moveMonster()
 void EffectCave::onExitReached()
 {
 	this->previousResult = TResult::RS_EXIT;
-	//std::cout << "exit yay" << std::endl;
 	Mix_PlayMusic(exitMusic, 0);
 	gameOver();
 }
@@ -419,7 +419,6 @@ void EffectCave::onExitReached()
 void EffectCave::onMonsterHit()
 {
 	this->previousResult = TResult::RS_MONSTER;
-	//std::cout << "game over" << std::endl;
 	Mix_PlayChannel(-1, eatingSound, 0);
 
 	Mix_PlayMusic(gameOverMusic, 0);
@@ -429,26 +428,30 @@ void EffectCave::onMonsterHit()
 
 void EffectCave::onStep()
 {
-	//std::cout << "tap" << std::endl;
 	Mix_PlayChannel(-1, stepSound, 0);
+}
+
+void EffectCave::onMonsterStep()
+{
+	Mix_PlayChannel(-1, monsterStepSound, 0);
 }
 
 const float BOARD_DIAGONAL = 10 * sqrtf(2);
 
-Uint8 getDistance(TSquare* sq1, TSquare* sq2, float normalizationDistance)
+Uint8 EffectCave::getDistance(TSquare* sq1, TSquare* sq2, float normalizationDistance)
 {
 	int di = sq1->i - sq2->i;
 	int dj = sq1->j - sq2->j;
 
 	float rawDistance = sqrtf(di * di + dj * dj);
+	std::cout << rawDistance << std::endl;
 	float d = (rawDistance > normalizationDistance ? BOARD_DIAGONAL * 0.95f : rawDistance) / BOARD_DIAGONAL * 255.f;
 	//std::cout << "d(" << (int)sq1->i << ", " << (int)sq1->j << "), (" << sq2->i << "," << sq2->j << ")" << std::endl;
 
-	d *= (expf(-0.05f * d));
 	return (Uint8) d;
 }
 
-Sint16 getAngle(TSquare* sq1, TSquare* sq2, TDirection direction)
+Sint16 EffectCave::getAngle(TSquare* sq1, TSquare* sq2, TDirection direction)
 {
 	float di = sq2->i - sq1->i;
 	float dj = sq2->j - sq1->j;
@@ -459,12 +462,9 @@ Sint16 getAngle(TSquare* sq1, TSquare* sq2, TDirection direction)
 
 	float y = dj / d;
 	float x = di / d;
-	//std::cout << "di " << di << " dj " << dj << " dx " << dx << " dy " << dy << " " << y << " " << x << std::endl;
 
-	//float angle = atan2f(y , x) * 180.f / M_PI;
-	//float angle = acosf(y * dy + x * dx) * 180.f / M_PI;
 	float angle = atan2f(x * dy - y * dx , y * dy + x * dx) * 180.f / M_PI;
-	//std::cout << "di " << di << " dj " << dj << " dx " << dx << " dy " << dy << " " << y << " " << x << " " << angle << " " << (Sint16) angle << std::endl;
+
 	return (Sint16)angle;
 }
 
@@ -474,11 +474,10 @@ void EffectCave::updateEnvironment()
 	Uint8 exitDistance = getDistance(player->square, exitSquare, BOARD_DIAGONAL);
 	Sint16 exitAngle = getAngle(player->square, exitSquare, player->direction);
 	std::cout << "waterfall d: " << (int) exitDistance << " a: " << exitAngle << std::endl;
-	//sprintf_s(str, 100, "waterfall d: %d a:%d", exitDistance, exitAngle);
 	
 	Mix_SetPosition(waterfallChannel, exitAngle, exitDistance);
-	// monster
 	
+	// monster
 	Uint8 monsterDistance = getDistance(player->square, monsterSquare, BOARD_DIAGONAL);
 	Sint16 monsterAngle = getAngle(player->square, monsterSquare, player->direction);
 	std::cout << "monster d: " << (int) monsterDistance << " a: " << monsterAngle << std::endl;

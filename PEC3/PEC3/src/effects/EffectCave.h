@@ -32,6 +32,9 @@ private:
 	bool isGameOver;
 	bool isEnding;
 
+	int snoreChannel = 0;
+	int waterfallChannel = 0;
+
 public:
 
 	EffectCave(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, short board[10][10]);
@@ -48,11 +51,14 @@ private:
 	void onExitReached();
 	void onMonsterHit();
 	void onStep();
+	void onMonsterStep();
 	void updateEnvironment();
 	void renderDebugGraphics();
 	void gameOver();
 	void moveMonster();
 	TDirection intToDirection(int n);
 	void movePlayer(bool goForward);
+	Uint8 getDistance(TSquare* sq1, TSquare* sq2, float normalizationDistance);
+	Sint16 getAngle(TSquare* sq1, TSquare* sq2, TDirection direction);
 };
 
