@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SDL_mixer.h>
+
 #include "EffectTemplate.h"
 
 class Player;
@@ -19,6 +21,16 @@ public:
 	const int MAX_SQUARES = 10;
 
 private:
+	Mix_Chunk* stepSound;
+	Mix_Chunk* crashSound;
+	Mix_Chunk* eatingSound;
+
+	Mix_Music* gameOverMusic;
+	Mix_Music* exitMusic;
+	Mix_Chunk* waterfallSound;
+	Mix_Chunk* snoreSound;
+	Mix_Chunk* monsterStepSound;
+
 	TSquare *board;
 	Player* player;
 	TSquare* startSquare;

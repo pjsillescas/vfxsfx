@@ -1,19 +1,9 @@
 #include "EffectCave.h"
 
-#include <SDL_mixer.h>
 #include "../utils/TextUtils.h"
 #include "Player.h"
 #include <iostream>
 
-Mix_Chunk* stepSound;
-Mix_Chunk* crashSound;
-Mix_Chunk* eatingSound;
-
-Mix_Music* gameOverMusic;
-Mix_Music* exitMusic;
-Mix_Chunk* waterfallSound;
-Mix_Chunk* snoreSound;
-Mix_Chunk* monsterStepSound;
 
 EffectCave::EffectCave(SDL_Surface* surface, int screenHeight, int screenWidth, int timeout, std::string title, short board[10][10]): EffectTemplate(surface, screenHeight, screenWidth, timeout, title)
 {
@@ -445,7 +435,8 @@ Uint8 EffectCave::getDistance(TSquare* sq1, TSquare* sq2, float normalizationDis
 
 	float rawDistance = sqrtf(di * di + dj * dj);
 	std::cout << rawDistance << std::endl;
-	float d = (rawDistance > normalizationDistance ? BOARD_DIAGONAL * 0.95f : rawDistance) / BOARD_DIAGONAL * 255.f;
+	//float d = (rawDistance > normalizationDistance ? BOARD_DIAGONAL * 0.95f : rawDistance) / BOARD_DIAGONAL * 255.f;
+	float d = rawDistance / BOARD_DIAGONAL * 255.f;
 	//std::cout << "d(" << (int)sq1->i << ", " << (int)sq1->j << "), (" << sq2->i << "," << sq2->j << ")" << std::endl;
 
 	return (Uint8) d;
@@ -471,14 +462,14 @@ Sint16 EffectCave::getAngle(TSquare* sq1, TSquare* sq2, TDirection direction)
 void EffectCave::updateEnvironment()
 {
 	// waterfall
-	Uint8 exitDistance = getDistance(player->square, exitSquare, BOARD_DIAGONAL);
+	Uint8 exitDistance = getDistance(player->square, exitSquare, BOARD_DIAGONAL * 0.8f);
 	Sint16 exitAngle = getAngle(player->square, exitSquare, player->direction);
 	std::cout << "waterfall d: " << (int) exitDistance << " a: " << exitAngle << std::endl;
 	
 	Mix_SetPosition(waterfallChannel, exitAngle, exitDistance);
 	
 	// monster
-	Uint8 monsterDistance = getDistance(player->square, monsterSquare, BOARD_DIAGONAL);
+	Uint8 monsterDistance = getDistance(player->square, monsterSquare, BOARD_DIAGONAL * 0.8f);
 	Sint16 monsterAngle = getAngle(player->square, monsterSquare, player->direction);
 	std::cout << "monster d: " << (int) monsterDistance << " a: " << monsterAngle << std::endl;
 
